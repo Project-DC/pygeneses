@@ -24,6 +24,7 @@ while(i < INITIAL_POPULATION):
     print("Born", (i+1), "/", INITIAL_POPULATION)
     player = Player(screen, 'player.png', 32, 32, SCREEN_WIDTH, SCREEN_HEIGHT)
     players.append(player)
+    ## TODO: Remove this time.sleep when testing is done
     time.sleep(1)
     i += 1
 
@@ -86,7 +87,6 @@ while running:
 
             if(now_time - players[i].born_at >= 15):
                 players[i].kill_player()
-                # del players[i]
                 players[i] = 0
                 killed.append(i)
 
