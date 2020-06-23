@@ -1,4 +1,5 @@
 import pygame
+import random
 import time
 
 class Player():
@@ -6,8 +7,8 @@ class Player():
     def __init__(self, screen, img, width, height, screen_width, screen_height):
         self.screen = screen
         self.playerImg = pygame.image.load(img)
-        self.playerX = 370
-        self.playerY = 370
+        self.playerX = random.randint(32, screen_width - 32)
+        self.playerY = random.randint(32, screen_height - 32)
         self.playerX_change = 0
         self.playerY_change = 0
         self.PLAYER_WIDTH = width
