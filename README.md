@@ -1,3 +1,3 @@
-# chimichangas
+# Chimichangas
 
-A simualtion environment created using pygame for the study of evolution simulation using Deep Reinforcement Learning algorithms
+Chimichangas are a species of artificially simulated beings created as part of Project DC. This repository holds a simulation environment created in pygame which is to be used with Deep Reinforcement Learning algorithms to find out the evolution of Chimichangas.
