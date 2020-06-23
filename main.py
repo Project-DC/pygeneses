@@ -45,18 +45,18 @@ while running:
         # If key is pressed, check whether it's right, left, up or down
         if event.type == pygame.KEYDOWN:
             if event.key == pygame.K_LEFT:
-                player.change_player_position(-speed, 0)
+                player.change_player_xposition(-speed)
             if event.key == pygame.K_RIGHT:
-                player.change_player_position(speed, 0)
+                player.change_player_xposition(speed)
             if event.key == pygame.K_UP:
-                player.change_player_position(0, -speed)
+                player.change_player_yposition(-speed)
             if event.key == pygame.K_DOWN:
-                player.change_player_position(0, speed)
+                player.change_player_yposition(speed)
         if event.type == pygame.KEYUP:
             if event.key == pygame.K_LEFT or event.key == pygame.K_RIGHT:
-                player.change_player_position(0, 0)
+                player.change_player_xposition(0)
             if event.key == pygame.K_UP or event.key == pygame.K_DOWN:
-                player.change_player_position(0, 0)
+                player.change_player_yposition(0)
 
     # Move the player
     player.move_player()

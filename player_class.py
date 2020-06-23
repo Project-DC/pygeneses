@@ -23,8 +23,10 @@ class Player():
         else:
             self.screen.blit(self.playerImg, (self.playerX, self.playerY))
 
-    def change_player_position(self, x, y):
+    def change_player_xposition(self, x):
         self.playerX_change = x
+
+    def change_player_yposition(self, y):
         self.playerY_change = y
 
     def move_player(self, kill=False):
