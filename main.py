@@ -17,17 +17,22 @@ screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
 pygame.display.set_caption("Chimichangas")
 
 # Player
-player = Player(screen, 'player.png', 32, 32, SCREEN_WIDTH, SCREEN_HEIGHT)
+INITIAL_POPULATION = 10
+players = []
+i = 0
+while(i < INITIAL_POPULATION):
+    print("Born", (i+1), "/", INITIAL_POPULATION)
+    player = Player(screen, 'player.png', 32, 32, SCREEN_WIDTH, SCREEN_HEIGHT)
+    players.append(player)
+    time.sleep(1)
+    i += 1
+
+print(len(players))
+
+killed = []
 
 # Speed
 speed = 1
-
-# Seconds font
-seconds = pygame.font.Font('freesansbold.ttf', 32)
-
-def show_seconds(t):
-    time_rem = seconds.render("Zindagi ke: " + str(t) + " s", True, (255, 255, 255))
-    screen.blit(time_rem, (10, 10))
 
 # Game loop
 running = True
@@ -45,31 +50,45 @@ while running:
         # If key is pressed, check whether it's right, left, up or down
         if event.type == pygame.KEYDOWN:
             if event.key == pygame.K_LEFT:
-                player.change_player_xposition(-speed)
+                for i in range(INITIAL_POPULATION):
+                    if(i not in killed):
+                        players[i].change_player_xposition(-speed)
             if event.key == pygame.K_RIGHT:
-                player.change_player_xposition(speed)
+                for i in range(INITIAL_POPULATION):
+                    if(i not in killed):
+                        players[i].change_player_xposition(speed)
             if event.key == pygame.K_UP:
-                player.change_player_yposition(-speed)
+                for i in range(INITIAL_POPULATION):
+                    if(i not in killed):
+                        players[i].change_player_yposition(-speed)
             if event.key == pygame.K_DOWN:
-                player.change_player_yposition(speed)
+                for i in range(INITIAL_POPULATION):
+                    if(i not in killed):
+                        players[i].change_player_yposition(speed)
         if event.type == pygame.KEYUP:
             if event.key == pygame.K_LEFT or event.key == pygame.K_RIGHT:
-                player.change_player_xposition(0)
+                for i in range(INITIAL_POPULATION):
+                    if(i not in killed):
+                        players[i].change_player_xposition(0)
             if event.key == pygame.K_UP or event.key == pygame.K_DOWN:
-                player.change_player_yposition(0)
+                for i in range(INITIAL_POPULATION):
+                    if(i not in killed):
+                        players[i].change_player_yposition(0)
 
-    # Move the player
-    player.move_player()
+    now_time = time.time()
+    for i in range(INITIAL_POPULATION):
+        if(i not in killed):
+            # Move the player
+            players[i].move_player()
 
-    # Show the player
-    player.show_player()
+            # Show the player
+            players[i].show_player()
 
-    if(time.time() - player.born_at >= 90):
-        player.kill_player()
-        del player
-        running = False
-    else:
-        show_seconds(round(time.time() - player.born_at, 0))
+            if(now_time - players[i].born_at >= 15):
+                players[i].kill_player()
+                # del players[i]
+                players[i] = 0
+                killed.append(i)
 
     # Update the window
     pygame.display.update()
