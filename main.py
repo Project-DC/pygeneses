@@ -45,6 +45,9 @@ while(j < number_of_particles):
     my_particles.append(particle)
     j += 1
 
+
+my_particles = Particle.check_particles(my_particles)
+
 # Game loop
 running = True
 while running:
