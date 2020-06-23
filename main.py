@@ -1,17 +1,15 @@
-# -*- coding: utf-8 -*-
-"""
-Created on Tue Jun 23 10:45:47 2020
-
-@author: dhairya
-"""
-
 import pygame
 
 #initialise pygame
 pygame.init()
 
+# Size constants
+PLAYER_WIDTH = PLAYER_HEIGHT = 32
+SCREEN_WIDTH = 1200
+SCREEN_HEIGHT = 700
+
 #create a screen
-screen = pygame.display.set_mode((1200, 700))
+screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
 
 #Title
 pygame.display.set_caption("Chimichangas")
@@ -60,10 +58,21 @@ while running:
             if event.key == pygame.K_UP or event.key == pygame.K_DOWN:
                 playerY_change = 0
 
-
-    #Call the player
     playerX += playerX_change
     playerY += playerY_change
+
+    # Don't let the agent get out of the world
+    if(playerX <= 0):
+        playerX = 0
+    elif(playerX >= (SCREEN_WIDTH - PLAYER_WIDTH)):
+        playerX = (SCREEN_WIDTH - PLAYER_WIDTH)
+
+    if(playerY <= 0):
+        playerY = 0
+    elif(playerY >= (SCREEN_HEIGHT - PLAYER_HEIGHT)):
+        playerY = (SCREEN_HEIGHT - PLAYER_HEIGHT)
+
+    #Call the player
     player(playerX, playerY)
 
     #Update the window
