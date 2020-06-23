@@ -38,26 +38,21 @@ killed = []
 # Speed
 speed = 1
 
-# First the screen is filled so that every thing is above the screen
-screen.fill((0, 178, 0))
-
 # Generate Food particle
 number_of_particles = random.randint(50, 100)
 my_particles = []
-
-for n in range(number_of_particles):
-    size = 10
-    x = random.randint(size, SCREEN_WIDTH-size)
-    y = random.randint(size, SCREEN_HEIGHT-size)
-    my_particles.append(Particle(x, y, size))
-
-for particle in my_particles:
-    particle.display(screen)
-pygame.display.flip()
+j = 0
+while(j < number_of_particles):
+    particle = Particle(screen, 'food.png', 10, 10, SCREEN_WIDTH, SCREEN_HEIGHT)
+    my_particles.append(particle)
+    j += 1
 
 # Game loop
 running = True
 while running:
+    
+    # First the screen is filled so that every thing is above the screen
+    screen.fill((0, 178, 0))
 
     for event in pygame.event.get():
 
@@ -83,6 +78,7 @@ while running:
                 for i in range(INITIAL_POPULATION):
                     if(i not in killed):
                         players[i].change_player_yposition(speed)
+                        
         if event.type == pygame.KEYUP:
             if event.key == pygame.K_LEFT or event.key == pygame.K_RIGHT:
                 for i in range(INITIAL_POPULATION):
@@ -93,6 +89,10 @@ while running:
                     if(i not in killed):
                         players[i].change_player_yposition(0)
 
+    # Show particles
+    for j in range(number_of_particles):
+        my_particles[j].show_particle()
+    
     now_time = time.time()
     for i in range(INITIAL_POPULATION):
         if(i not in killed):
