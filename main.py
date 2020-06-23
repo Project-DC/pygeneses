@@ -1,7 +1,10 @@
 import pygame
 import time
+import random
 
 from player_class import Player
+
+from particle_class import Particle
 
 # Initialise pygame
 pygame.init()
@@ -35,12 +38,26 @@ killed = []
 # Speed
 speed = 1
 
+# First the screen is filled so that every thing is above the screen
+screen.fill((0, 178, 0))
+
+# Generate Food particle
+number_of_particles = random.randint(50, 100)
+my_particles = []
+
+for n in range(number_of_particles):
+    size = 10
+    x = random.randint(size, SCREEN_WIDTH-size)
+    y = random.randint(size, SCREEN_HEIGHT-size)
+    my_particles.append(Particle(x, y, size))
+
+for particle in my_particles:
+    particle.display(screen)
+pygame.display.flip()
+
 # Game loop
 running = True
 while running:
-
-    # First the screen is filled so that every thing is above the screen
-    screen.fill((0, 178, 0))
 
     for event in pygame.event.get():
 
