@@ -4,7 +4,7 @@ import random
 
 from player_class import Player
 from particle_class import Particle
-from helpers import food_ingesting
+from helpers import food_ingesting, regenerate_species
 
 # Initialise pygame
 pygame.init()
@@ -19,19 +19,17 @@ screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
 # Title
 pygame.display.set_caption("Chimichangas")
 
-# Player
+# Generate initial population
 INITIAL_POPULATION = 2
-players = []
-i = 0
-while(i < INITIAL_POPULATION):
-    print("Born", (i+1), "/", INITIAL_POPULATION)
-    player = Player(screen, 'player.png', 32, 32, SCREEN_WIDTH, SCREEN_HEIGHT)
-    players.append(player)
-    ## TODO: Remove this time.sleep when testing is done
-    time.sleep(3)
-    i += 1
+players = regenerate_species(INITIAL_POPULATION, screen, SCREEN_WIDTH, SCREEN_HEIGHT)
 
+# Killed individuals
 killed = []
+
+# Allow regeneration of species
+allow_regenerate = True
+regenerate_times = 0
+MAX_REGENERATIONS = 3
 
 # Speed
 speed = 3
@@ -96,6 +94,16 @@ while running:
         if(type(my_particles[j]) != int):
             my_particles[j].show_particle()
 
+    if(len(killed) == INITIAL_POPULATION and allow_regenerate):
+        killed = []
+        players = regenerate_species(INITIAL_POPULATION, screen, SCREEN_WIDTH, SCREEN_HEIGHT)
+        regenerate_times += 1
+    elif(len(killed) == INITIAL_POPULATION and not allow_regenerate):
+        running = False
+
+    if(regenerate_times == MAX_REGENERATIONS):
+        allow_regenerate = False
+
     now_time = time.time()
     for i in range(INITIAL_POPULATION):
         if(i not in killed):
@@ -105,7 +113,7 @@ while running:
             # Show the player
             players[i].show_player()
 
-            if(now_time - players[i].born_at >= 30):
+            if(now_time - players[i].born_at >= 15):
                 players[i].kill_player()
                 with open('info-run-dead-' + str(i+1) + '.txt', 'w') as file:
                     file.write("Chimichanga #" + str(i+1) + " ate " + str(players[i].food_ate) + " food particles.\n")
