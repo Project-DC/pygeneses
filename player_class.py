@@ -58,5 +58,4 @@ class Player():
     def ingesting_food(self, idx, time):
         self.cannot_move = True
         self.ingesting_begin_time = time
-        print(self.ingesting_begin_time)
         self.ingesting_particle_index = idx

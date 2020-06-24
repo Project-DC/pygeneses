@@ -56,10 +56,6 @@ while running:
 
         #To check whether the window is quitted or not
         if event.type == pygame.QUIT:
-            with open('info-run-alive-' + str(round(time.time(), 0)) + '.txt', 'w') as file:
-                for i, player in enumerate(players):
-                    if(type(player) != int):
-                        file.write("Chimichanga #" + str(i+1) + " ate " + str(player.food_ate) + " food particles.\n")
             running = False
 
         # If key is pressed, check whether it's right, left, up or down
@@ -117,8 +113,6 @@ while running:
 
             if(now_time - players[i].born_at >= 15):
                 players[i].kill_player()
-                with open('info-run-dead-' + str(i+1) + '.txt', 'w') as file:
-                    file.write("Chimichanga #" + str(i+1) + " ate " + str(players[i].food_ate) + " food particles.\n")
                 players[i] = 0
                 killed.append(i)
 
@@ -129,7 +123,6 @@ while running:
 
             if(type(players[i]) != int and players[i].ingesting_begin_time != 0 and time.time() - players[i].ingesting_begin_time >= 2):
                 players[i].food_ate += 1
-                print(i, players[i].food_ate)
                 players[i].ingesting_begin_time = 0
                 players[i].cannot_move = False
 
