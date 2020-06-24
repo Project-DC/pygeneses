@@ -19,10 +19,11 @@ class Player():
         self.is_killed = False
         self.born_at = time.time()
         self.food_ate = 0
-        self.gender = np.random.choice(['male', 'female'])
+        self.gender = np.random.choice(['male', 'female'], p=[0.5, 0.5])
         self.cannot_move = False
         self.ingesting_begin_time = 0
         self.ingesting_particle_index = 0
+        self.is_impotent = np.random.choice([True, False], p=[0.2, 0.8])
 
     def show_player(self):
         if(self.is_killed):
@@ -59,3 +60,16 @@ class Player():
         self.cannot_move = True
         self.ingesting_begin_time = time
         self.ingesting_particle_index = idx
+
+    def asexual_reproduction(self, screen, SCREEN_WIDTH, SCREEN_HEIGHT):
+        INITIAL_POPULATION = random.randint(2, 8)
+        offspring_players = []
+        i = 0
+        while(i < INITIAL_POPULATION):
+            print("Born", (i+1), "/", INITIAL_POPULATION)
+            player = Player(screen, 'player.png', 32, 32, SCREEN_WIDTH, SCREEN_HEIGHT)
+            offspring_players.append(player)
+            ## TODO: Remove this time.sleep when testing is done
+            time.sleep(2)
+            i += 1
+        return offspring_players
