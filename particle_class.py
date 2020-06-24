@@ -1,9 +1,9 @@
 import pygame
 import random
-
+import math
 
 class Particle():
-    
+
     def __init__(self, screen, img, width, height, screen_width, screen_height):
         self.screen = screen
         self.particleImg = pygame.image.load(img)
@@ -13,7 +13,7 @@ class Particle():
         self.PARTICLE_HEIGHT = height
         self.SCREEN_WIDTH = screen_width
         self.SCREEN_HEIGHT = screen_height
-    
-    
+
+
     def show_particle(self):
         self.screen.blit(self.particleImg, (self.particleX, self.particleY))

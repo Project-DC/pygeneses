@@ -4,7 +4,7 @@ import random
 
 from player_class import Player
 from particle_class import Particle
-from helpers import food_ingesting, regenerate_species
+from helpers import food_ingesting, regenerate_species, check_particles
 
 # Initialise pygame
 pygame.init()
@@ -42,6 +42,8 @@ while(j < number_of_particles):
     particle = Particle(screen, 'food.png', 10, 10, SCREEN_WIDTH, SCREEN_HEIGHT)
     my_particles.append(particle)
     j += 1
+
+my_particles = check_particles(my_particles)
 
 # Game loop
 running = True

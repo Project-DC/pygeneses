@@ -12,6 +12,15 @@ def food_ingesting(player, food_particles):
                 return i
     return -1
 
+def check_particles(my_particles):
+    for my_particle in my_particles:
+        for j, my_particle_inner in enumerate(my_particles):
+            if(my_particle_inner != my_particle and type(my_particle) != int and type(my_particle_inner) != int):
+                ed = ((my_particle.particleX - my_particle_inner.particleX)**2 + (my_particle.particleY - my_particle_inner.particleY)**2)**(1/2)
+                if(ed < 20):
+                    my_particles[j] = 0
+    return my_particles
+
 def regenerate_species(pop_size, screen, SCREEN_WIDTH, SCREEN_HEIGHT):
     INITIAL_POPULATION = pop_size
     players = []
