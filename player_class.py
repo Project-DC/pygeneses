@@ -23,7 +23,7 @@ class Player():
         self.cannot_move = False
         self.ingesting_begin_time = 0
         self.ingesting_particle_index = 0
-        self.is_impotent = np.random.choice([True, False], p=[0.2, 0.8])
+        self.is_impotent = np.random.choice([True, False], p=[0.5, 0.5])
 
     def show_player(self):
         if(self.is_killed):
