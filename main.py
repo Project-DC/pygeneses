@@ -22,8 +22,11 @@ screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
 pygame.display.set_caption("Chimichangas")
 
 # Generate initial population
-INITIAL_POPULATION = 2
+INITIAL_POPULATION = 3
 players = regenerate_species(INITIAL_POPULATION, screen, SCREEN_WIDTH, SCREEN_HEIGHT)
+print(players[0].playerX, players[0].playerY)
+print(players[1].playerX, players[1].playerY)
+print(players[2].playerX, players[2].playerY)
 
 # Killed individuals
 killed = []
@@ -90,6 +93,7 @@ while running:
                     killed.append(0)
             if event.key == pygame.K_b:
                 mate_idx = search_mate(players[0],players)
+                print(mate_idx)
                 if(mate_idx != -1):
                     mating_begin_time = time.time()
                     offspring_players = players[0].sexual_reproduction(screen, SCREEN_WIDTH, SCREEN_HEIGHT, mating_begin_time, True)
@@ -155,7 +159,7 @@ while running:
                 players[i].ingesting_food(food_particle, time.time())
                 my_particles[food_particle] = 0
 
-            if(type(players[i]) != int and players[i].ingesting_begin_time != 0 and time.time() - players[i].ingesting_begin_time >= 2):
+            if(type(players[i]) != int and players[i].ingesting_begin_time != 0 and time.time() - players[i].ingesting_begin_time >= 1):
                 players[i].food_ate += 1
                 players[i].ingesting_begin_time = 0
                 players[i].cannot_move = False

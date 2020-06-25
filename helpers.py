@@ -59,6 +59,8 @@ def search_mate(host, players):
             # print("DIST B/W ", host," AND ",player," = ",ed)
             if(ed <= 20):
                 env.append(i)
+
+    print(env)
     return env[np.array(env).argsort()[0]] if len(env) > 0 else -1
 
 
