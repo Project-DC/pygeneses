@@ -22,11 +22,8 @@ screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
 pygame.display.set_caption("Chimichangas")
 
 # Generate initial population
-INITIAL_POPULATION = 3
+INITIAL_POPULATION = 1
 players = regenerate_species(INITIAL_POPULATION, screen, SCREEN_WIDTH, SCREEN_HEIGHT)
-print(players[0].playerX, players[0].playerY)
-print(players[1].playerX, players[1].playerY)
-print(players[2].playerX, players[2].playerY)
 
 # Killed individuals
 killed = []
@@ -42,7 +39,7 @@ MAX_AGE = 90
 speed = 3
 
 # Generate Food particle
-number_of_particles = random.randint(0, 1)
+number_of_particles = random.randint(10, 20)
 my_particles = []
 j = 0
 while(j < number_of_particles):
@@ -101,6 +98,12 @@ while running:
                     for offspring_player in offspring_players:
                         players.append(offspring_player)
                     INITIAL_POPULATION += len(offspring_players)
+            if event.key == pygame.K_c:
+                food_particle = food_nearby(players[i], my_particles)
+                print(food_particle)
+                if(food_particle != -1):
+                    players[i].ingesting_food(food_particle, time.time())
+                    my_particles[food_particle] = 0
 
         if event.type == pygame.KEYUP:
             if event.key == pygame.K_LEFT or event.key == pygame.K_RIGHT:
@@ -153,13 +156,7 @@ while running:
             else:
                 players[i].show_close()
 
-
-            food_particle = food_nearby(players[i], my_particles)
-            if(food_particle != -1):
-                players[i].ingesting_food(food_particle, time.time())
-                my_particles[food_particle] = 0
-
-            if(type(players[i]) != int and players[i].ingesting_begin_time != 0 and time.time() - players[i].ingesting_begin_time >= 1):
+            if(type(players[i]) != int and players[i].ingesting_begin_time != 0 and time.time() - players[i].ingesting_begin_time >= 10):
                 players[i].food_ate += 1
                 players[i].ingesting_begin_time = 0
                 players[i].cannot_move = False
