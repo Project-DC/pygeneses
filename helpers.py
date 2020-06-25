@@ -42,8 +42,7 @@ def players_in_env(host, players):
     return env,distances
 
 
-
-def check_particles(my_particles):              #checks if food particles are clustered ande removes any closer than 20px 
+def check_particles(my_particles):              #checks if food particles are clustered ande removes any closer than 20px
     for my_particle in my_particles:
         for j, my_particle_inner in enumerate(my_particles):
             if(my_particle_inner != my_particle and type(my_particle) != int and type(my_particle_inner) != int):

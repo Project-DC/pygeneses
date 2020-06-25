@@ -110,34 +110,25 @@ while running:
             # Move the player
             players[i].move_player()
 
-            
-
             env_particles,env_particle_distance = food_in_env(players[i], my_particles)
             players[i].food_near = env_particle_distance
 
             env_players, env_player_distance = players_in_env(players[i],players)
             players[i].players_near = env_player_distance
-           
 
             if not env_players:
                 players[i].show_player()                                #show normal player
-
-
 
             for index in range( 0, len(env_particles) ):                #change color of food in env_particles
                 local = env_particles[index]
                 if type(my_particles[local]) != int:
                     my_particles[local].show_close()
-                    # print(env_particle_distance[index])
-
 
             for index in range( 0, len(env_players) ):                #change color of food in env_particles
                 local = env_players[index]
                 if type(players[local]) != int:
                     players[local].show_close()
                     print("PLAYER ",i," close to ",local)
-
-
 
             food_particle = food_nearby(players[i], my_particles)
             if(food_particle != -1):
