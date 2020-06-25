@@ -156,7 +156,7 @@ while running:
             else:
                 players[i].show_close()
 
-            if(type(players[i]) != int and players[i].ingesting_begin_time != 0 and time.time() - players[i].ingesting_begin_time >= 10):
+            if(type(players[i]) != int and players[i].ingesting_begin_time != 0 and time.time() - players[i].ingesting_begin_time >= 1):
                 players[i].food_ate += 1
                 players[i].ingesting_begin_time = 0
                 players[i].cannot_move = False
