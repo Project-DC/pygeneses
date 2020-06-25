@@ -20,7 +20,7 @@ def food_in_env(player, food_particles):         #returns food particle index if
         return [],[]
     for i, food_particle in enumerate(food_particles):
         if(type(food_particle) != int):
-            ed = ((food_particle.particleX - (player.playerX + 16))**2 + (food_particle.particleY - (player.playerY + 16))**2)**(1/2)
+            ed = ((food_particle.particleX - (player.playerX))**2 + (food_particle.particleY - (player.playerY))**2)**(1/2)
             if(ed <= 100):
                 env.append(i)
                 distances.append(ed)
@@ -31,11 +31,15 @@ def food_in_env(player, food_particles):         #returns food particle index if
 def players_in_env(host, players):
     env = []
     distances = []
-    if(type(host) == int):
+    # if(type(host) == int):
+    #     return [],[]
+    if (host.is_killed == True):
         return [],[]
     for i, player in enumerate(players):
-        if (type(player) != int) and (player != host):
-            ed = ((host.playerX - (player.playerX + 16))**2 + (host.playerY - (player.playerY + 16))**2)**(1/2)
+        # if (type(player) != int) and (player != host):
+        if (player.is_killed == False) and (player != host):
+            ed = ((host.playerX - (player.playerX ))**2 + (host.playerY - (player.playerY ))**2)**(1/2)
+            # print("DIST B/W ", host," AND ",player," = ",ed)
             if(ed <= 100):
                 env.append(i)
                 distances.append(ed)

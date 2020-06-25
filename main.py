@@ -32,11 +32,13 @@ allow_regenerate = True
 regenerate_times = 0
 MAX_REGENERATIONS = 3
 
+MAX_AGE = 30
+
 # Speed
 speed = 3
 
 # Generate Food particle
-number_of_particles = random.randint(50, 100)
+number_of_particles = random.randint(20, 40)
 my_particles = []
 j = 0
 while(j < number_of_particles):
@@ -126,19 +128,19 @@ while running:
             env_players, env_player_distance = players_in_env(players[i],players)
             players[i].players_near = env_player_distance
 
-            if not env_players:
-                players[i].show_player()                                #show normal player
+                              #show normal player
 
             for index in range( 0, len(env_particles) ):                #change color of food in env_particles
                 local = env_particles[index]
                 if type(my_particles[local]) != int:
                     my_particles[local].show_close()
 
-            for index in range( 0, len(env_players) ):                #change color of food in env_particles
-                local = env_players[index]
-                if type(players[local]) != int:
-                    players[local].show_close()
-                    print("PLAYER ",i," close to ",local)
+
+            if not env_players:
+                players[i].show_player()   
+            else :
+                players[i].show_close()
+
 
             food_particle = food_nearby(players[i], my_particles)
             if(food_particle != -1):
@@ -150,10 +152,14 @@ while running:
                 players[i].ingesting_begin_time = 0
                 players[i].cannot_move = False
 
-            if(now_time - players[i].born_at >= 15):                   #put kill situation at end of for loop
+            if(now_time - players[i].born_at >= MAX_AGE):                   #put kill situation at end of for loop
                 players[i].kill_player()
-                players[i] = 0
+                # players[i] = 0
                 killed.append(i)
+                print ("PLAYER ",i," DIED")
+        
+        else: 
+            players[i].show_player()                                        #shows dead player
 
     # Update the window
     pygame.display.update()

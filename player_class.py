@@ -35,6 +35,7 @@ class Player():
 
 
     def show_close(self):
+        print("DEATH =", self.is_killed)
         if(self.is_killed):
             self.screen.blit(pygame.image.load('dead-player.png'), (self.playerX, self.playerY))
         else:
