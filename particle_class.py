@@ -17,3 +17,6 @@ class Particle():
 
     def show_particle(self):
         self.screen.blit(self.particleImg, (self.particleX, self.particleY))
+
+    def show_close(self):                   #testing function
+        self.screen.blit(pygame.image.load("food_near.png"), (self.particleX, self.particleY))

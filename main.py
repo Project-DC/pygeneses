@@ -4,7 +4,8 @@ import random
 
 from player_class import Player
 from particle_class import Particle
-from helpers import food_ingesting, regenerate_species, check_particles
+from helpers import *
+# food_nearby, regenerate_species, check_particles
 
 # Initialise pygame
 pygame.init()
@@ -113,20 +114,33 @@ while running:
         allow_regenerate = False
 
     now_time = time.time()
+
     for i in range(INITIAL_POPULATION):
         if(i not in killed):
             # Move the player
             players[i].move_player()
 
-            # Show the player
-            players[i].show_player()
+            env_particles,env_particle_distance = food_in_env(players[i], my_particles)
+            players[i].food_near = env_particle_distance
+            
+            env_players, env_player_distance = players_in_env(players[i],players)
+            players[i].players_near = env_player_distance
 
-            if(now_time - players[i].born_at >= 90):
-                players[i].kill_player()
-                players[i] = 0
-                killed.append(i)
+            if not env_players:
+                players[i].show_player()                                #show normal player
 
-            food_particle = food_ingesting(players[i], my_particles)
+            for index in range( 0, len(env_particles) ):                #change color of food in env_particles
+                local = env_particles[index]
+                if type(my_particles[local]) != int:
+                    my_particles[local].show_close()
+
+            for index in range( 0, len(env_players) ):                #change color of food in env_particles
+                local = env_players[index]
+                if type(players[local]) != int:
+                    players[local].show_close()
+                    print("PLAYER ",i," close to ",local)
+
+            food_particle = food_nearby(players[i], my_particles)
             if(food_particle != -1):
                 players[i].ingesting_food(food_particle, time.time())
                 my_particles[food_particle] = 0
@@ -135,6 +149,11 @@ while running:
                 players[i].food_ate += 1
                 players[i].ingesting_begin_time = 0
                 players[i].cannot_move = False
+
+            if(now_time - players[i].born_at >= 15):                   #put kill situation at end of for loop
+                players[i].kill_player()
+                players[i] = 0
+                killed.append(i)
 
     # Update the window
     pygame.display.update()

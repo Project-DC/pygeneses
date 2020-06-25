@@ -2,7 +2,7 @@ import time
 
 from player_class import Player
 
-def food_ingesting(player, food_particles):
+def food_nearby(player, food_particles):         #returns food particle index if food is nearby, else returns -1
     if(type(player) == int):
         return -1
     for i, food_particle in enumerate(food_particles):
@@ -12,7 +12,37 @@ def food_ingesting(player, food_particles):
                 return i
     return -1
 
-def check_particles(my_particles):
+
+def food_in_env(player, food_particles):         #returns food particle index if food is nearby, else returns -1
+    env = []
+    distances = []
+    if(type(player) == int):
+        return [],[]
+    for i, food_particle in enumerate(food_particles):
+        if(type(food_particle) != int):
+            ed = ((food_particle.particleX - (player.playerX + 16))**2 + (food_particle.particleY - (player.playerY + 16))**2)**(1/2)
+            if(ed <= 100):
+                env.append(i)
+                distances.append(ed)
+    # print("ENV :", env)
+    return env,distances
+
+
+def players_in_env(host, players):
+    env = []
+    distances = []
+    if(type(host) == int):
+        return [],[]
+    for i, player in enumerate(players):
+        if (type(player) != int) and (player != host):
+            ed = ((host.playerX - (player.playerX + 16))**2 + (host.playerY - (player.playerY + 16))**2)**(1/2)
+            if(ed <= 100):
+                env.append(i)
+                distances.append(ed)
+    return env,distances
+
+
+def check_particles(my_particles):              #checks if food particles are clustered ande removes any closer than 20px
     for my_particle in my_particles:
         for j, my_particle_inner in enumerate(my_particles):
             if(my_particle_inner != my_particle and type(my_particle) != int and type(my_particle_inner) != int):
@@ -21,7 +51,7 @@ def check_particles(my_particles):
                     my_particles[j] = 0
     return my_particles
 
-def regenerate_species(pop_size, screen, SCREEN_WIDTH, SCREEN_HEIGHT):
+def regenerate_species(pop_size, screen, SCREEN_WIDTH, SCREEN_HEIGHT):         #regenerates creatures, returns list of new species
     INITIAL_POPULATION = pop_size
     players = []
     i = 0
