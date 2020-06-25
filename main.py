@@ -77,6 +77,16 @@ while running:
                 for i in range(INITIAL_POPULATION):
                     if(i not in killed):
                         players[i].change_player_yposition(speed)
+            if event.key == pygame.K_a:
+                print(players[0].is_impotent)
+                if(not players[0].is_impotent and type(players[0]) != int and (round(time.time() - players[0].born_at) in range(10, 61))):
+                    print("Hello")
+                    offspring_players = players[0].asexual_reproduction(screen, SCREEN_WIDTH, SCREEN_HEIGHT)
+                    for offspring_player in offspring_players:
+                        players.append(offspring_player)
+                    INITIAL_POPULATION += len(offspring_players)
+                    players[0] = 0
+                    killed.append(0)
 
         if event.type == pygame.KEYUP:
             if event.key == pygame.K_LEFT or event.key == pygame.K_RIGHT:
@@ -112,7 +122,7 @@ while running:
 
             env_particles,env_particle_distance = food_in_env(players[i], my_particles)
             players[i].food_near = env_particle_distance
-
+            
             env_players, env_player_distance = players_in_env(players[i],players)
             players[i].players_near = env_player_distance
 
