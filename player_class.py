@@ -26,6 +26,7 @@ class Player():
         self.food_near = []
         self.players_near = []
         self.is_impotent = np.random.choice([True, False], p=[0.5, 0.5])
+        self.mating_begin_time = 0
 
     def show_player(self):
         if(self.is_killed):
@@ -35,7 +36,6 @@ class Player():
 
 
     def show_close(self):
-        print("DEATH =", self.is_killed)
         if(self.is_killed):
             self.screen.blit(pygame.image.load('dead-player.png'), (self.playerX, self.playerY))
         else:
@@ -65,7 +65,7 @@ class Player():
             elif(self.playerY >= (self.SCREEN_HEIGHT - self.PLAYER_HEIGHT)):
                 self.playerY = (self.SCREEN_HEIGHT - self.PLAYER_HEIGHT)
 
-    def kill_player(self):    
+    def kill_player(self):
         self.is_killed = True
 
     def ingesting_food(self, idx, time):
@@ -85,3 +85,19 @@ class Player():
             time.sleep(2)
             i += 1
         return offspring_players
+
+    def sexual_reproduction(self, screen, SCREEN_WIDTH, SCREEN_HEIGHT, mating_begin_time, gen_offspring=False):
+        self.cannot_move = True
+        self.mating_begin_time = mating_begin_time
+        if(gen_offspring):
+            INITIAL_POPULATION = random.randint(2, 8)
+            offspring_players = []
+            i = 0
+            while(i < INITIAL_POPULATION):
+                print("Born", (i+1), "/", INITIAL_POPULATION)
+                player = Player(screen, 'player.png', 32, 32, SCREEN_WIDTH, SCREEN_HEIGHT)
+                offspring_players.append(player)
+                ## TODO: Remove this time.sleep when testing is done
+                time.sleep(2)
+                i += 1
+            return offspring_players

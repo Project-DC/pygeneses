@@ -1,4 +1,5 @@
 import time
+import numpy as np
 
 from player_class import Player
 
@@ -45,6 +46,21 @@ def players_in_env(host, players):
                 distances.append(ed)
     return env,distances
 
+def search_mate(host, players):
+    env = []
+    # if(type(host) == int):
+    #     return [],[]
+    if (host.is_killed == True):
+        return [],[]
+    for i, player in enumerate(players):
+        # if (type(player) != int) and (player != host):
+        if (player.is_killed == False) and (player != host) and (not player.is_impotent) and ((round(time.time() - player.born_at) in range(10, 61))) and (player.gender != host.gender):
+            ed = ((host.playerX - (player.playerX ))**2 + (host.playerY - (player.playerY ))**2)**(1/2)
+            # print("DIST B/W ", host," AND ",player," = ",ed)
+            if(ed <= 20):
+                env.append(i)
+    return env[np.array(env).argsort()[0]] if len(env) > 0 else -1
+
 
 def check_particles(my_particles):              #checks if food particles are clustered ande removes any closer than 20px
     for my_particle in my_particles:
@@ -66,5 +82,4 @@ def regenerate_species(pop_size, screen, SCREEN_WIDTH, SCREEN_HEIGHT):         #
         ## TODO: Remove this time.sleep when testing is done
         time.sleep(2)
         i += 1
-
     return players

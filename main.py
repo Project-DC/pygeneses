@@ -1,6 +1,7 @@
 import pygame
 import time
 import random
+import numpy as np
 
 from player_class import Player
 from particle_class import Particle
@@ -32,13 +33,13 @@ allow_regenerate = True
 regenerate_times = 0
 MAX_REGENERATIONS = 3
 
-MAX_AGE = 30
+MAX_AGE = 90
 
 # Speed
 speed = 3
 
 # Generate Food particle
-number_of_particles = random.randint(20, 40)
+number_of_particles = random.randint(0, 1)
 my_particles = []
 j = 0
 while(j < number_of_particles):
@@ -80,15 +81,22 @@ while running:
                     if(i not in killed):
                         players[i].change_player_yposition(speed)
             if event.key == pygame.K_a:
-                print(players[0].is_impotent)
                 if(not players[0].is_impotent and type(players[0]) != int and (round(time.time() - players[0].born_at) in range(10, 61))):
-                    print("Hello")
                     offspring_players = players[0].asexual_reproduction(screen, SCREEN_WIDTH, SCREEN_HEIGHT)
                     for offspring_player in offspring_players:
                         players.append(offspring_player)
                     INITIAL_POPULATION += len(offspring_players)
                     players[0] = 0
                     killed.append(0)
+            if event.key == pygame.K_b:
+                mate_idx = search_mate(players[0],players)
+                if(mate_idx != -1):
+                    mating_begin_time = time.time()
+                    offspring_players = players[0].sexual_reproduction(screen, SCREEN_WIDTH, SCREEN_HEIGHT, mating_begin_time, True)
+                    players[mate_idx].sexual_reproduction(screen, SCREEN_WIDTH, SCREEN_HEIGHT, mating_begin_time)
+                    for offspring_player in offspring_players:
+                        players.append(offspring_player)
+                    INITIAL_POPULATION += len(offspring_players)
 
         if event.type == pygame.KEYUP:
             if event.key == pygame.K_LEFT or event.key == pygame.K_RIGHT:
@@ -124,7 +132,7 @@ while running:
 
             env_particles,env_particle_distance = food_in_env(players[i], my_particles)
             players[i].food_near = env_particle_distance
-            
+
             env_players, env_player_distance = players_in_env(players[i],players)
             players[i].players_near = env_player_distance
 
@@ -137,8 +145,8 @@ while running:
 
 
             if not env_players:
-                players[i].show_player()   
-            else :
+                players[i].show_player()
+            else:
                 players[i].show_close()
 
 
@@ -152,13 +160,17 @@ while running:
                 players[i].ingesting_begin_time = 0
                 players[i].cannot_move = False
 
+            if(type(players[i]) != int and players[i].mating_begin_time != 0 and time.time() - players[i].mating_begin_time >= 2):
+                players[i].mating_begin_time = 0
+                players[i].cannot_move = False
+
             if(now_time - players[i].born_at >= MAX_AGE):                   #put kill situation at end of for loop
                 players[i].kill_player()
                 # players[i] = 0
                 killed.append(i)
                 print ("PLAYER ",i," DIED")
-        
-        else: 
+
+        else:
             players[i].show_player()                                        #shows dead player
 
     # Update the window
