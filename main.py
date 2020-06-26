@@ -22,7 +22,7 @@ screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
 pygame.display.set_caption("Chimichangas")
 
 # Generate initial population
-INITIAL_POPULATION = 1
+INITIAL_POPULATION = 2
 players = regenerate_species(INITIAL_POPULATION, screen, SCREEN_WIDTH, SCREEN_HEIGHT)
 
 # Killed individuals
@@ -90,7 +90,6 @@ while running:
                     killed.append(0)
             if event.key == pygame.K_b:
                 mate_idx = search_mate(players[0],players)
-                print(mate_idx)
                 if(mate_idx != -1):
                     mating_begin_time = time.time()
                     offspring_players = players[0].sexual_reproduction(screen, SCREEN_WIDTH, SCREEN_HEIGHT, mating_begin_time, True)
@@ -100,10 +99,15 @@ while running:
                     INITIAL_POPULATION += len(offspring_players)
             if event.key == pygame.K_c:
                 food_particle = food_nearby(players[i], my_particles)
-                print(food_particle)
                 if(food_particle != -1):
                     players[i].ingesting_food(food_particle, time.time())
                     my_particles[food_particle] = 0
+            if event.key == pygame.K_d:
+                if(player.fighting_with == -1):
+                    enemy = search_enemy(players[0], players)
+                    if(enemy != -1):
+                        players[0].fighting_with = enemy
+                        players[enemy].fighting_with = 0
 
         if event.type == pygame.KEYUP:
             if event.key == pygame.K_LEFT or event.key == pygame.K_RIGHT:

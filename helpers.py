@@ -63,6 +63,22 @@ def search_mate(host, players):
     print(env)
     return env[np.array(env).argsort()[0]] if len(env) > 0 else -1
 
+def search_enemy(host, players):
+    env = []
+    # if(type(host) == int):
+    #     return [],[]
+    if (host.is_killed == True):
+        return [],[]
+    for i, player in enumerate(players):
+        # if (type(player) != int) and (player != host):
+        if (player.is_killed == False) and (player != host) and (player.fighting_with == -1):
+            ed = ((host.playerX - (player.playerX ))**2 + (host.playerY - (player.playerY ))**2)**(1/2)
+            # print("DIST B/W ", host," AND ",player," = ",ed)
+            if(ed <= 20):
+                env.append(i)
+
+    print(env)
+    return env[np.array(env).argsort()[0]] if len(env) > 0 else -1
 
 def check_particles(my_particles):              #checks if food particles are clustered ande removes any closer than 20px
     for my_particle in my_particles:

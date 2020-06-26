@@ -27,6 +27,7 @@ class Player():
         self.players_near = []
         self.is_impotent = np.random.choice([True, False], p=[0.5, 0.5])
         self.mating_begin_time = 0
+        self.fighting_with = -1
 
     def show_player(self):
         if(self.is_killed):
@@ -38,6 +39,8 @@ class Player():
     def show_close(self):
         if(self.is_killed):
             self.screen.blit(pygame.image.load('dead-player.png'), (self.playerX, self.playerY))
+        elif(self.mating_begin_time != 0):
+            self.screen.blit(pygame.image.load('player_mating.png'), (self.playerX, self.playerY))
         else:
             self.screen.blit(pygame.image.load("player_near.png"), (self.playerX, self.playerY))
 
