@@ -28,6 +28,7 @@ class Player():
         self.is_impotent = np.random.choice([True, False], p=[0.5, 0.5])
         self.mating_begin_time = 0
         self.fighting_with = -1
+        self.energy = 100
 
     def show_player(self):
         if(self.is_killed):
@@ -48,9 +49,11 @@ class Player():
 
     def change_player_xposition(self, x):           #set change to be updated in x
         self.playerX_change = x
+        self.energy -= 5
 
     def change_player_yposition(self, y):           #set change to be updated in y
         self.playerY_change = y
+        self.energy -= 5
 
     def move_player(self, kill=False):              #convert changes to be updated to actual new position
         if(not self.cannot_move):
@@ -75,6 +78,7 @@ class Player():
         self.cannot_move = True
         self.ingesting_begin_time = time
         self.ingesting_particle_index = idx
+        self.energy += 25
 
     def asexual_reproduction(self, screen, SCREEN_WIDTH, SCREEN_HEIGHT):
         INITIAL_POPULATION = random.randint(2, 8)
@@ -92,6 +96,7 @@ class Player():
     def sexual_reproduction(self, screen, SCREEN_WIDTH, SCREEN_HEIGHT, mating_begin_time, gen_offspring=False):
         self.cannot_move = True
         self.mating_begin_time = mating_begin_time
+        self.energy -= 30
         if(gen_offspring):
             INITIAL_POPULATION = random.randint(2, 8)
             offspring_players = []

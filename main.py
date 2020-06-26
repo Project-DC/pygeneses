@@ -103,11 +103,13 @@ while running:
                     players[i].ingesting_food(food_particle, time.time())
                     my_particles[food_particle] = 0
             if event.key == pygame.K_d:
-                if(player.fighting_with == -1):
+                if(players[0].fighting_with == -1):
                     enemy = search_enemy(players[0], players)
                     if(enemy != -1):
                         players[0].fighting_with = enemy
                         players[enemy].fighting_with = 0
+                        players[0].energy -= 10
+                        players[enemy].fighting_with -= 10
 
         if event.type == pygame.KEYUP:
             if event.key == pygame.K_LEFT or event.key == pygame.K_RIGHT:
@@ -169,11 +171,13 @@ while running:
                 players[i].mating_begin_time = 0
                 players[i].cannot_move = False
 
+            if(players[i].energy <= 0):
+                killed.append(i)
+
             if(now_time - players[i].born_at >= MAX_AGE):                   #put kill situation at end of for loop
                 players[i].kill_player()
                 # players[i] = 0
                 killed.append(i)
-                print ("PLAYER ",i," DIED")
 
         else:
             players[i].show_player()                                        #shows dead player
