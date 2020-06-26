@@ -17,8 +17,6 @@ pygame.display.set_caption("Chimichangas")
 # Generate initial population
 players = regenerate_species()
 
-gender_ratio(players)
-
 # Killed individuals
 killed = []
 
@@ -33,104 +31,97 @@ for j in range(NUMBER_OF_PARTICLES):
 
 my_particles = check_particles(my_particles)
 
-# Game loop
-running = True
-while running:
+screen.fill((0, 178, 0))
 
-    # First the screen is filled so that every thing is above the screen
+for event in pygame.event.get():
+    pass
+
+pygame.display.update()
+
+def actions(idx, action):
+    global INITIAL_POPULATION
+
+    reward = 0
+
     screen.fill((0, 178, 0))
 
     for event in pygame.event.get():
+        pass
 
-        #To check whether the window is quitted or not
-        if event.type == pygame.QUIT:
-            running = False
-
-        # If key is pressed, check whether it's right, left, up or down
-        if event.type == pygame.KEYDOWN:
-            if event.key == pygame.K_LEFT:
-                for i in range(INITIAL_POPULATION):
-                    if(i not in killed):
-                        players[i].change_player_xposition(-SPEED)
-            if event.key == pygame.K_RIGHT:
-                for i in range(INITIAL_POPULATION):
-                    if(i not in killed):
-                        players[i].change_player_xposition(SPEED)
-            if event.key == pygame.K_UP:
-                for i in range(INITIAL_POPULATION):
-                    if(i not in killed):
-                        players[i].change_player_yposition(-SPEED)
-            if event.key == pygame.K_DOWN:
-                for i in range(INITIAL_POPULATION):
-                    if(i not in killed):
-                        players[i].change_player_yposition(SPEED)
-            if event.key == pygame.K_a:
-                if(type(players[0]) != int and not players[0].is_impotent and type(players[0]) != int and (round(time.time() - players[0].born_at) in range(10, 61))):
-                    offspring_players = players[0].asexual_reproduction()
-                    for offspring_player in offspring_players:
-                        players.append(offspring_player)
-                    INITIAL_POPULATION += len(offspring_players)
-                    players[0] = 0
-                    killed.append(0)
-            if event.key == pygame.K_b:
-                mate_idx = search_mate(players[0],players)
-                print(mate_idx)
-                if(mate_idx != -1):
-                    mating_begin_time = time.time()
-                    offspring_players = players[0].sexual_reproduction(mating_begin_time, True)
-                    players[mate_idx].sexual_reproduction(mating_begin_time)
-                    for offspring_player in offspring_players:
-                        players.append(offspring_player)
-                    INITIAL_POPULATION += len(offspring_players)
-            if event.key == pygame.K_c:
-                food_particle = food_nearby(players[0], my_particles)
-                print(food_particle)
-                if(food_particle != -1):
-                    players[i].ingesting_food(food_particle, time.time())
-                    my_particles[food_particle] = 0
-            if event.key == pygame.K_d:
-                if(players[0].fighting_with == -1):
-                    enemy = search_enemy(players[0], players)
-                    if(enemy != -1):
-                        print(players[0].energy, players[enemy].energy)
-                        players[0].fighting_with = enemy
-                        players[enemy].fighting_with = 0
-                        players[0].energy -= 10
-                        players[enemy].energy -= 10
-                        players[0].fighting_with = -1
-                        players[enemy].fighting_with = -1
-
-        if event.type == pygame.KEYUP:
-            if event.key == pygame.K_LEFT or event.key == pygame.K_RIGHT:
-                for i in range(INITIAL_POPULATION):
-                    if(i not in killed):
-                        players[i].change_player_xposition(0)
-            if event.key == pygame.K_UP or event.key == pygame.K_DOWN:
-                for i in range(INITIAL_POPULATION):
-                    if(i not in killed):
-                        players[i].change_player_yposition(0)
+    if action == 0: # Left
+        players[idx].change_player_xposition(-SPEED)
+        reward = -2
+    elif action == 1: # Right
+        players[idx].change_player_xposition(SPEED)
+        reward = -2
+    elif action == 2: # Up
+        players[idx].change_player_yposition(-SPEED)
+        reward = -2
+    elif action == 3: # Down
+        players[idx].change_player_yposition(SPEED)
+        reward = -2
+    elif action == 4: # Up Left
+        players[idx].change_player_yposition(-SPEED)
+        players[idx].change_player_xposition(-SPEED)
+        reward = -2
+    elif action == 5: # Up Right
+        players[idx].change_player_yposition(-SPEED)
+        players[idx].change_player_xposition(SPEED)
+        reward = -2
+    elif action == 6: # Down Left
+        players[idx].change_player_yposition(SPEED)
+        players[idx].change_player_xposition(-SPEED)
+        reward = -2
+    elif action == 7: # Down Right
+        players[idx].change_player_yposition(SPEED)
+        players[idx].change_player_xposition(SPEED)
+        reward = -2
+    elif action == 8: # Stay
+        players[idx].energy -= 2
+        reward = -5
+    elif action == 9:
+        food_particle = food_nearby(players[idx], my_particles)
+        if(food_particle != -1):
+            players[idx].ingesting_food(food_particle, time.time())
+            my_particles[food_particle] = 0
+    elif action == 10:
+        if(type(players[idx]) != int and not players[idx].is_impotent and type(players[idx]) != int and (round(time.time() - players[idx].born_at) in range(10, 61))):
+            offspring_players = players[idx].asexual_reproduction()
+            for offspring_player in offspring_players:
+                players.append(offspring_player)
+            INITIAL_POPULATION += len(offspring_players)
+            players[idx] = 0
+            killed.append(idx)
+    elif action == 11:
+        mate_idx = search_mate(players[idx],players)
+        print(mate_idx)
+        if(mate_idx != -1):
+            mating_begin_time = time.time()
+            offspring_players = players[idx].sexual_reproduction(mating_begin_time, True)
+            players[mate_idx].sexual_reproduction(mating_begin_time)
+            for offspring_player in offspring_players:
+                players.append(offspring_player)
+            INITIAL_POPULATION += len(offspring_players)
+    elif action == 12:
+        if(players[idx].fighting_with == -1):
+            enemy = search_enemy(players[idx], players)
+            if(enemy != -1):
+                players[0].fighting_with = enemy
+                players[enemy].fighting_with = 0
+                players[0].energy -= 10
+                players[enemy].energy -= 10
+                players[0].fighting_with = -1
+                players[enemy].fighting_with = -1
 
     # Show particles
     for j in range(NUMBER_OF_PARTICLES):
         if(type(my_particles[j]) != int):
             my_particles[j].show_particle()
 
-    if(len(killed) == INITIAL_POPULATION and allow_regenerate):
-        killed = []
-        players = regenerate_species()
-        regenerate_times += 1
-    elif(len(killed) == INITIAL_POPULATION and not allow_regenerate):
-        running = False
-
-    if(regenerate_times == MAX_REGENERATIONS):
-        allow_regenerate = False
-
     now_time = time.time()
 
     for i in range(INITIAL_POPULATION):
         if(i not in killed):
-            # Move the player
-            players[i].move_player()
 
             env_particles,env_particle_distance = food_in_env(players[i], my_particles)
             players[i].food_near = env_particle_distance
@@ -167,3 +158,15 @@ while running:
 
     # Update the window
     pygame.display.update()
+
+    time.sleep(0.001)
+
+    return reward, killed
+
+agent = 0
+for i in range(100):
+    if(agent in killed):
+        break
+    print(i)
+    actions(0, 0)
+    actions(1, 0)
