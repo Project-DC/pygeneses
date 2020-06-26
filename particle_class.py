@@ -2,21 +2,17 @@ import pygame
 import random
 import math
 
+from global_constants import *
+
 class Particle():
 
-    def __init__(self, screen, img, width, height, screen_width, screen_height):
-        self.screen = screen
-        self.particleImg = pygame.image.load(img)
-        self.particleX = random.randint(10, screen_width - 10)
-        self.particleY = random.randint(10, screen_height - 10)
-        self.PARTICLE_WIDTH = width
-        self.PARTICLE_HEIGHT = height
-        self.SCREEN_WIDTH = screen_width
-        self.SCREEN_HEIGHT = screen_height
-
+    def __init__(self):
+        self.particleImg = pygame.image.load('food.png')
+        self.particleX = random.randint(10, SCREEN_WIDTH - 10)
+        self.particleY = random.randint(10, SCREEN_HEIGHT - 10)
 
     def show_particle(self):
-        self.screen.blit(self.particleImg, (self.particleX, self.particleY))
+        screen.blit(self.particleImg, (self.particleX, self.particleY))
 
     def show_close(self):                   #testing function
-        self.screen.blit(pygame.image.load("food_near.png"), (self.particleX, self.particleY))
+        screen.blit(pygame.image.load("food_near.png"), (self.particleX, self.particleY))

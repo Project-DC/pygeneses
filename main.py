@@ -6,24 +6,18 @@ import numpy as np
 from player_class import Player
 from particle_class import Particle
 from helpers import *
-# food_nearby, regenerate_species, check_particles
+from global_constants import *
 
 # Initialise pygame
 pygame.init()
-
-# Size constants
-SCREEN_WIDTH = 1200
-SCREEN_HEIGHT = 700
-
-# Create a screen
-screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
 
 # Title
 pygame.display.set_caption("Chimichangas")
 
 # Generate initial population
-INITIAL_POPULATION = 2
-players = regenerate_species(INITIAL_POPULATION, screen, SCREEN_WIDTH, SCREEN_HEIGHT)
+players = regenerate_species()
+
+gender_ratio(players)
 
 # Killed individuals
 killed = []
@@ -31,21 +25,11 @@ killed = []
 # Allow regeneration of species
 allow_regenerate = True
 regenerate_times = 0
-MAX_REGENERATIONS = 3
-
-MAX_AGE = 90
-
-# Speed
-speed = 3
 
 # Generate Food particle
-number_of_particles = random.randint(10, 20)
 my_particles = []
-j = 0
-while(j < number_of_particles):
-    particle = Particle(screen, 'food.png', 10, 10, SCREEN_WIDTH, SCREEN_HEIGHT)
-    my_particles.append(particle)
-    j += 1
+for j in range(NUMBER_OF_PARTICLES):
+    my_particles.append(Particle())
 
 my_particles = check_particles(my_particles)
 
@@ -67,22 +51,22 @@ while running:
             if event.key == pygame.K_LEFT:
                 for i in range(INITIAL_POPULATION):
                     if(i not in killed):
-                        players[i].change_player_xposition(-speed)
+                        players[i].change_player_xposition(-SPEED)
             if event.key == pygame.K_RIGHT:
                 for i in range(INITIAL_POPULATION):
                     if(i not in killed):
-                        players[i].change_player_xposition(speed)
+                        players[i].change_player_xposition(SPEED)
             if event.key == pygame.K_UP:
                 for i in range(INITIAL_POPULATION):
                     if(i not in killed):
-                        players[i].change_player_yposition(-speed)
+                        players[i].change_player_yposition(-SPEED)
             if event.key == pygame.K_DOWN:
                 for i in range(INITIAL_POPULATION):
                     if(i not in killed):
-                        players[i].change_player_yposition(speed)
+                        players[i].change_player_yposition(SPEED)
             if event.key == pygame.K_a:
-                if(not players[0].is_impotent and type(players[0]) != int and (round(time.time() - players[0].born_at) in range(10, 61))):
-                    offspring_players = players[0].asexual_reproduction(screen, SCREEN_WIDTH, SCREEN_HEIGHT)
+                if(type(players[0]) != int and not players[0].is_impotent and type(players[0]) != int and (round(time.time() - players[0].born_at) in range(10, 61))):
+                    offspring_players = players[0].asexual_reproduction()
                     for offspring_player in offspring_players:
                         players.append(offspring_player)
                     INITIAL_POPULATION += len(offspring_players)
@@ -90,15 +74,17 @@ while running:
                     killed.append(0)
             if event.key == pygame.K_b:
                 mate_idx = search_mate(players[0],players)
+                print(mate_idx)
                 if(mate_idx != -1):
                     mating_begin_time = time.time()
-                    offspring_players = players[0].sexual_reproduction(screen, SCREEN_WIDTH, SCREEN_HEIGHT, mating_begin_time, True)
-                    players[mate_idx].sexual_reproduction(screen, SCREEN_WIDTH, SCREEN_HEIGHT, mating_begin_time)
+                    offspring_players = players[0].sexual_reproduction(mating_begin_time, True)
+                    players[mate_idx].sexual_reproduction(mating_begin_time)
                     for offspring_player in offspring_players:
                         players.append(offspring_player)
                     INITIAL_POPULATION += len(offspring_players)
             if event.key == pygame.K_c:
-                food_particle = food_nearby(players[i], my_particles)
+                food_particle = food_nearby(players[0], my_particles)
+                print(food_particle)
                 if(food_particle != -1):
                     players[i].ingesting_food(food_particle, time.time())
                     my_particles[food_particle] = 0
@@ -106,10 +92,13 @@ while running:
                 if(players[0].fighting_with == -1):
                     enemy = search_enemy(players[0], players)
                     if(enemy != -1):
+                        print(players[0].energy, players[enemy].energy)
                         players[0].fighting_with = enemy
                         players[enemy].fighting_with = 0
                         players[0].energy -= 10
-                        players[enemy].fighting_with -= 10
+                        players[enemy].energy -= 10
+                        players[0].fighting_with = -1
+                        players[enemy].fighting_with = -1
 
         if event.type == pygame.KEYUP:
             if event.key == pygame.K_LEFT or event.key == pygame.K_RIGHT:
@@ -122,13 +111,13 @@ while running:
                         players[i].change_player_yposition(0)
 
     # Show particles
-    for j in range(number_of_particles):
+    for j in range(NUMBER_OF_PARTICLES):
         if(type(my_particles[j]) != int):
             my_particles[j].show_particle()
 
     if(len(killed) == INITIAL_POPULATION and allow_regenerate):
         killed = []
-        players = regenerate_species(INITIAL_POPULATION, screen, SCREEN_WIDTH, SCREEN_HEIGHT)
+        players = regenerate_species()
         regenerate_times += 1
     elif(len(killed) == INITIAL_POPULATION and not allow_regenerate):
         running = False
@@ -149,13 +138,10 @@ while running:
             env_players, env_player_distance = players_in_env(players[i],players)
             players[i].players_near = env_player_distance
 
-                              #show normal player
-
-            for index in range( 0, len(env_particles) ):                #change color of food in env_particles
+            for index in range(0, len(env_particles)):                #change color of food in env_particles
                 local = env_particles[index]
                 if type(my_particles[local]) != int:
                     my_particles[local].show_close()
-
 
             if not env_players:
                 players[i].show_player()
@@ -174,13 +160,10 @@ while running:
             if(players[i].energy <= 0):
                 killed.append(i)
 
-            if(now_time - players[i].born_at >= MAX_AGE):                   #put kill situation at end of for loop
+            if(now_time - players[i].born_at >= MAX_AGE):
                 players[i].kill_player()
-                # players[i] = 0
+                players[i] = 0
                 killed.append(i)
-
-        else:
-            players[i].show_player()                                        #shows dead player
 
     # Update the window
     pygame.display.update()
