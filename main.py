@@ -48,6 +48,7 @@ def actions(idx, action):
     for event in pygame.event.get():
         pass
 
+    print("action ", action)
     if action == 0: # Left
         players[idx].change_player_xposition(-SPEED)
         reward = -2
@@ -79,20 +80,20 @@ def actions(idx, action):
     elif action == 8: # Stay
         players[idx].energy -= 2
         reward = -5
-    elif action == 9:
+    elif action == 9: # Eat
         food_particle = food_nearby(players[idx], my_particles)
         if(food_particle != -1):
             players[idx].ingesting_food(food_particle, time.time())
             my_particles[food_particle] = 0
-    elif action == 10:
-        if(type(players[idx]) != int and not players[idx].is_impotent and type(players[idx]) != int and (round(time.time() - players[idx].born_at) in range(10, 61))):
+    elif action == 10:   # Mate Asexual
+        if(type(players[idx]) != int and not players[idx].is_impotent and (round(time.time() - players[idx].born_at) in range(10, 61))):
             offspring_players = players[idx].asexual_reproduction()
             for offspring_player in offspring_players:
                 players.append(offspring_player)
             INITIAL_POPULATION += len(offspring_players)
             players[idx] = 0
             killed.append(idx)
-    elif action == 11:
+    elif action == 11:     #Mate Sexual
         mate_idx = search_mate(players[idx],players)
         print(mate_idx)
         if(mate_idx != -1):
@@ -102,7 +103,7 @@ def actions(idx, action):
             for offspring_player in offspring_players:
                 players.append(offspring_player)
             INITIAL_POPULATION += len(offspring_players)
-    elif action == 12:
+    elif action == 12:          #fight
         if(players[idx].fighting_with == -1):
             enemy = search_enemy(players[idx], players)
             if(enemy != -1):
