@@ -24,6 +24,8 @@ killed = []
 allow_regenerate = True
 regenerate_times = 0
 
+FOOD_REGEN_CONDITION_IS_MET = False                    #temporary value
+
 # Generate Food particle
 my_particles = []
 for j in range(NUMBER_OF_PARTICLES):
@@ -40,6 +42,7 @@ pygame.display.update()
 
 def actions(idx, action):
     global INITIAL_POPULATION
+    global NUMBER_OF_PARTICLES
 
     reward = 0
 
@@ -113,6 +116,10 @@ def actions(idx, action):
                 players[enemy].energy -= 10
                 players[0].fighting_with = -1
                 players[enemy].fighting_with = -1
+
+  
+    if (FOOD_REGEN_CONDITION_IS_MET):                                       #FOOD REGEN PART always false for now
+        my_particles,NUMBER_OF_PARTICLES = refreshParticles(my_particles,NUMBER_OF_PARTICLES)
 
     # Show particles
     for j in range(NUMBER_OF_PARTICLES):

@@ -86,9 +86,11 @@ def regenerate_species():
     return players
 
 
-def refreshParticles(particles):
-    for j in range(random.randint(PARTICLES_TO_REGROW[0],PARTICLES_TO_REGROW[1])):
+def refreshParticles(particles, NUMBER_OF_PARTICLES):
+    NEW_PARTICLES = random.randint(PARTICLES_TO_REGROW[0],PARTICLES_TO_REGROW[1])
+    for j in range(NEW_PARTICLES):
         particles.append(Particle())
     particles = check_particles(particles)
-    return particles
+    NUMBER_OF_PARTICLES+=NEW_PARTICLES
+    return particles,NUMBER_OF_PARTICLES
 
