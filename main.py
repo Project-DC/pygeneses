@@ -24,6 +24,7 @@ killed = []
 allow_regenerate = True
 regenerate_times = 0
 
+
 # Generate Food particle
 my_particles = []
 for j in range(NUMBER_OF_PARTICLES):
@@ -51,6 +52,9 @@ def actions(idx, action):
     if action == 0: # Left
         players[idx].change_player_xposition(-SPEED)
         reward = -2
+        players[idx].update_history(action, round(time.time()), reward)
+
+
     elif action == 1: # Right
         players[idx].change_player_xposition(SPEED)
         reward = -2
@@ -79,39 +83,52 @@ def actions(idx, action):
     elif action == 8: # Stay
         players[idx].energy -= 2
         reward = -5
-    elif action == 9:
+    elif action == 9: #Ingestion
         food_particle = food_nearby(players[idx], my_particles)
         if(food_particle != -1):
             players[idx].ingesting_food(food_particle, time.time())
             my_particles[food_particle] = 0
-    elif action == 10:
+    elif action == 10:  #asexual_reproduction
         if(type(players[idx]) != int and not players[idx].is_impotent and type(players[idx]) != int and (round(time.time() - players[idx].born_at) in range(10, 61))):
-            offspring_players = players[idx].asexual_reproduction()
+            offspring_players, offspring_ids = players[idx].asexual_reproduction(len(players))
             for offspring_player in offspring_players:
                 players.append(offspring_player)
             INITIAL_POPULATION += len(offspring_players)
+            players[idx].update_history(action, round(time.time()), reward, num_offspring =  len(offspring_ids), offspring_ids = offspring_ids)
+            players[idx].write_data()   #Writes data to file
             players[idx] = 0
             killed.append(idx)
-    elif action == 11:
+    elif action == 11:  #sexual_reproduction
         mate_idx = search_mate(players[idx],players)
         print(mate_idx)
         if(mate_idx != -1):
             mating_begin_time = time.time()
-            offspring_players = players[idx].sexual_reproduction(mating_begin_time, True)
-            players[mate_idx].sexual_reproduction(mating_begin_time)
+            reward = -30
+            offspring_players, offspring_ids = players[idx].sexual_reproduction(mating_begin_time, len(players), True)
+            players[mate_idx].sexual_reproduction(mating_begin_time, len(players))
             for offspring_player in offspring_players:
                 players.append(offspring_player)
             INITIAL_POPULATION += len(offspring_players)
-    elif action == 12:
+            players[idx].update_history(action, mating_begin_time, reward, num_offspring = len(offspring_ids), offspring_ids = offspring_ids, mate_id = mate_idx)
+            players[mate_idx].update_history(action, mating_begin_time, reward, num_offspring = len(offspring_ids), offspring_ids = offspring_ids, mate_id = idx)
+
+
+    elif action == 12:      #Fight
         if(players[idx].fighting_with == -1):
             enemy = search_enemy(players[idx], players)
             if(enemy != -1):
-                players[0].fighting_with = enemy
-                players[enemy].fighting_with = 0
-                players[0].energy -= 10
+                players[idx].fighting_with = enemy
+                players[enemy].fighting_with = idx
+                players[idx].energy -= 10
                 players[enemy].energy -= 10
-                players[0].fighting_with = -1
+                players[idx].fighting_with = -1
                 players[enemy].fighting_with = -1
+
+            players[idx].update_history(action, round(time.time()), reward, fight_with = enemy )
+            players[enemy].update_history(action, round(time.time()), reward, fight_with = idx)
+
+    if action <=9 :
+        players[idx].update_history(action, round(time.time()), reward)
 
     # Show particles
     for j in range(NUMBER_OF_PARTICLES):
@@ -149,11 +166,13 @@ def actions(idx, action):
                 players[i].cannot_move = False
 
             if(players[i].energy <= 0):
+                players[i].write_data()
                 killed.append(i)
 
             if(now_time - players[i].born_at >= MAX_AGE):
                 players[i].kill_player()
                 players[i] = 0
+                players[i].write_data()
                 killed.append(i)
 
     # Update the window
@@ -170,3 +189,5 @@ for i in range(100):
     print(i)
     actions(0, 0)
     actions(1, 0)
+    actions(0, 10)
+    actions(1, 9)

@@ -79,5 +79,5 @@ def regenerate_species():
     players = []
     for i in range(INITIAL_POPULATION):
         print("Born", (i+1), "/", INITIAL_POPULATION)
-        players.append(Player())
+        players.append(Player(i))
     return players
