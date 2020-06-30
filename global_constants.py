@@ -7,7 +7,7 @@ SCREEN_HEIGHT = 700
 
 INITIAL_POPULATION = 2
 
-MAX_REGENERATIONS = 3
+MAX_REGENERATIONS = 2
 
 MAX_AGE = 90
 
@@ -21,3 +21,9 @@ NUMBER_OF_PARTICLES = random.randint(30, 50)
 PARTICLES_TO_REGROW = (20,40)
 
 TIME = 0
+
+# Allow regeneration of species
+allow_regenerate = True
+regenerate_times = 0
+
+FOOD_REGEN_CONDITION_IS_MET = False

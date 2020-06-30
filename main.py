@@ -8,40 +8,37 @@ from particle_class import Particle
 from helpers import *
 from global_constants import *
 
-# Initialise pygame
-pygame.init()
+def init():
+    # Initialise pygame
+    pygame.init()
 
-# Title
-pygame.display.set_caption("Chimichangas")
+    # Title
+    pygame.display.set_caption("Chimichangas")
 
-# Generate initial population
-players = regenerate_species()
+    # Generate initial population
+    players = regenerate_species(TIME)
 
-# Killed individuals
-killed = []
+    # Killed individuals
+    killed = []
 
-# Allow regeneration of species
-allow_regenerate = True
-regenerate_times = 0
+    # Generate Food particle
+    my_particles = []
+    for j in range(NUMBER_OF_PARTICLES):
+        my_particles.append(Particle())
 
-FOOD_REGEN_CONDITION_IS_MET = False
+    my_particles = check_particles(my_particles)
 
-# Generate Food particle
-my_particles = []
-for j in range(NUMBER_OF_PARTICLES):
-    my_particles.append(Particle())
+    screen.fill((0, 178, 0))
 
-my_particles = check_particles(my_particles)
+    for event in pygame.event.get():
+        pass
 
-screen.fill((0, 178, 0))
+    pygame.display.update()
 
-for event in pygame.event.get():
-    pass
-
-pygame.display.update()
+    return players, killed, my_particles
 
 def actions(idx, action):
-    global INITIAL_POPULATION, TIME, FOOD_REGEN_CONDITION_IS_MET, NUMBER_OF_PARTICLES, my_particles
+    global INITIAL_POPULATION, TIME, FOOD_REGEN_CONDITION_IS_MET, NUMBER_OF_PARTICLES, my_particles, players, killed, regenerate_times
 
     reward = 0
 
@@ -89,14 +86,13 @@ def actions(idx, action):
             my_particles[food_particle] = 0
             reward = 5
             players[idx].update_history(action, TIME, reward)
-
         else:
             reward = -10
             players[idx].update_history("Failed action - "+str(action), TIME, reward)
     elif action == 10:  #asexual_reproduction
         if(type(players[idx]) != int and not players[idx].is_impotent and type(players[idx]) != int and (TIME - players[idx].born_at) in range(10, 61)):
             reward = 4
-            offspring_players, offspring_ids = players[idx].asexual_reproduction(len(players))
+            offspring_players, offspring_ids = players[idx].asexual_reproduction(len(players), TIME)
             for offspring_player in offspring_players:
                 players.append(offspring_player)
             INITIAL_POPULATION += len(offspring_players)
@@ -110,7 +106,7 @@ def actions(idx, action):
 
     elif action == 11:  #sexual_reproduction
         if(mating_begin_time == 0):
-            mate_idx = search_mate(players[idx],players)
+            mate_idx = search_mate(players[idx],players, TIME)
             if(mate_idx != -1):
                 mating_begin_time = TIME
                 reward = 4
@@ -204,6 +200,7 @@ def actions(idx, action):
                 killed.append(i)
 
             if(now_time - players[i].born_at >= MAX_AGE):
+                print(now_time, players[i].born_at)
                 players[i].write_data()
                 players[i] = 0
                 killed.append(i)
@@ -218,12 +215,21 @@ def actions(idx, action):
 
     return reward
 
-time_tot = 0
-for _ in range(100):
-    if(0 not in killed):
-        actions(0, 8)
-        print(killed, TIME, end=' ')
-    if(1 not in killed):
-        actions(1, 8)
-        print(killed, TIME, end=' ')
-    print()
+if __name__ == "__main__":
+    players, killed, my_particles = init()
+    time_tot = 0
+    for _ in range(100):
+        if(0 not in killed):
+            actions(0, 0)
+        if(1 not in killed):
+            actions(1, 0)
+
+        if(len(killed) == INITIAL_POPULATION and allow_regenerate):
+            killed = []
+            players = regenerate_species(TIME)
+            regenerate_times += 1
+        elif(len(killed) == INITIAL_POPULATION and not allow_regenerate):
+            running = False
+
+        if(regenerate_times == MAX_REGENERATIONS):
+            allow_regenerate = False

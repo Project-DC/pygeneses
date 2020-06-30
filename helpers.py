@@ -44,7 +44,6 @@ def players_in_env(host, players):
 
     return env,distances
 
-
 def getPlayerVector(host, env_players, all_players):
     X = []
     Y = []
@@ -56,9 +55,9 @@ def getPlayerVector(host, env_players, all_players):
             X.append( (host.playerX - all_players[idx].playerX ) )
             Y.append( (host.playerY - all_players[idx].playerY ) )
             sex.append( all_players[idx].gender )
-    
+
     return X,Y,sex
-    
+
 def getFoodVector(player, env_particles, all_particles):
     X = []
     Y = []
@@ -68,12 +67,10 @@ def getFoodVector(player, env_particles, all_particles):
         if type(all_particles[idx]) != int :
             X.append( (player.playerX - all_particles[idx].particleX ) )
             Y.append( (player.playerY - all_particles[idx].particleY ) )
-    
+
     return X,Y
 
-
-
-def search_mate(host, players):
+def search_mate(host, players, TIME):
     env = []
     if (type(host) == int):
         return -1
@@ -106,7 +103,7 @@ def check_particles(my_particles):
                     my_particles[j] = 0
     return my_particles
 
-def regenerate_species():
+def regenerate_species(TIME):
     players = []
     for i in range(INITIAL_POPULATION):
         print("Born", (i+1), "/", INITIAL_POPULATION)

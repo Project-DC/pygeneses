@@ -72,7 +72,7 @@ class Player():
 
             self.energy -= 5
 
-    def asexual_reproduction(self, lenPlayers):
+    def asexual_reproduction(self, lenPlayers, time_given):
         offspring_players = []
         num_offspring = random.randint(2,8)
         offspring_ids = []
@@ -82,7 +82,7 @@ class Player():
             id_offspring = lenPlayers
             offspring_ids.append(id_offspring)
             lenPlayers = lenPlayers + 1
-            offspring_players.append(Player(id_offspring, TIME))
+            offspring_players.append(Player(id_offspring, time_given))
         return offspring_players, offspring_ids
 
     def sexual_reproduction(self, mating_begin_time, lenPlayers, gen_offspring=False):
@@ -98,12 +98,12 @@ class Player():
                 id_offspring = lenPlayers
                 offspring_ids.append(id_offspring)
                 lenPlayers = lenPlayers+1
-                offspring_players.append(Player(id_offspring, TIME))
+                offspring_players.append(Player(id_offspring, mating_begin_time))
             return offspring_players, offspring_ids
 
-    def ingesting_food(self, idx, time):
+    def ingesting_food(self, idx, time_given):
         self.cannot_move = True
-        self.ingesting_begin_time = time
+        self.ingesting_begin_time = time_given
         self.ingesting_particle_index = idx
         self.energy += 25
 
