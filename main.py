@@ -86,8 +86,12 @@ def actions(idx, action):
         if(food_particle != -1):
             players[idx].ingesting_food(food_particle, TIME)
             my_particles[food_particle] = 0
+            reward = 5
+        else:
+            reward = -10
     elif action == 10:  #asexual_reproduction
         if(type(players[idx]) != int and not players[idx].is_impotent and type(players[idx]) != int and (TIME - players[idx].born_at) in range(10, 61))):
+            reward = 4
             offspring_players, offspring_ids = players[idx].asexual_reproduction(len(players))
             for offspring_player in offspring_players:
                 players.append(offspring_player)
@@ -96,38 +100,49 @@ def actions(idx, action):
             players[idx].write_data()   #Writes data to file
             players[idx] = 0
             killed.append(idx)
+        else:
+            reward = -10
     elif action == 11:  #sexual_reproduction
-        mate_idx = search_mate(players[idx],players)
-        print(mate_idx)
-        if(mate_idx != -1):
-            mating_begin_time = TIME
-            reward = -30
-            offspring_players, offspring_ids = players[idx].sexual_reproduction(mating_begin_time, len(players), True)
-            players[mate_idx].sexual_reproduction(mating_begin_time, len(players))
-            for offspring_player in offspring_players:
-                players.append(offspring_player)
-            INITIAL_POPULATION += len(offspring_players)
-            players[idx].update_history(action, mating_begin_time, reward, num_offspring = len(offspring_ids), offspring_ids = offspring_ids, mate_id = mate_idx)
-            players[mate_idx].update_history(action, mating_begin_time, reward, num_offspring = len(offspring_ids), offspring_ids = offspring_ids, mate_id = idx)
+        if(mating_begin_time == 0):
+            mate_idx = search_mate(players[idx],players)
+            if(mate_idx != -1):
+                mating_begin_time = TIME
+                reward = 4
+                offspring_players, offspring_ids = players[idx].sexual_reproduction(mating_begin_time, len(players), True)
+                players[mate_idx].sexual_reproduction(mating_begin_time, len(players))
+                for offspring_player in offspring_players:
+                    players.append(offspring_player)
+                INITIAL_POPULATION += len(offspring_players)
+                players[idx].update_history(action, mating_begin_time, reward, num_offspring = len(offspring_ids), offspring_ids = offspring_ids, mate_id = mate_idx)
+                players[mate_idx].update_history(action, mating_begin_time, reward, num_offspring = len(offspring_ids), offspring_ids = offspring_ids, mate_id = idx)
+            else:
+                reward = -10
+        else:
+            reward = -10
     elif action == 12:      #Fight
         if(players[idx].fighting_with == -1):
             enemy = search_enemy(players[idx], players)
             if(enemy != -1):
+                reward = -1
                 players[idx].fighting_with = enemy
                 players[enemy].fighting_with = idx
                 players[idx].energy -= 10
                 players[enemy].energy -= 10
                 players[idx].fighting_with = -1
                 players[enemy].fighting_with = -1
-
-            players[idx].update_history(action, TIME, reward, fight_with = enemy )
-            players[enemy].update_history(action, TIME, reward, fight_with = idx)
+                players[idx].update_history(action, TIME, reward, fight_with = enemy )
+                players[enemy].update_history(action, TIME, reward, fight_with = idx)
+            else:
+                reward = -10
+        else:
+            reward = -10
 
     if action <=9 :
         players[idx].update_history(action, TIME, reward)
-        
+
     if (FOOD_REGEN_CONDITION_IS_MET):                                       #FOOD REGEN PART always false for now
         my_particles,NUMBER_OF_PARTICLES = refreshParticles(my_particles,NUMBER_OF_PARTICLES)
+        FOOD_REGEN_CONDITION_IS_MET = False
 
     # Show particles
     for j in range(NUMBER_OF_PARTICLES):
@@ -177,19 +192,12 @@ def actions(idx, action):
     # Update the window
     pygame.display.update()
 
+    if(TIME % 90 == 0):
+        FOOD_REGEN_CONDITION_IS_MET = True
+
     TIME += 1
 
     return reward, killed
-#
-# agent = 0
-# for i in range(100):
-#     if(agent in killed):
-#         break
-#     print(i)
-#     actions(0, 0)
-#     actions(1, 0)
-#     actions(0, 10)
-#     actions(1, 9)
 
 time_tot = 0
 for _ in range(10):
