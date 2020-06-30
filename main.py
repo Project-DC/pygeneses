@@ -81,14 +81,18 @@ def actions(idx, action):
     elif action == 8: # Stay
         players[idx].energy -= 2
         reward = -5
+        players[idx].update_history(action, TIME, reward)
     elif action == 9: #Ingestion
         food_particle = food_nearby(players[idx], my_particles)
         if(food_particle != -1):
             players[idx].ingesting_food(food_particle, TIME)
             my_particles[food_particle] = 0
             reward = 5
+            players[idx].update_history(action, TIME, reward)
+
         else:
             reward = -10
+            players[idx].update_history("Failed action - "+str(action), TIME, reward)
     elif action == 10:  #asexual_reproduction
         if(type(players[idx]) != int and not players[idx].is_impotent and type(players[idx]) != int and (TIME - players[idx].born_at) in range(10, 61)):
             reward = 4
@@ -102,6 +106,8 @@ def actions(idx, action):
             killed.append(idx)
         else:
             reward = -10
+            players[idx].update_history("Failed action - "+str(action), TIME, reward)
+
     elif action == 11:  #sexual_reproduction
         if(mating_begin_time == 0):
             mate_idx = search_mate(players[idx],players)
@@ -117,8 +123,13 @@ def actions(idx, action):
                 players[mate_idx].update_history(action, mating_begin_time, reward, num_offspring = len(offspring_ids), offspring_ids = offspring_ids, mate_id = idx)
             else:
                 reward = -10
+                players[idx].update_history("Failed action - "+str(action), TIME, reward)
+
         else:
             reward = -10
+            players[idx].update_history("Failed action - "+str(action), TIME, reward)
+
+
     elif action == 12:      #Fight
         if(players[idx].fighting_with == -1):
             enemy = search_enemy(players[idx], players)
@@ -134,11 +145,18 @@ def actions(idx, action):
                 players[enemy].update_history(action, TIME, reward, fight_with = idx)
             else:
                 reward = -10
+                players[idx].update_history("Failed action - "+str(action), TIME, reward)
+
         else:
             reward = -10
+            players[idx].update_history("Failed action - "+str(action), TIME, reward)
 
-    if action <=9 :
-        players[idx].update_history(action, TIME, reward)
+
+    if action <=7 :
+        if players[idx].cannot_move == False:
+            players[idx].update_history(action, TIME, reward)
+        else:
+            players[idx].update_history("Failed action - "+str(action), TIME, reward)
 
     if (FOOD_REGEN_CONDITION_IS_MET):                                       #FOOD REGEN PART always false for now
         my_particles,NUMBER_OF_PARTICLES = refreshParticles(my_particles,NUMBER_OF_PARTICLES)
