@@ -2,7 +2,7 @@ import time
 import numpy as np
 
 from player_class import Player
-from global_constants import INITIAL_POPULATION
+from global_constants import INITIAL_POPULATION, TIME
 
 def food_nearby(player, food_particles):         #returns food particle index if food is nearby, else returns -1
     if(type(player) == int):
@@ -47,7 +47,7 @@ def search_mate(host, players):
     if (type(host) == int):
         return -1
     for i, player in enumerate(players):
-        if (type(player) != int) and (player != host) and (not player.is_impotent) and ((round(time.time() - player.born_at) in range(10, 61))) and (player.gender != host.gender):
+        if (type(player) != int) and (player != host) and (not player.is_impotent) and ((TIME - player.born_at) in range(10, 61))) and (player.gender != host.gender):
             ed = (((host.playerX+16) - (player.playerX+16))**2 + ((host.playerY+16) - (player.playerY+16))**2)**(1/2)
             if(ed <= 30):
                 env.append(i)
@@ -79,5 +79,5 @@ def regenerate_species():
     players = []
     for i in range(INITIAL_POPULATION):
         print("Born", (i+1), "/", INITIAL_POPULATION)
-        players.append(Player(i))
+        players.append(Player(i, TIME))
     return players

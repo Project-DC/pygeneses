@@ -8,7 +8,7 @@ from global_constants import *
 
 class Player():
 
-    def __init__(self, i):
+    def __init__(self, i, tob):
         self.index = i
         #Lists to Store history
         self.action_history = []               # [Action, Time, Reward, Energy, num_offspring, [offspring ids]]
@@ -19,7 +19,7 @@ class Player():
         self.playerY = random.randint(32, SCREEN_HEIGHT - 32)
         self.PLAYER_WIDTH = 32
         self.PLAYER_HEIGHT = 32
-        self.born_at = time.time()
+        self.born_at = tob
         self.food_ate = 0
         self.gender = np.random.choice(['Male', 'Female'], p=[0.5, 0.5])
         self.cannot_move = False
@@ -31,7 +31,6 @@ class Player():
         self.mating_begin_time = 0
         self.fighting_with = -1
         self.energy = 200
-
 
     def write_data(self):
         file_name ="Players_Data/"+str(self.born_at)+"-"+str(self.index)+".txt"
@@ -77,12 +76,13 @@ class Player():
         offspring_players = []
         num_offspring = random.randint(2,8)
         offspring_ids = []
+        self.energy -= 30
         for i in range(num_offspring):
             print("Born", (i+1), "/", num_offspring)
             id_offspring = lenPlayers
             offspring_ids.append(id_offspring)
             lenPlayers = lenPlayers + 1
-            offspring_players.append(Player(id_offspring))
+            offspring_players.append(Player(id_offspring, TIME))
         return offspring_players, offspring_ids
 
     def sexual_reproduction(self, mating_begin_time, lenPlayers, gen_offspring=False):
@@ -98,7 +98,7 @@ class Player():
                 id_offspring = lenPlayers
                 offspring_ids.append(id_offspring)
                 lenPlayers = lenPlayers+1
-                offspring_players.append(Player(id_offspring))
+                offspring_players.append(Player(id_offspring, TIME))
             return offspring_players, offspring_ids
 
     def ingesting_food(self, idx, time):
@@ -115,6 +115,3 @@ class Player():
             screen.blit(pygame.image.load('player_mating.png'), (self.playerX, self.playerY))
         else:
             screen.blit(pygame.image.load("player_near.png"), (self.playerX, self.playerY))
-
-    def kill_player(self):
-        self.is_killed = True

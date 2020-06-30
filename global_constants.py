@@ -18,3 +18,5 @@ SPEED = 3
 screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
 
 NUMBER_OF_PARTICLES = random.randint(30, 50)
+
+TIME = 0
