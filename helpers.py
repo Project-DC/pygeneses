@@ -1,11 +1,8 @@
 import time
 import numpy as np
-import random
 
 from player_class import Player
-from particle_class import Particle
-from global_constants import INITIAL_POPULATION, PARTICLES_TO_REGROW
-
+from global_constants import INITIAL_POPULATION, TIME
 
 def food_nearby(player, food_particles):         #returns food particle index if food is nearby, else returns -1
     if(type(player) == int):
@@ -50,7 +47,7 @@ def search_mate(host, players):
     if (type(host) == int):
         return -1
     for i, player in enumerate(players):
-        if (type(player) != int) and (player != host) and (not player.is_impotent) and ((round(time.time() - player.born_at) in range(10, 61))) and (player.gender != host.gender):
+        if (type(player) != int) and (player != host) and (not player.is_impotent) and ((TIME - player.born_at) in range(10, 61))) and (player.gender != host.gender):
             ed = (((host.playerX+16) - (player.playerX+16))**2 + ((host.playerY+16) - (player.playerY+16))**2)**(1/2)
             if(ed <= 30):
                 env.append(i)
@@ -82,10 +79,9 @@ def regenerate_species():
     players = []
     for i in range(INITIAL_POPULATION):
         print("Born", (i+1), "/", INITIAL_POPULATION)
-        players.append(Player())
+        players.append(Player(i, TIME))
     return players
-
-
+  
 def refreshParticles(particles, NUMBER_OF_PARTICLES):
     NEW_PARTICLES = random.randint(PARTICLES_TO_REGROW[0],PARTICLES_TO_REGROW[1])
     for j in range(NEW_PARTICLES):
@@ -93,4 +89,3 @@ def refreshParticles(particles, NUMBER_OF_PARTICLES):
     particles = check_particles(particles)
     NUMBER_OF_PARTICLES+=NEW_PARTICLES
     return particles,NUMBER_OF_PARTICLES
-

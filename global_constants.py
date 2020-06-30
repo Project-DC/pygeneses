@@ -19,3 +19,5 @@ screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
 
 NUMBER_OF_PARTICLES = random.randint(30, 50)
 PARTICLES_TO_REGROW = (20,40)
+
+TIME = 0
