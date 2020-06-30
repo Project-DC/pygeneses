@@ -44,6 +44,35 @@ def players_in_env(host, players):
 
     return env,distances
 
+
+def getPlayerVector(host, env_players, all_players):
+    X = []
+    Y = []
+    sex = []
+    if (type(host) == int):
+        return [],[]
+    for idx in (env_players):
+        if (type(all_players[idx]) != int) and (all_players[idx] != host):
+            X.append( (host.playerX - all_players[idx].playerX ) )
+            Y.append( (host.playerY - all_players[idx].playerY ) )
+            sex.append( all_players[idx].gender )
+    
+    return X,Y,sex
+    
+def getFoodVector(player, env_particles, all_particles):
+    X = []
+    Y = []
+    if (type(player) == int):
+        return [],[]
+    for idx in (env_particles):
+        if type(all_particles[idx]) != int :
+            X.append( (player.playerX - all_particles[idx].particleX ) )
+            Y.append( (player.playerY - all_particles[idx].particleY ) )
+    
+    return X,Y
+
+
+
 def search_mate(host, players):
     env = []
     if (type(host) == int):
