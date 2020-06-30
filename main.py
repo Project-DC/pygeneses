@@ -156,9 +156,11 @@ def actions(idx, action):
 
             env_particles,env_particle_distance = food_in_env(players[i], my_particles)
             players[i].food_near = env_particle_distance
+            env_food_vector = getFoodVector(players[i],env_particles, my_particles)                 #VECTOR FOOD
 
             env_players, env_player_distance = players_in_env(players[i],players)
             players[i].players_near = env_player_distance
+            env_player_vector = getPlayerVector(players[i],env_players, players)                    #VECTOR player
 
             for index in range(0, len(env_particles)):                #change color of food in env_particles
                 local = env_particles[index]
