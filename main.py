@@ -24,6 +24,8 @@ killed = []
 allow_regenerate = True
 regenerate_times = 0
 
+FOOD_REGEN_CONDITION_IS_MET = False                    #temporary value
+
 # Generate Food particle
 my_particles = []
 for j in range(NUMBER_OF_PARTICLES):
@@ -123,6 +125,9 @@ def actions(idx, action):
 
     if action <=9 :
         players[idx].update_history(action, TIME, reward)
+        
+    if (FOOD_REGEN_CONDITION_IS_MET):                                       #FOOD REGEN PART always false for now
+        my_particles,NUMBER_OF_PARTICLES = refreshParticles(my_particles,NUMBER_OF_PARTICLES)
 
     # Show particles
     for j in range(NUMBER_OF_PARTICLES):

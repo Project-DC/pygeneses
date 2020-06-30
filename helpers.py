@@ -81,3 +81,11 @@ def regenerate_species():
         print("Born", (i+1), "/", INITIAL_POPULATION)
         players.append(Player(i, TIME))
     return players
+  
+def refreshParticles(particles, NUMBER_OF_PARTICLES):
+    NEW_PARTICLES = random.randint(PARTICLES_TO_REGROW[0],PARTICLES_TO_REGROW[1])
+    for j in range(NEW_PARTICLES):
+        particles.append(Particle())
+    particles = check_particles(particles)
+    NUMBER_OF_PARTICLES+=NEW_PARTICLES
+    return particles,NUMBER_OF_PARTICLES
