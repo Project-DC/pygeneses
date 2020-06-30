@@ -24,7 +24,7 @@ killed = []
 allow_regenerate = True
 regenerate_times = 0
 
-FOOD_REGEN_CONDITION_IS_MET = False                    #temporary value
+FOOD_REGEN_CONDITION_IS_MET = False
 
 # Generate Food particle
 my_particles = []
@@ -41,7 +41,7 @@ for event in pygame.event.get():
 pygame.display.update()
 
 def actions(idx, action):
-    global INITIAL_POPULATION
+    global INITIAL_POPULATION, TIME, FOOD_REGEN_CONDITION_IS_MET, NUMBER_OF_PARTICLES, my_particles
 
     reward = 0
 
@@ -90,7 +90,7 @@ def actions(idx, action):
         else:
             reward = -10
     elif action == 10:  #asexual_reproduction
-        if(type(players[idx]) != int and not players[idx].is_impotent and type(players[idx]) != int and (TIME - players[idx].born_at) in range(10, 61))):
+        if(type(players[idx]) != int and not players[idx].is_impotent and type(players[idx]) != int and (TIME - players[idx].born_at) in range(10, 61)):
             reward = 4
             offspring_players, offspring_ids = players[idx].asexual_reproduction(len(players))
             for offspring_player in offspring_players:
@@ -184,9 +184,8 @@ def actions(idx, action):
                 killed.append(i)
 
             if(now_time - players[i].born_at >= MAX_AGE):
-                players[i].kill_player()
-                players[i] = 0
                 players[i].write_data()
+                players[i] = 0
                 killed.append(i)
 
     # Update the window
@@ -197,12 +196,14 @@ def actions(idx, action):
 
     TIME += 1
 
-    return reward, killed
+    return reward
 
 time_tot = 0
-for _ in range(10):
-    start = time.time()
-    actions(0, 0)
-    end = time.time()
-    time_tot += (end - start)
-print(time_tot / 10.)
+for _ in range(100):
+    if(0 not in killed):
+        actions(0, 8)
+        print(killed, TIME, end=' ')
+    if(1 not in killed):
+        actions(1, 8)
+        print(killed, TIME, end=' ')
+    print()
