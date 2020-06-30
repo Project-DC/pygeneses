@@ -50,13 +50,19 @@ def getPlayerVector(host, env_players, all_players):
     sex = []
     if (type(host) == int):
         return [],[]
+    gender_to_number = {'Female': 1, 'Male': 2}
     for idx in (env_players):
         if (type(all_players[idx]) != int) and (all_players[idx] != host):
             X.append( (host.playerX - all_players[idx].playerX ) )
             Y.append( (host.playerY - all_players[idx].playerY ) )
-            sex.append( all_players[idx].gender )
+            sex.append(gender_to_number[all_players[idx].gender])
 
-    return X,Y,sex
+    if(len(X) == 0):
+        X.append(0)
+        Y.append(0)
+        sex.append(0)
+
+    return list([X,Y,sex])
 
 def getFoodVector(player, env_particles, all_particles):
     X = []
@@ -68,7 +74,11 @@ def getFoodVector(player, env_particles, all_particles):
             X.append( (player.playerX - all_particles[idx].particleX ) )
             Y.append( (player.playerY - all_particles[idx].particleY ) )
 
-    return X,Y
+    if(len(X) == 0):
+        X.append(0)
+        Y.append(0)
+
+    return list([X,Y])
 
 def search_mate(host, players, TIME):
     env = []
@@ -106,7 +116,6 @@ def check_particles(my_particles):
 def regenerate_species(TIME):
     players = []
     for i in range(INITIAL_POPULATION):
-        print("Born", (i+1), "/", INITIAL_POPULATION)
         players.append(Player(i, TIME))
     return players
 

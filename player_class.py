@@ -40,14 +40,22 @@ class Player():
             file.write(" \n")
         file.close()
 
-    def update_history(self, action, time, reward, num_offspring = None, offspring_ids = None, mate_id = None, fight_with = None):
+    def update_history(self, action, time, reward, num_offspring = None, offspring_ids = None, mate_id = None, fight_with = None, failed=False):
         if action<=9:
+            if(failed):
+                action = 'Failed-' + str(action)
             self.action_history.append([action, time, reward, self.energy])
         elif action == 10 :
+            if(failed):
+                action = 'Failed-' + str(action)
             self.action_history.append([action, time, reward, self.energy, num_offspring, offspring_ids])
         elif action == 11 :
+            if(failed):
+                action = 'Failed-' + str(action)
             self.action_history.append([action, time, reward, self.energy, num_offspring, offspring_ids, mate_id])
         elif action == 12:
+            if(failed):
+                action = 'Failed-' + str(action)
             self.action_history.append([action, time, reward, self.energy, fight_with])
 
     def change_player_xposition(self, x):
@@ -78,7 +86,6 @@ class Player():
         offspring_ids = []
         self.energy -= 30
         for i in range(num_offspring):
-            print("Born", (i+1), "/", num_offspring)
             id_offspring = lenPlayers
             offspring_ids.append(id_offspring)
             lenPlayers = lenPlayers + 1
@@ -94,7 +101,6 @@ class Player():
             INITIAL_POPULATION = random.randint(2, 8)
             offspring_players = []
             for i in range(INITIAL_POPULATION):
-                print("Born", (i+1), "/", INITIAL_POPULATION)
                 id_offspring = lenPlayers
                 offspring_ids.append(id_offspring)
                 lenPlayers = lenPlayers+1

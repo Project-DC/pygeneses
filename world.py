@@ -37,8 +37,8 @@ def init():
 
     return players, killed, my_particles
 
-def actions(idx, action):
-    global INITIAL_POPULATION, TIME, FOOD_REGEN_CONDITION_IS_MET, NUMBER_OF_PARTICLES, my_particles, players, killed, regenerate_times
+def take_action(players, my_particles, killed, idx, action, TIME):
+    global INITIAL_POPULATION, FOOD_REGEN_CONDITION_IS_MET, NUMBER_OF_PARTICLES, regenerate_times
 
     reward = 0
 
@@ -88,7 +88,7 @@ def actions(idx, action):
             players[idx].update_history(action, TIME, reward)
         else:
             reward = -10
-            players[idx].update_history("Failed action - "+str(action), TIME, reward)
+            players[idx].update_history(action, TIME, reward, failed=True)
     elif action == 10:  #asexual_reproduction
         if(type(players[idx]) != int and not players[idx].is_impotent and type(players[idx]) != int and (TIME - players[idx].born_at) in range(10, 61)):
             reward = 4
@@ -102,10 +102,9 @@ def actions(idx, action):
             killed.append(idx)
         else:
             reward = -10
-            players[idx].update_history("Failed action - "+str(action), TIME, reward)
-
+            players[idx].update_history(action, TIME, reward, failed=True)
     elif action == 11:  #sexual_reproduction
-        if(mating_begin_time == 0):
+        if(players[idx].mating_begin_time == 0):
             mate_idx = search_mate(players[idx],players, TIME)
             if(mate_idx != -1):
                 mating_begin_time = TIME
@@ -119,13 +118,11 @@ def actions(idx, action):
                 players[mate_idx].update_history(action, mating_begin_time, reward, num_offspring = len(offspring_ids), offspring_ids = offspring_ids, mate_id = idx)
             else:
                 reward = -10
-                players[idx].update_history("Failed action - "+str(action), TIME, reward)
+                players[idx].update_history(action, TIME, reward, failed=True)
 
         else:
             reward = -10
-            players[idx].update_history("Failed action - "+str(action), TIME, reward)
-
-
+            players[idx].update_history(action, TIME, reward, failed=True)
     elif action == 12:      #Fight
         if(players[idx].fighting_with == -1):
             enemy = search_enemy(players[idx], players)
@@ -141,18 +138,17 @@ def actions(idx, action):
                 players[enemy].update_history(action, TIME, reward, fight_with = idx)
             else:
                 reward = -10
-                players[idx].update_history("Failed action - "+str(action), TIME, reward)
-
+                players[idx].update_history(action, TIME, reward, failed=True)
         else:
             reward = -10
-            players[idx].update_history("Failed action - "+str(action), TIME, reward)
+            players[idx].update_history(action, TIME, reward, failed=True)
 
 
     if action <=7 :
         if players[idx].cannot_move == False:
             players[idx].update_history(action, TIME, reward)
         else:
-            players[idx].update_history("Failed action - "+str(action), TIME, reward)
+            players[idx].update_history(action, TIME, reward, failed=True)
 
     if (FOOD_REGEN_CONDITION_IS_MET):                                       #FOOD REGEN PART always false for now
         my_particles,NUMBER_OF_PARTICLES = refreshParticles(my_particles,NUMBER_OF_PARTICLES)
@@ -165,9 +161,8 @@ def actions(idx, action):
 
     now_time = TIME
 
-    for i in range(INITIAL_POPULATION):
+    for i in range(len(players)):
         if(i not in killed):
-
             env_particles,env_particle_distance = food_in_env(players[i], my_particles)
             players[i].food_near = env_particle_distance
             env_food_vector = getFoodVector(players[i],env_particles, my_particles)                 #VECTOR FOOD
@@ -200,7 +195,6 @@ def actions(idx, action):
                 killed.append(i)
 
             if(now_time - players[i].born_at >= MAX_AGE):
-                print(now_time, players[i].born_at)
                 players[i].write_data()
                 players[i] = 0
                 killed.append(i)
@@ -208,12 +202,16 @@ def actions(idx, action):
     # Update the window
     pygame.display.update()
 
-    if(TIME % 90 == 0):
+    if(TIME % 200 == 0):
         FOOD_REGEN_CONDITION_IS_MET = True
 
     TIME += 1
 
-    return reward
+    done = False
+    if idx in killed:
+        done = True
+
+    return reward, done, players, my_particles, killed, TIME
 
 if __name__ == "__main__":
     players, killed, my_particles = init()
