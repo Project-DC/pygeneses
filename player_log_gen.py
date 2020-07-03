@@ -1,10 +1,11 @@
-import os
-path = os.getcwd()
-path = path+'/Players_Data'
-for file in os.listdir(path):
-    file = open("Players_Data/0-0.txt", "r")
-    if file.mode == 'r':
-        contents = file.readlines()
+import sys
+files = sys.argv[1:]
+
+for filename in files:
+    
+    f = open(filename, "r")
+    if f.mode == 'r':
+        contents = f.readlines()
 
     for line in contents:
         entity = list()
