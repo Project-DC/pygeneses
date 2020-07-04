@@ -41,6 +41,7 @@ def take_action(players, my_particles, killed, idx, action, TIME):
     global INITIAL_POPULATION, FOOD_REGEN_CONDITION_IS_MET, NUMBER_OF_PARTICLES, regenerate_times
 
     reward = 0
+    mate_idx = -1
 
     screen.fill((0, 178, 0))
 
@@ -77,7 +78,7 @@ def take_action(players, my_particles, killed, idx, action, TIME):
         reward = -2
     elif action == 8: # Stay
         players[idx].energy -= 2
-        reward = -5
+        reward = -50
         players[idx].update_history(action, TIME, reward)
     elif action == 9: #Ingestion
         food_particle = food_nearby(players[idx], my_particles)
@@ -91,7 +92,7 @@ def take_action(players, my_particles, killed, idx, action, TIME):
             players[idx].update_history(action, TIME, reward, failed=True)
     elif action == 10:  #asexual_reproduction
         if(type(players[idx]) != int and not players[idx].is_impotent and type(players[idx]) != int and (TIME - players[idx].born_at) in range(10, 61)):
-            reward = 4
+            reward = 0
             offspring_players, offspring_ids = players[idx].asexual_reproduction(len(players), TIME)
             for offspring_player in offspring_players:
                 players.append(offspring_player)
@@ -151,6 +152,7 @@ def take_action(players, my_particles, killed, idx, action, TIME):
             players[idx].update_history(action, TIME, reward, failed=True)
 
     if (FOOD_REGEN_CONDITION_IS_MET):                                       #FOOD REGEN PART always false for now
+        print("Food regenerated!")
         my_particles,NUMBER_OF_PARTICLES = refreshParticles(my_particles,NUMBER_OF_PARTICLES)
         FOOD_REGEN_CONDITION_IS_MET = False
 
@@ -202,16 +204,11 @@ def take_action(players, my_particles, killed, idx, action, TIME):
     # Update the window
     pygame.display.update()
 
-    if(TIME % 200 == 0):
-        FOOD_REGEN_CONDITION_IS_MET = True
-
-    TIME += 1
-
     done = False
     if idx in killed:
         done = True
 
-    return reward, done, players, my_particles, killed, TIME
+    return reward, done, players, my_particles, killed, mate_idx, TIME
 
 if __name__ == "__main__":
     players, killed, my_particles = init()
