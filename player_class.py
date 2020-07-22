@@ -6,7 +6,7 @@ import os
 
 from global_constants import *
 
-class Player():
+class Player:
 
     def __init__(self, i, tob):
         self.index = i
