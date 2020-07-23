@@ -31,32 +31,31 @@ class Player:
         self.mating_begin_time = 0
         self.fighting_with = -1
         self.energy = 200
+        self.Parent = []
+
+    def Add_Parent(self, id, tob):
+        self.Parent.append([id,tob])
 
     def write_data(self):
-        file_name ="Players_Data/"+str(self.born_at)+"-"+str(self.index)+".txt"
-        file = open(file_name, "w")
-        for row in self.action_history:
-            file.write(str(row))
-            file.write(" \n")
+        file_name ="Players_Data/"+str(self.born_at)+"-"+str(self.index)+".npy"
+        file = open(file_name, "wb")
+        np.save(file, self.action_history)
         file.close()
 
-    def update_history(self, action, time, reward, num_offspring = None, offspring_ids = None, mate_id = None, fight_with = None, failed=False):
-        if action<=9:
-            if(failed):
-                action = 'Failed-' + str(action)
-            self.action_history.append([action, time, reward, self.energy])
+    def update_history(self, action, time, reward, num_offspring = None, offspring_ids = None, mate_id = None, fight_with = None):
+
+        if type(action) != int:
+            if 'Failed' in action:
+                self.action_history.append([action, time, reward, self.energy, self.Parent])
+        elif action <= 9:
+            self.action_history.append([action, time, reward, self.energy, self.Parent])
         elif action == 10 :
-            if(failed):
-                action = 'Failed-' + str(action)
-            self.action_history.append([action, time, reward, self.energy, num_offspring, offspring_ids])
+            self.action_history.append([action, time, reward, self.energy, num_offspring, offspring_ids, self.Parent])
         elif action == 11 :
-            if(failed):
-                action = 'Failed-' + str(action)
-            self.action_history.append([action, time, reward, self.energy, num_offspring, offspring_ids, mate_id])
+            self.action_history.append([action, time, reward, self.energy, num_offspring, offspring_ids, mate_id, self.Parent])
         elif action == 12:
-            if(failed):
-                action = 'Failed-' + str(action)
-            self.action_history.append([action, time, reward, self.energy, fight_with])
+            self.action_history.append([action, time, reward, self.energy, fight_with, self.Parent])
+
 
     def change_player_xposition(self, x):
         if(not self.cannot_move):
@@ -90,6 +89,7 @@ class Player:
             offspring_ids.append(id_offspring)
             lenPlayers = lenPlayers + 1
             offspring_players.append(Player(id_offspring, time_given))
+            offspring_players[i].Add_Parent(self.index, self.born_at)
         return offspring_players, offspring_ids
 
     def sexual_reproduction(self, mating_begin_time, lenPlayers, gen_offspring=False):
@@ -105,6 +105,7 @@ class Player:
                 offspring_ids.append(id_offspring)
                 lenPlayers = lenPlayers+1
                 offspring_players.append(Player(id_offspring, mating_begin_time))
+                offspring_players[i].Add_Parent(self.index, self.born_at)
             return offspring_players, offspring_ids
 
     def ingesting_food(self, idx, time_given):

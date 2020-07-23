@@ -150,11 +150,11 @@ class PrimaVita:
                 self.players[idx].update_history(action, self.time, reward)
             else:
                 reward = -10
-                self.players[idx].update_history(action, self.time, reward, failed=True)
+                self.players[idx].update_history(action, self.time, reward)
         elif action == 10:  # Asexual_reproduction
             if(type(self.players[idx]) != int and not self.players[idx].is_impotent and
                 type(self.players[idx]) != int and (self.time - self.players[idx].born_at) in range(10, 61)):
-                reward = 0
+                reward = 4
                 offspring_players, offspring_ids = self.players[idx].asexual_reproduction(len(self.players), self.time)
                 for offspring_player in offspring_players:
                     self.players.append(offspring_player)
@@ -168,7 +168,7 @@ class PrimaVita:
                 self.model.kill_agent(idx)
             else:
                 reward = -10
-                self.players[idx].update_history(action, self.time, reward, failed=True)
+                self.players[idx].update_history(action, self.time, reward)
         elif action == 11:  # Sexual_reproduction
             if(self.players[idx].mating_begin_time == 0):
                 mate_idx = search_mate(self.players[idx], self.players, self.time)
@@ -185,7 +185,7 @@ class PrimaVita:
 
                     dominant_percent = random.randint(0, 10) * 10
                     recessive_percent = 100 - dominant_percent
-                    offsprings = len(players) - len(agents)
+                    offsprings = len(self.players) - len(agents)
                     num_dominant = round(offsprings * (dominant_percent / 100))
                     num_recessive = offsprings - num_dominant
 
@@ -196,11 +196,11 @@ class PrimaVita:
                     self.model.add_agets(recessive_idx, num_recessive)
                 else:
                     reward = -10
-                    self.players[idx].update_history(action, TIME, reward, failed=True)
+                    self.players[idx].update_history(action, TIME, reward)
 
             else:
                 reward = -10
-                self.players[idx].update_history(action, TIME, reward, failed=True)
+                self.players[idx].update_history(action, TIME, reward)
         elif action == 12:      #Fight
             if(self.players[idx].fighting_with == -1):
                 enemy = search_enemy(self.players[idx], self.players)
@@ -216,16 +216,16 @@ class PrimaVita:
                     self.players[enemy].update_history(action, self.time, reward, fight_with = idx)
                 else:
                     reward = -10
-                    self.players[idx].update_history(action, self.time, reward, failed=True)
+                    self.players[idx].update_history(action, self.time, reward)
             else:
                 reward = -10
-                self.players[idx].update_history(action, self.time, reward, failed=True)
+                self.players[idx].update_history(action, self.time, reward)
 
         if action <=7 :
             if self.players[idx].cannot_move == False:
                 self.players[idx].update_history(action, self.time, reward)
             else:
-                self.players[idx].update_history(action, self.time, reward, failed=True)
+                self.players[idx].update_history(action, self.time, reward)
 
         if (FOOD_REGEN_CONDITION_IS_MET):                                       #FOOD REGEN PART always false for now
             print("Food regenerated!")
