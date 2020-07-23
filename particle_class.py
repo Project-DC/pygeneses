@@ -4,7 +4,7 @@ import math
 
 from global_constants import *
 
-class Particle():
+class Particle:
 
     def __init__(self):
         self.particleImg = pygame.image.load('food.png')
