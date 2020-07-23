@@ -31,6 +31,10 @@ class Player:
         self.mating_begin_time = 0
         self.fighting_with = -1
         self.energy = 200
+        self.Parent = []
+
+    def Add_Parent(self, id, tob):
+        self.Parent.append([id,tob])
 
     def write_data(self):
         file_name ="Players_Data/"+str(self.born_at)+"-"+str(self.index)+".npy"
@@ -85,6 +89,7 @@ class Player:
             offspring_ids.append(id_offspring)
             lenPlayers = lenPlayers + 1
             offspring_players.append(Player(id_offspring, time_given))
+            offspring_players[i].Add_Parent(self.index, self.born_at)
         return offspring_players, offspring_ids
 
     def sexual_reproduction(self, mating_begin_time, lenPlayers, gen_offspring=False):
@@ -100,6 +105,7 @@ class Player:
                 offspring_ids.append(id_offspring)
                 lenPlayers = lenPlayers+1
                 offspring_players.append(Player(id_offspring, mating_begin_time))
+                offspring_players[i].Add_Parent(self.index, self.born_at)
             return offspring_players, offspring_ids
 
     def ingesting_food(self, idx, time_given):
