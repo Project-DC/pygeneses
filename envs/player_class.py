@@ -4,7 +4,7 @@ import time
 import numpy as np
 import os
 
-from global_constants import *
+from .global_constants import *
 
 class Player:
 
@@ -14,7 +14,7 @@ class Player:
         self.action_history = []               # [Action, Time, Reward, Energy, num_offspring, [offspring ids]]
 
 
-        self.playerImg = pygame.image.load('player.png')
+        self.playerImg = pygame.image.load(os.path.join(os.path.dirname(__file__), 'images/player.png'))
         self.playerX = random.randint(32, SCREEN_WIDTH - 32)
         self.playerY = random.randint(32, SCREEN_HEIGHT - 32)
         self.PLAYER_WIDTH = 32
@@ -119,6 +119,6 @@ class Player:
 
     def show_close(self):
         if(self.mating_begin_time != 0):
-            screen.blit(pygame.image.load('player_mating.png'), (self.playerX, self.playerY))
+            screen.blit(pygame.image.load(os.path.join(os.path.dirname(__file__), 'images/player_mating.png')), (self.playerX, self.playerY))
         else:
-            screen.blit(pygame.image.load("player_near.png"), (self.playerX, self.playerY))
+            screen.blit(pygame.image.load(os.path.join(os.path.dirname(__file__), "images/player_near.png")), (self.playerX, self.playerY))

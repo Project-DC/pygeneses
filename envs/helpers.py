@@ -2,9 +2,8 @@ import time
 import numpy as np
 import random
 
-from player_class import Player
-from particle_class import Particle
-from global_constants import INITIAL_POPULATION, TIME, PARTICLES_TO_REGROW
+from .player_class import Player
+from .particle_class import Particle
 
 def food_nearby(player, food_particles):         #returns food particle index if food is nearby, else returns -1
     if(type(player) == int):
@@ -113,16 +112,16 @@ def check_particles(my_particles):
                     my_particles[j] = 0
     return my_particles
 
-def regenerate_species(TIME):
+def regenerate_species(time, initial_population):
     players = []
-    for i in range(INITIAL_POPULATION):
-        players.append(Player(i, TIME))
+    for i in range(initial_population):
+        players.append(Player(i, time))
     return players
 
-def refreshParticles(particles, NUMBER_OF_PARTICLES):
-    NEW_PARTICLES = random.randint(PARTICLES_TO_REGROW[0],PARTICLES_TO_REGROW[1])
-    for j in range(NEW_PARTICLES):
-        particles.append(Particle())
-    particles = check_particles(particles)
-    NUMBER_OF_PARTICLES+=NEW_PARTICLES
-    return particles,NUMBER_OF_PARTICLES
+# def refreshParticles(particles, NUMBER_OF_PARTICLES):
+#     NEW_PARTICLES = random.randint(PARTICLES_TO_REGROW[0],PARTICLES_TO_REGROW[1])
+#     for j in range(NEW_PARTICLES):
+#         particles.append(Particle())
+#     particles = check_particles(particles)
+#     NUMBER_OF_PARTICLES+=NEW_PARTICLES
+#     return particles,NUMBER_OF_PARTICLES

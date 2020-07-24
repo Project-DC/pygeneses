@@ -1,6 +1,7 @@
-from reinforce_nn import Agent
 import torch
 import torch.optim as optim
+
+from .reinforce_nn import Agent
 
 class ReinforceModel:
 

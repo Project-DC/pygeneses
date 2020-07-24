@@ -1,12 +1,13 @@
 import os
 import shutil
 import pygame
+import random
 
-from player_class import Player
-from particle_class import Particle
-from helpers import *
-from global_constants import *
-from reinforce import ReinforceModel
+from .player_class import Player
+from .particle_class import Particle
+from .helpers import *
+from .global_constants import *
+from .reinforce import ReinforceModel
 
 model_to_class = {'reinforce': 'ReinforceModel'}
 
@@ -25,8 +26,12 @@ class PrimaVita:
         self.players = []
         self.killed = []
         self.my_particles = []
+        self.number_of_particles = random.randint(70, 80)
+        self.particles_to_regrow = (20, 40)
         self.model = 0
         self.model_updates = model_updates
+        self.speed = 3
+        self.max_age = 90
 
         self.reset_logs()
 
@@ -38,9 +43,9 @@ class PrimaVita:
         pygame.display.set_caption("Prima Vita")
 
         # Generate initial population
-        self.players = regenerate_species(TIME)
+        self.players = regenerate_species(0, self.initial_population)
 
-        for j in range(NUMBER_OF_PARTICLES):
+        for j in range(self.number_of_particles):
             self.my_particles.append(Particle())
 
         self.my_particles = check_particles(self.my_particles)
@@ -110,32 +115,32 @@ class PrimaVita:
             pass
 
         if action == 0: # Left
-            self.players[idx].change_player_xposition(-SPEED)
+            self.players[idx].change_player_xposition(-self.speed)
             reward = -2
         elif action == 1: # Right
-            self.players[idx].change_player_xposition(SPEED)
+            self.players[idx].change_player_xposition(self.speed)
             reward = -2
         elif action == 2: # Up
-            self.players[idx].change_player_yposition(-SPEED)
+            self.players[idx].change_player_yposition(-self.speed)
             reward = -2
         elif action == 3: # Down
-            self.players[idx].change_player_yposition(SPEED)
+            self.players[idx].change_player_yposition(self.speed)
             reward = -2
         elif action == 4: # Up Left
-            self.players[idx].change_player_yposition(-SPEED)
-            self.players[idx].change_player_xposition(-SPEED)
+            self.players[idx].change_player_yposition(-self.speed)
+            self.players[idx].change_player_xposition(-self.speed)
             reward = -2
         elif action == 5: # Up Right
-            self.players[idx].change_player_yposition(-SPEED)
-            self.players[idx].change_player_xposition(SPEED)
+            self.players[idx].change_player_yposition(-self.speed)
+            self.players[idx].change_player_xposition(self.speed)
             reward = -2
         elif action == 6: # Down Left
-            self.players[idx].change_player_yposition(SPEED)
-            self.players[idx].change_player_xposition(-SPEED)
+            self.players[idx].change_player_yposition(self.speed)
+            self.players[idx].change_player_xposition(-self.speed)
             reward = -2
         elif action == 7: # Down Right
-            self.players[idx].change_player_yposition(SPEED)
-            self.players[idx].change_player_xposition(SPEED)
+            self.players[idx].change_player_yposition(self.speed)
+            self.players[idx].change_player_xposition(self.speed)
             reward = -2
         elif action == 8: # Stay
             self.players[idx].energy -= 2
@@ -196,11 +201,11 @@ class PrimaVita:
                     self.model.add_agets(recessive_idx, num_recessive)
                 else:
                     reward = -10
-                    self.players[idx].update_history(action, TIME, reward)
+                    self.players[idx].update_history(action, self.time, reward)
 
             else:
                 reward = -10
-                self.players[idx].update_history(action, TIME, reward)
+                self.players[idx].update_history(action, self.time, reward)
         elif action == 12:      #Fight
             if(self.players[idx].fighting_with == -1):
                 enemy = search_enemy(self.players[idx], self.players)
@@ -227,7 +232,7 @@ class PrimaVita:
             else:
                 self.players[idx].update_history(action, self.time, reward)
 
-        if (FOOD_REGEN_CONDITION_IS_MET):                                       #FOOD REGEN PART always false for now
+        if (self.food_regen_condition_is_met):                                       #FOOD REGEN PART always false for now
             print("Food regenerated!")
             self.my_particles, _ = refreshParticles(self.my_particles, len(self.my_particles))
             self.food_regen_condition_is_met = False
@@ -280,7 +285,7 @@ class PrimaVita:
                     self.killed.append(i)
                     self.model.kill_agent(i)
 
-                if(type(self.players[i]) != int and now_time - self.players[i].born_at >= MAX_AGE):
+                if(type(self.players[i]) != int and now_time - self.players[i].born_at >= self.max_age):
                     self.players[i].write_data()
                     self.players[i] = 0
                     self.killed.append(i)
