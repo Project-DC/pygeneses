@@ -7,7 +7,7 @@ from .player_class import Player
 from .particle_class import Particle
 from .helpers import *
 from .global_constants import *
-from .reinforce import ReinforceModel
+from pyevolve.models.reinforce.reinforce import ReinforceModel
 
 model_to_class = {'reinforce': 'ReinforceModel'}
 
