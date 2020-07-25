@@ -5,7 +5,6 @@ import random
 
 from .player_class import Player
 from .particle_class import Particle
-from .helpers import *
 from .global_constants import *
 from pyevolve.models.reinforce.reinforce import ReinforceModel
 

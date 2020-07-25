@@ -1,5 +1,7 @@
 __pycache__
 .DS_Store
-*.txt
 .ipynb_checkpoints
 *.npy
+build/*
+dist/*
+pyevolution.egg-info/*
