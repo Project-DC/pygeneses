@@ -3,6 +3,7 @@ import torch.nn as nn
 from torch.distributions import Categorical
 import torch.nn.functional as F
 
+
 class Agent(nn.Module):
     def __init__(self, s_size, a_size, device, h_size=30):
         super(Agent, self).__init__()
