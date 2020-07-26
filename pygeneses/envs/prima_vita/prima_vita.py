@@ -7,7 +7,7 @@ import numpy as np
 from .player_class import Player
 from .particle_class import Particle
 from .global_constants import *
-from pyevolution.models.reinforce.reinforce import ReinforceModel
+from pygeneses.models.reinforce.reinforce import ReinforceModel
 
 model_to_class = {"reinforce": "ReinforceModel"}
 
