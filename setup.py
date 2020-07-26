@@ -30,5 +30,5 @@ setup(
     package_data={'pygeneses': [
         'envs/prima_vita/images/*.png'
     ]},
-    install_requires=["pygame", "numpy", "torch"],
+    install_requires=["pygame", "numpy", "torch==1.4.0"],
 )
