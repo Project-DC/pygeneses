@@ -40,7 +40,7 @@ class Player:
         self.Parent.append([id, tob])
 
     def write_data(self):
-        print(f"\U0001F62 RIP {self.born_at}-{self.index}")
+        print(f"\U0001F622 RIP {self.born_at}-{self.index}")
         file_name = "Players_Data/" + str(self.born_at) + "-" + str(self.index) + ".npy"
         file = open(file_name, "wb")
         np.save(file, self.action_history)
