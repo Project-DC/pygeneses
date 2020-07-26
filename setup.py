@@ -9,8 +9,8 @@ README = (HERE / "README.md").read_text()
 
 # This call to setup() does all the work
 setup(
-    name="pyevolution",
-    version="0.1.0",
+    name="pygeneses",
+    version="0.1",
     description="PyTorch based framework for training artificial agents in bio-inspired environments",
     long_description=README,
     long_description_content_type="text/markdown",
@@ -27,7 +27,7 @@ setup(
         "Programming Language :: Python :: 3.6",
     ],
     packages=[package for package in find_packages()],
-    package_data={'pyevolution': [
+    package_data={'pygeneses': [
         'envs/prima_vita/images/*.png'
     ]},
     install_requires=["pygame", "numpy", "torch"],
