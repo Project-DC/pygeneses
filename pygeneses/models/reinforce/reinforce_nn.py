@@ -13,13 +13,16 @@ class Agent(nn.Module):
         self.fc2 = nn.Linear(h_size, a_size)
 
     def forward(self, x):
-        x = F.relu(self.fc1(x))
+        x = self.fc1(x)
+        embed = x.detach()
+        x = F.relu(x)
         x = self.fc2(x)
-        return F.softmax(x, dim=1)
+        return F.softmax(x, dim=1), embed
 
     def act(self, state):
         state = torch.from_numpy(state).float().unsqueeze(0).to(self.device)
-        probs = self.forward(state).cpu()
+        probs, embed = self.forward(state)
+        probs = probs.cpu()
         m = Categorical(probs)
         action = m.sample()
-        return action.item(), m.log_prob(action)
+        return action.item(), m.log_prob(action), embed
