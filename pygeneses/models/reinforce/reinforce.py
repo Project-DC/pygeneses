@@ -36,6 +36,10 @@ class ReinforceModel:
     def update_reward(self, idx, reward):
         self.rewards[i].append(reward)
 
+
+    def get_embed(self,idx):
+        return self.agents[idx].fc2
+
     def add_agents(self, parent_idx, num_offsprings):
         for idx in range(len(self.agents), len(self.agents) + num_offsprings):
             self.agents.append(

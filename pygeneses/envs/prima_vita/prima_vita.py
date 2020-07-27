@@ -79,6 +79,7 @@ class PrimaVita:
             shutil.rmtree(self.log_dir)
 
         os.mkdir(self.log_dir)
+        os.mkdir(os.path.join(self.log_dir,"Embeddings"))
 
     def pad_state(self, state, maxlen):
         if len(state) > maxlen:
@@ -197,7 +198,7 @@ class PrimaVita:
                     num_offspring=len(offspring_ids),
                     offspring_ids=offspring_ids,
                 )
-                self.players[idx].write_data()  # Writes data to file
+                self.players[idx].write_data(self.model.get_embed(idx))  # Writes data to file
                 self.players[idx] = 0
                 self.killed.append(idx)
 
@@ -350,7 +351,7 @@ class PrimaVita:
                     self.players[i].cannot_move = False
 
                 if type(self.players[i]) != int and self.players[i].energy <= 0:
-                    self.players[i].write_data()
+                    self.players[i].write_data(self.model.get_embed(idx))
                     self.players[i] = 0
                     self.killed.append(i)
                     self.model.kill_agent(i)
@@ -359,7 +360,7 @@ class PrimaVita:
                     type(self.players[i]) != int
                     and now_time - self.players[i].born_at >= self.max_age
                 ):
-                    self.players[i].write_data()
+                    self.players[i].write_data(self.model.get_embed(idx))
                     self.players[i] = 0
                     self.killed.append(i)
                     self.model.kill_agent(i)

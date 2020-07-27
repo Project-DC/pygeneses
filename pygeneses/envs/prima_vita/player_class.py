@@ -39,11 +39,14 @@ class Player:
     def Add_Parent(self, id, tob):
         self.Parent.append([id, tob])
 
-    def write_data(self):
+    def write_data(self, embed):
         print(f"\U0001F622 RIP {self.born_at}-{self.index}")
-        file_name = "Players_Data/" + str(self.born_at) + "-" + str(self.index) + ".npy"
-        file = open(file_name, "wb")
+        file_name =  str(self.born_at) + "-" + str(self.index)
+        file = open("Players_Data/" + file_name + ".npy", "wb")
         np.save(file, self.action_history)
+        file.close()
+        file = open("Players_Data/Embeddings/" + file_name+".npy", "wb")
+        np.save(file, embed)
         file.close()
 
     def update_history(
