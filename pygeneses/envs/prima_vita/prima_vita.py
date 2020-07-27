@@ -125,8 +125,8 @@ class PrimaVita:
         return np.array(initial_state)
 
     def take_action(self, idx, state):
-        action = self.model.predict_action(idx, state)
-
+        action, embed = self.model.predict_action(idx, state)
+        self.players[idx].embeddings = np.add(self.players[idx].embeddings, np.array(embed))
         reward = 0
         mate_idx = -1
 
@@ -198,7 +198,7 @@ class PrimaVita:
                     num_offspring=len(offspring_ids),
                     offspring_ids=offspring_ids,
                 )
-                self.players[idx].write_data(self.model.get_embed(idx))  # Writes data to file
+                self.players[idx].write_data(self.time)  # Writes data to file
                 self.players[idx] = 0
                 self.killed.append(idx)
 
@@ -351,7 +351,7 @@ class PrimaVita:
                     self.players[i].cannot_move = False
 
                 if type(self.players[i]) != int and self.players[i].energy <= 0:
-                    self.players[i].write_data(self.model.get_embed(idx))
+                    self.players[i].write_data(self.time)
                     self.players[i] = 0
                     self.killed.append(i)
                     self.model.kill_agent(i)
@@ -360,7 +360,7 @@ class PrimaVita:
                     type(self.players[i]) != int
                     and now_time - self.players[i].born_at >= self.max_age
                 ):
-                    self.players[i].write_data(self.model.get_embed(idx))
+                    self.players[i].write_data(self.time)
                     self.players[i] = 0
                     self.killed.append(i)
                     self.model.kill_agent(i)

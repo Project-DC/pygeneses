@@ -28,17 +28,14 @@ class ReinforceModel:
             self.rewards[idx] = []
 
     def predict_action(self, idx, state):
-        action, log_prob = self.agents[idx].act(state)
+        action, log_prob, embed = self.agents[idx].act(state)
         self.saved_log_probs[idx].append(log_prob)
 
-        return action
+        return action, embed
 
     def update_reward(self, idx, reward):
         self.rewards[i].append(reward)
 
-
-    def get_embed(self,idx):
-        return self.agents[idx].fc2
 
     def add_agents(self, parent_idx, num_offsprings):
         for idx in range(len(self.agents), len(self.agents) + num_offsprings):
