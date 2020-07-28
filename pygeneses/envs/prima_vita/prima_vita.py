@@ -126,7 +126,8 @@ class PrimaVita:
 
     def take_action(self, idx, state):
         action, embed = self.model.predict_action(idx, state)
-        self.players[idx].embeddings = np.add(self.players[idx].embeddings, np.array(embed))
+        temp = embed.cpu().numpy()
+        self.players[idx].embeddings = np.add(self.players[idx].embeddings, temp)
         reward = 0
         mate_idx = -1
 

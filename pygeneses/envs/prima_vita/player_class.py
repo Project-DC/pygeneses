@@ -65,10 +65,11 @@ class Player:
         if type(action) != int:
             if "Failed" in action:
                 self.action_history.append(
-                    [action, time, reward, self.energy, self.Parent]
+                    [-action, time, reward, self.energy, self.Parent, self.playerX, self.playerY]
                 )
         elif action <= 9:
-            self.action_history.append([action, time, reward, self.energy, self.Parent])
+            self.action_history.append([action, time, reward, self.energy, self.Parent, self.playerX,
+            self.playerX])
         elif action == 10:
             self.action_history.append(
                 [
@@ -79,6 +80,8 @@ class Player:
                     num_offspring,
                     offspring_ids,
                     self.Parent,
+                    self.playerX,
+                    self.playerY
                 ]
             )
         elif action == 11:
@@ -92,11 +95,13 @@ class Player:
                     offspring_ids,
                     mate_id,
                     self.Parent,
+                    self.playerX,
+                    self.playerY
                 ]
             )
         elif action == 12:
             self.action_history.append(
-                [action, time, reward, self.energy, fight_with, self.Parent]
+                [action, time, reward, self.energy, fight_with, self.Parent, self.playerX, self.playerY]
             )
 
     def change_player_xposition(self, x):
