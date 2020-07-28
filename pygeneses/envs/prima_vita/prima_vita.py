@@ -34,11 +34,12 @@ class PrimaVita:
         self.killed = []
         self.my_particles = []
         self.number_of_particles = random.randint(70, 80)
-        self.particles_to_regrow = (20, 40)
+        self.particles_to_regrow = (20, 40)       # Control this food to control max population
         self.model = 0
         self.model_updates = model_updates
         self.speed = 3
         self.max_age = 90
+        self.randomKillChance = 1    # probability in percent that a given player will be randomly killed in a single turn
 
         self.reset_logs()
 
@@ -366,6 +367,8 @@ class PrimaVita:
                     self.killed.append(i)
                     self.model.kill_agent(i)
 
+                self.randomKill(i)
+
         if now_time % self.model_updates == 0:
             self.model.update_all_agents()
 
@@ -525,3 +528,10 @@ class PrimaVita:
             self.my_particles.append(Particle())
         self.my_particles = self.check_particles()
         self.number_of_particles += NEW_PARTICLES
+
+    def randomKill(self, playerIdx):
+        if (random.uniform(0,100) < self.randomKillChance):
+            self.players[playerIdx].write_data(self.time)
+            self.players[playerIdx] = 0
+            self.killed.append(playerIdx)
+            self.model.kill_agent(playerIdx)
