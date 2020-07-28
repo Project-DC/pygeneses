@@ -34,17 +34,18 @@ class Player:
         self.mating_begin_time = 0
         self.fighting_with = -1
         self.energy = 200
-        self.Parent = []
+
         self.embeddings = np.array([0])
+        self.states = []
 
     def Add_Parent(self, id, tob):
-        self.Parent.append([id, tob])
+        self.action_history.append(np.array([id, tob]))
 
     def write_data(self, time):
         print(f"\U0001F622 RIP {self.born_at}-{self.index}")
         file_name =  str(self.born_at) + "-" + str(self.index)
         file = open("Players_Data/" + file_name + ".npy", "wb")
-        np.save(file, self.action_history)
+        np.save(file, np.array(self.action_history))
         file.close()
         file = open("Players_Data/Embeddings/" + file_name+".npy", "wb")
         self.embeddings = self.embeddings/(time-self.born_at)
@@ -56,52 +57,53 @@ class Player:
         action,
         time,
         reward,
-        num_offspring=None,
-        offspring_ids=None,
-        mate_id=None,
-        fight_with=None,
+        num_offspring=-1,
+        offspring_ids=-1,
+        mate_id=-1,
+        fight_with=-1,
     ):
 
         if type(action) != int:
             if "Failed" in action:
                 self.action_history.append(
-                    [-action, time, reward, self.energy, self.Parent, self.playerX, self.playerY]
+                    np.array([-action, time, reward, self.energy, self.playerX, self.playerY, self.states[-1]])
                 )
         elif action <= 9:
-            self.action_history.append([action, time, reward, self.energy, self.Parent, self.playerX,
-            self.playerX])
+            self.action_history.append(np.array([action, time, reward, self.energy, self.playerX, self.playerY,
+            self.states[-1]]))
         elif action == 10:
             self.action_history.append(
-                [
+                np.array([
                     action,
                     time,
                     reward,
                     self.energy,
                     num_offspring,
-                    offspring_ids,
-                    self.Parent,
+                    np.array(offspring_ids),
                     self.playerX,
-                    self.playerY
-                ]
+                    self.playerY,
+                    self.states[-1]
+                ])
             )
         elif action == 11:
             self.action_history.append(
-                [
+                np.array([
                     action,
                     time,
                     reward,
                     self.energy,
                     num_offspring,
-                    offspring_ids,
+                    np.array(offspring_ids),
                     mate_id,
-                    self.Parent,
                     self.playerX,
-                    self.playerY
-                ]
+                    self.playerY,
+                    self.states[-1]
+                ])
             )
         elif action == 12:
             self.action_history.append(
-                [action, time, reward, self.energy, fight_with, self.Parent, self.playerX, self.playerY]
+                np.array([action, time, reward, self.energy, fight_with, self.playerX, self.playerY,
+                self.states[-1]])
             )
 
     def change_player_xposition(self, x):

@@ -107,6 +107,7 @@ class PrimaVita:
                 env_player_vector = sum(env_player_vector, [])
 
                 temp_state = [env_food_vector, env_player_vector]
+                self.players[i].states.append(np.array([np.array(env_food_vector), np.array(env_player_vector)]))
                 temp_state = sum(temp_state, [])
                 initial_state.append(np.array(temp_state))
             else:
@@ -242,7 +243,7 @@ class PrimaVita:
 
                     dominant_percent = random.randint(0, 10) * 10
                     recessive_percent = 100 - dominant_percent
-                    offsprings = len(self.players) - len(agents)
+                    offsprings = len(self.players) - len(self.agents)
                     num_dominant = round(offsprings * (dominant_percent / 100))
                     num_recessive = offsprings - num_dominant
 
