@@ -6,6 +6,7 @@
     <title>VitaBoard</title>
     <script src="./script.js" defer></script>
     <link rel="stylesheet" href="./styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 </head>
 <body>
     
@@ -17,8 +18,10 @@
 
             <nav>
                 <ul class="tabs">
-                    <li data-tab-target="#collective" class="active tab">Collective</li>
-                    <li data-tab-target="#single_agent" class="tab">Single Agent</li>
+                    <li data-tab-target="#clusters" class="active tab">Embedding Clusters</li>
+                    <li data-tab-target="#familytree" class="tab">Family Trees</li>
+                    <li data-tab-target="#graphs" class="tab">Graphs</li>
+                    <li data-tab-target="#visualizer" class="tab">Life Visualizer</li>
                 </ul>
             </nav>
 
@@ -28,7 +31,7 @@
     
             <div class="tab-content">
     
-                <div id="collective" data-tab-content class="content active">
+                <div id="clusters" data-tab-content class="content active">
                     <div class="box1">
                         Here comes box 1 of tab 1
                     </div>
@@ -37,12 +40,30 @@
                     </div>
                 </div>
     
-                <div id="single_agent" data-tab-content class="content">
+                <div id="familytree" data-tab-content class="content">
                     <div class="box1">
                         Here comes box 1 of tab 2
                     </div>
                     <div class="box2">
                         Here comes box 2 of tab 2
+                    </div>
+                </div>
+
+                <div id="graphs" data-tab-content class="content">
+                    <div class="box1">
+                        Here comes box 1 of tab 3
+                    </div>
+                    <div class="box2">
+                        Here comes box 2 of tab 3
+                    </div>
+                </div>
+
+                <div id="visualizer" data-tab-content class="content">
+                    <div class="box1">
+                        Here comes box 1 of tab 4
+                    </div>
+                    <div class="box2">
+                        Here comes box 2 of tab 4
                     </div>
                 </div>
     
@@ -51,7 +72,7 @@
         </div>
 
         <footer>
-            <p>Made by Developers of Project DC</p>
+            <p>Made with <i class="fa fa-heart pulse"></i> by Developers of Project DC</p>
         </footer>
 
     </div>

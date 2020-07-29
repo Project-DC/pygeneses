@@ -17,7 +17,7 @@
 
 /*Full container properties*/
 .container {
-    background-color: black;
+    background-color: #fff;
     height: 100vh;
     width: 100%;
 }
@@ -27,17 +27,28 @@ li {
     font-family: Arial, Helvetica, sans-serif;
     font-weight: 800;
     font-size: 16px;
-    color: rgb(29, 191, 231);
+    color: #fff;
     text-decoration: none;
 }
 
 li:nth-child(1) {
-    margin-right: 20px;
+    margin-right: 10px;
 }
 
-li:nth-child(1) {
-    margin-left: 20px;
+li:nth-child(2) {
+    margin-left: 10px;
+    margin-right: 10px;
 }
+
+li:nth-child(3) {
+    margin-left: 10px;
+    margin-right: 10px;
+}
+
+li:nth-child(4) {
+    margin-left: 10px;
+}
+
 /*Setting the navbar space*/
 header{
     height: 6vh;
@@ -46,6 +57,7 @@ header{
     justify-content: space-between;
     align-items: center;
     padding: 30px 10%;
+    background-color: #e7717d;
 }
 
 /*Making logo clickable once logo added*/
@@ -54,6 +66,7 @@ header{
     color: white;
 }
 
+/*Tab Settings*/
 .tabs {
     display: flex;
     justify-content: space-around;
@@ -69,13 +82,15 @@ header{
 }
 
 .tab.active {
-    color: crimson;
-    background-color: rgb(7, 7, 77);
+    color: #e7717d;
+    background-color: #fff;
     border-radius: 18px;
 }
 
 .tab:hover {
-    color: crimson;
+    color: #e7717d;
+    background-color: #fff;
+    border-radius: 18px;
     outline: none;
 }
 
@@ -83,6 +98,7 @@ header{
     outline: none;
 }
 
+/*Content Display*/
 .contents {
     height: 90vh;
     width: 100%;
@@ -99,9 +115,9 @@ header{
     display: flex;
     justify-content: space-evenly;
     align-items: center;
-    color: white;
 }
 
+/*Containers*/
 .box1 {
     border: 2px yellow solid;
     width: 600px;
@@ -114,10 +130,12 @@ header{
     height: 550px;
 }
 
+/*Footer*/
 footer {
-    height: 3.5vh;
+    height: 3.65vh;
     width: 100vw;
-    color: crimson;
+    color: #fff;
+    background-color: #e7717d;
 }
 
 footer p {
@@ -126,4 +144,20 @@ footer p {
     padding-top: 5px;
     font-size: larger;
     font-weight: bolder;
+}
+
+/*For the heart beating icon*/
+.fa{
+    color: #E90606;
+    margin: 0 3px;
+    font-size: 10px;
+    animation: pound .35s infinite alternate;
+    -webkit-animation: pound .35s infinite alternate;
+}
+
+/*The heart beat animation*/
+@keyframes pound{
+    to{
+        transform: scale(1.1)
+    }
 }
