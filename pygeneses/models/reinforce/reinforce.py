@@ -14,6 +14,7 @@ class ReinforceModel:
         self.scores = []
         self.saved_log_probs = {}
         self.rewards = {}
+        self.policy_loss = {}
 
         self.init(initial_population)
 
@@ -25,6 +26,7 @@ class ReinforceModel:
             self.optimizers.append(optim.Adam(self.agents[-1].parameters(), lr=1e-2))
             self.scores.append(0)
             self.saved_log_probs[idx] = []
+            self.policy_loss[idx] = []
             self.rewards[idx] = []
 
     def predict_action(self, idx, state):
@@ -58,9 +60,11 @@ class ReinforceModel:
     def update_all_agents(self):
         for idx in range(len(self.agents)):
             if type(self.agents[idx]) != int and len(self.saved_log_probs[idx]) > 0:
-                self.optimizers[idx].zero_grad()
-                policy_loss = 0
+                self.policy_loss[idx] = []
                 for j in range(len(self.saved_log_probs[idx])):
-                    policy_loss += -self.saved_log_probs[idx][j] * self.rewards[idx][j]
-                policy_loss.backward(retain_graph=True)
+                    self.policy_loss[idx].append(-(self.saved_log_probs[idx][j] * self.rewards[idx][j]))
+                self.policy_loss[idx] = torch.cat(self.policy_loss[idx]).sum()
+
+                self.optimizers[idx].zero_grad()
+                self.policy_loss[idx].backward(retain_graph=True)
                 self.optimizers[idx].step()

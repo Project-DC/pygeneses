@@ -16,7 +16,7 @@ class PrimaVita:
     def __init__(
         self,
         initial_population=10,
-        state_size=20,
+        state_size=21,
         action_size=13,
         max_regenerations=0,
         model_updates=10,
@@ -117,6 +117,7 @@ class PrimaVita:
         initial_state = [
             self.pad_state(state, self.state_size - 1) for state in initial_state
         ]
+
         initial_state = [
             np.append(initial_state[i], self.players[i].energy)
             if type(self.players[i]) != int

@@ -8,7 +8,7 @@ from .global_constants import *
 
 
 class Player:
-    def __init__(self, i, tob):
+    def __init__(self, i, tob, x=None, y=None):
         self.index = i
         # Lists to Store history
         self.action_history = (
@@ -18,8 +18,8 @@ class Player:
         self.playerImg = pygame.image.load(
             os.path.join(os.path.dirname(__file__), "images/player.png")
         )
-        self.playerX = random.randint(32, SCREEN_WIDTH - 32)
-        self.playerY = random.randint(32, SCREEN_HEIGHT - 32)
+        self.playerX = x if x is not None else random.randint(32, SCREEN_WIDTH - 32)
+        self.playerY = y if y is not None else random.randint(32, SCREEN_HEIGHT - 32)
         self.PLAYER_WIDTH = 32
         self.PLAYER_HEIGHT = 32
         self.born_at = tob
@@ -37,6 +37,8 @@ class Player:
 
         self.embeddings = np.array([0])
         self.states = []
+
+        self.action_history.append([self.playerX, self.playerY])
 
     def Add_Parent(self, id, tob):
         self.action_history.append(np.array([id, tob]))
