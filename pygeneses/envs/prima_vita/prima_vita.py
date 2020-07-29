@@ -256,7 +256,7 @@ class PrimaVita:
                     recessive_idx = idx if dominant_idx == mate_idx else mate_idx
 
                     self.model.add_agents(dominant_idx, num_dominant)
-                    self.model.add_agets(recessive_idx, num_recessive)
+                    self.model.add_agents(recessive_idx, num_recessive)
                 else:
                     reward = -10
                     self.players[idx].update_history(action, self.time, reward)
