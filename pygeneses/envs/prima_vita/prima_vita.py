@@ -244,7 +244,7 @@ class PrimaVita:
 
                     dominant_percent = random.randint(0, 10) * 10
                     recessive_percent = 100 - dominant_percent
-                    offsprings = len(self.players) - len(self.agents)
+                    offsprings = len(self.players) - len(self.model.agents)
                     num_dominant = round(offsprings * (dominant_percent / 100))
                     num_recessive = offsprings - num_dominant
 
