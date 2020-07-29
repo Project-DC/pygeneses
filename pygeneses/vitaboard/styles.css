@@ -1,23 +1,44 @@
+/*Resetting the global systems*/
 *, *::before, *::after {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
 }
 
+/*Hiding the tab content*/
+[data-tab-content] {
+    display: none;
+}
+
+/*Displaying the tab content*/
+.active [data-tab-content] {
+    display: block;
+}
+
+/*Full container properties*/
 .container {
     background-color: black;
     height: 100vh;
     width: 100%;
 }
 
-li, a {
+/*Global settings for the navbar links*/
+li {
     font-family: Arial, Helvetica, sans-serif;
     font-weight: 800;
     font-size: 16px;
-    color: white;
+    color: rgb(29, 191, 231);
     text-decoration: none;
 }
 
+li:nth-child(1) {
+    margin-right: 20px;
+}
+
+li:nth-child(1) {
+    margin-left: 20px;
+}
+/*Setting the navbar space*/
 header{
     height: 6vh;
     width: 100vw;
@@ -25,37 +46,60 @@ header{
     justify-content: space-between;
     align-items: center;
     padding: 30px 10%;
-    background-color: violet;
 }
 
+/*Making logo clickable once logo added*/
 .logo {
     cursor: pointer;
     color: white;
 }
 
-.nav-links {
-    list-style: none;
+.tabs {
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    list-style-type: none;
+    padding: 20px 20px;
 }
 
-.nav-links li {
-    display: inline-block;
-    padding: 0 20px;
+.tab {
+    cursor: pointer;
+    padding: 10px;
+    transition: all 0.5s ease 0s;
 }
 
-.nav-links li a {
-    transition: all 0.3s ease 0s;
+.tab.active {
+    color: crimson;
+    background-color: rgb(7, 7, 77);
+    border-radius: 18px;
 }
 
-.nav-links li a:hover {
-    color: #0088a9;
+.tab:hover {
+    color: crimson;
+    outline: none;
 }
 
-.tab1 {
+.tab:focus {
+    outline: none;
+}
+
+.contents {
     height: 90vh;
+    width: 100%;
+}
+
+.tab-content {
+    height: 100%;
+    width: 100%;
+}
+
+.content.active {
+    height: 100%;
     width: 100%;
     display: flex;
     justify-content: space-evenly;
     align-items: center;
+    color: white;
 }
 
 .box1 {
@@ -70,25 +114,16 @@ header{
     height: 550px;
 }
 
-
-.tab2 {
-    height: 90vh;
-    width: 100%;
-    display: flex;
-    justify-content: space-evenly;
-    align-items: center;
-}
-
 footer {
     height: 3.5vh;
-    width: 100%;
-    background-color: white;
-    color: black;
-    font-weight: bolder;
-    padding-top: 5px;
-    padding-bottom: 5px;
+    width: 100vw;
+    color: crimson;
 }
 
 footer p {
     text-align: center;
+    vertical-align: middle;
+    padding-top: 5px;
+    font-size: larger;
+    font-weight: bolder;
 }
