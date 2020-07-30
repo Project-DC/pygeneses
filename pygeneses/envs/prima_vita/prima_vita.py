@@ -69,11 +69,7 @@ class PrimaVita:
             pass
 
         pygame.display.update()
-
-        eval(model_to_class[model_name])(
-            self.initial_population, self.state_size, self.action_size
-        )
-
+        
     def reset_logs(self):
         if os.path.exists(self.log_dir):
             shutil.rmtree(self.log_dir)
