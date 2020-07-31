@@ -81,10 +81,11 @@ def get_life_stats(address):
     #Return various stats based on lifetime of players
     '''
         Inputs:
-            address :-  Address of the folder containing the log Files
+            address  :-  Address of the folder containing the log Files
         Returns:
-            mean :- Dictionary containting the mean of lifetimes of players born at a particular time. {time_of_birth:mean}
-            variance :- Dictionary containting the variance of lifetimes of players born at a particular time. {time_of_birth:variance}
+            mean     :- Dictionary containting the mean of lifetimes of players born at a particular time. {time_of_birth: mean}
+            variance :- Dictionary containting the variance of lifetimes of players born at a particular time. {time_of_birth: variance}
+            qof      :- Dictionary containing the Quality of life index of players born at a particulartime . {time: count_qof}
     '''
     f_names = os.listdir(address)
     f_names = check_ext(f_names)
@@ -97,16 +98,19 @@ def get_life_stats(address):
         life_data = add_life_exp(life, tob, life_data)
     variance = {}
     mean = {}
+    qof = {}
     for i in life_data.keys():
         if len(life_data[i]) == 1:
             variance[i] = 0
             mean[i] = life_data[i][0]
+            qof[i] = 1 if life_data[i][0] >= 85 else 0
             continue
+        qof[i] = sum(np.array(life_data[i])>30)
         variance[i] = statistics.stdev(life_data[i])
         mean[i] = statistics.mean(life_data[i])
-    return mean, variance
+    return mean, variance, qof
 
 #Uncomment to check if the functions are working properly
-'''print(get_life_stats(r"C:\Users\PD-PC\Desktop\pygeneses\Players_Data"))
-print("#"*100)
-print(gen_fam_graph(r"C:\Users\PD-PC\Desktop\pygeneses\Players_Data"))'''
+'''print(get_life_stats("C:\\Users\\PD-PC\\Desktop\\pygeneses\\Players_Data"))
+print("#"*70)
+print(gen_fam_graph("C:\\Users\\PD-PC\\Desktop\\pygeneses\\Players_Data")) '''
