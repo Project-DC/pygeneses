@@ -103,7 +103,7 @@ class PrimaVita:
         self.particles_to_regrow = (
             20,
             40,
-        )  # Control this food to control max population
+        )
         self.model = 0
         self.model_updates = model_updates
         self.speed = 3
@@ -273,14 +273,14 @@ class PrimaVita:
 
     def take_action(self, idx, state):
         """
-            Take an action, make changes to environment, return rewards
+        Take an action, make changes to environment, return rewards
 
-            Params
-            ======
-            idx   (int)
-                : Index of the player to take action
-            state (numpy.ndarray)
-                : State that the agent currently experiences
+        Params
+        ======
+        idx   (int)
+            : Index of the player to take action
+        state (numpy.ndarray)
+            : State that the agent currently experiences
         """
 
         # Predict action and return embedding using RL model used
@@ -574,9 +574,7 @@ class PrimaVita:
                 self.players[i].food_near = env_particle_distance
 
                 # Compute distance vector for the food particles in fixed radius
-                env_food_vector = self.getFoodVector(
-                    self.players[i], env_particles
-                )
+                env_food_vector = self.getFoodVector(self.players[i], env_particles)
 
                 # Find players in proximity
                 env_players, env_player_distance = self.players_in_env(self.players[i])
@@ -585,14 +583,10 @@ class PrimaVita:
                 self.players[i].players_near = env_player_distance
 
                 # Compute distance vector for players in proximity
-                env_player_vector = self.getPlayerVector(
-                    self.players[i], env_players
-                )
+                env_player_vector = self.getPlayerVector(self.players[i], env_players)
 
                 # Change colors of food particles in proximity
-                for index in range(
-                    0, len(env_particles)
-                ):
+                for index in range(0, len(env_particles)):
                     local = env_particles[index]
                     if type(self.food_particles[local]) != int:
                         self.food_particles[local].show_close()
@@ -648,24 +642,24 @@ class PrimaVita:
 
     def update_time(self):
         """
-            Update time of the environment
+        Update time of the environment
         """
 
         self.time += 1
 
     def food_nearby(self, player):
         """
-            Find nearby food
+        Find nearby food
 
-            Params
-            ======
-            player (pygeneses.envs.prima_vita.player_class.Player)
-                : The player whose surroundings is to be checked for food particle
+        Params
+        ======
+        player (pygeneses.envs.prima_vita.player_class.Player)
+            : The player whose surroundings is to be checked for food particle
 
-            Returns
-            =======
-            i/-1 (int)
-                : The index of closest food particle if available or -1
+        Returns
+        =======
+        i/-1 (int)
+            : The index of closest food particle if available or -1
         """
 
         # If player is dead then return -1
@@ -690,19 +684,19 @@ class PrimaVita:
 
     def food_in_env(self, player):
         """
-            Return all food particles within a fixed radius of the agent
+        Return all food particles within a fixed radius of the agent
 
-            Params
-            ======
-            player (pygeneses.envs.prima_vita.player_class.Player)
-                : The player whose surroundings is to be checked for food particle
+        Params
+        ======
+        player (pygeneses.envs.prima_vita.player_class.Player)
+            : The player whose surroundings is to be checked for food particle
 
-            Returns
-            =======
-            env       (list)
-                : The index of food particles inside fixed radius of current agent
-            distances (list)
-                : The distances of food particles from the agent
+        Returns
+        =======
+        env       (list)
+            : The index of food particles inside fixed radius of current agent
+        distances (list)
+            : The distances of food particles from the agent
         """
 
         # Create empty lists
@@ -733,19 +727,19 @@ class PrimaVita:
 
     def players_in_env(self, host):
         """
-            Return all players within a fixed radius of the current player
+        Return all players within a fixed radius of the current player
 
-            Params
-            ======
-            host (pygeneses.envs.prima_vita.player_class.Player)
-                : The player whose surroundings is to be checked for food particle
+        Params
+        ======
+        host (pygeneses.envs.prima_vita.player_class.Player)
+            : The player whose surroundings is to be checked for food particle
 
-            Returns
-            =======
-            env       (list)
-                : The index of players inside fixed radius of current player
-            distances (list)
-                : The distances of food particles from the agent
+        Returns
+        =======
+        env       (list)
+            : The index of players inside fixed radius of current player
+        distances (list)
+            : The distances of food particles from the agent
         """
 
         # Create empty lists
@@ -775,23 +769,23 @@ class PrimaVita:
 
     def getPlayerVector(self, host, env_players):
         """
-            Return all player vectors within a fixed radius of the current player
+        Return all player vectors within a fixed radius of the current player
 
-            Params
-            ======
-            host        (pygeneses.envs.prima_vita.player_class.Player)
-                : The player whose surroundings is to be checked for food particle
-            env_players (list)
-                : The indexes of players in proximity to current player
+        Params
+        ======
+        host        (pygeneses.envs.prima_vita.player_class.Player)
+            : The player whose surroundings is to be checked for food particle
+        env_players (list)
+            : The indexes of players in proximity to current player
 
-            Returns
-            =======
-            X   (list)
-                : Distance along x-axis
-            Y   (list)
-                : Distance along y-axis
-            sex (list)
-                : Sex of player in radius
+        Returns
+        =======
+        X   (list)
+            : Distance along x-axis
+        Y   (list)
+            : Distance along y-axis
+        sex (list)
+            : Sex of player in radius
         """
 
         # Create empty lists
@@ -823,21 +817,21 @@ class PrimaVita:
 
     def getFoodVector(self, player, env_particles):
         """
-            Return all food particle vectors within a fixed radius of the current player
+        Return all food particle vectors within a fixed radius of the current player
 
-            Params
-            ======
-            host          (pygeneses.envs.prima_vita.player_class.Player)
-                : The player whose surroundings is to be checked for food particle
-            env_particles (list)
-                : The indexes of food particles in proximity to current player
+        Params
+        ======
+        host          (pygeneses.envs.prima_vita.player_class.Player)
+            : The player whose surroundings is to be checked for food particle
+        env_particles (list)
+            : The indexes of food particles in proximity to current player
 
-            Returns
-            =======
-            X   (list)
-                : Distance along x-axis
-            Y   (list)
-                : Distance along y-axis
+        Returns
+        =======
+        X   (list)
+            : Distance along x-axis
+        Y   (list)
+            : Distance along y-axis
         """
 
         # Create empty lists
@@ -863,17 +857,17 @@ class PrimaVita:
 
     def search_mate(self, host):
         """
-            Search for a mate (for sexual reproduction)
+        Search for a mate (for sexual reproduction)
 
-            Params
-            ======
-            host (pygeneses.envs.prima_vita.player_class.Player)
-                : The player whose surroundings is to be checked for food particle
+        Params
+        ======
+        host (pygeneses.envs.prima_vita.player_class.Player)
+            : The player whose surroundings is to be checked for food particle
 
-            Returns
-            =======
-            env/-1 (int)
-                : Closest agent in proximity to current agent (to mate with)
+        Returns
+        =======
+        env/-1 (int)
+            : Closest agent in proximity to current agent (to mate with)
         """
 
         env = []
@@ -908,17 +902,17 @@ class PrimaVita:
 
     def search_enemy(self, host):
         """
-            Search for a player to fight with
+        Search for a player to fight with
 
-            Params
-            ======
-            host (pygeneses.envs.prima_vita.player_class.Player)
-                : The player whose surroundings is to be checked for food particle
+        Params
+        ======
+        host (pygeneses.envs.prima_vita.player_class.Player)
+            : The player whose surroundings is to be checked for food particle
 
-            Returns
-            =======
-            env/-1 (int)
-                : Closest agent in proximity to current agent (to fight with)
+        Returns
+        =======
+        env/-1 (int)
+            : Closest agent in proximity to current agent (to fight with)
         """
 
         env = []
@@ -950,7 +944,7 @@ class PrimaVita:
 
     def check_particles(self):
         """
-            Remove particles that are too close to others
+        Remove particles that are too close to others
         """
 
         # Loop through all food particles
@@ -975,7 +969,7 @@ class PrimaVita:
 
     def regenerate_species(self):
         """
-            Generate/Regenerate species based on certain initial population count given
+        Generate/Regenerate species based on certain initial population count given
         """
 
         # Loop till iterator reaches initial population count
@@ -985,7 +979,7 @@ class PrimaVita:
 
     def refreshParticles(self):
         """
-            Replenish food particles based on certain conditions
+        Replenish food particles based on certain conditions
         """
 
         # Choose the number of particles to be generated
