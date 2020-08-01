@@ -491,78 +491,119 @@ class PrimaVita:
 
                 # Update logs for failed sexual reproduction action
                 self.players[idx].update_history(action, self.time, reward)
-        elif action == 12:  # Fight
+        # Action: fight
+        elif action == 12:
+
+            # If current agent is not fighting with anyone else
             if self.players[idx].fighting_with == -1:
+
+                # Search enemy (closest agent, no personal grudges :) )
                 enemy = self.search_enemy(self.players[idx])
+
+                # If an agent is found in some fixed radius then
                 if enemy != -1:
+
+                    # Fighting isn't promoted, so a negative reward is given
                     reward = -1
+
+                    # Fighting action
                     self.players[idx].fighting_with = enemy
                     self.players[enemy].fighting_with = idx
                     self.players[idx].energy -= 10
                     self.players[enemy].energy -= 10
                     self.players[idx].fighting_with = -1
                     self.players[enemy].fighting_with = -1
+
+                    # Log fight action
                     self.players[idx].update_history(
                         action, self.time, reward, fight_with=enemy
                     )
+
+                    # Log fight action
                     self.players[enemy].update_history(
                         action, self.time, reward, fight_with=idx
                     )
+                # If there is no agent in agent
                 else:
                     reward = -10
+
+                    # Log failed fight action
                     self.players[idx].update_history(action, self.time, reward)
+            # If the agent is already fighting with another agent (we do not promote mob fighting)
             else:
                 reward = -10
+
+                # Log failed fight action
                 self.players[idx].update_history(action, self.time, reward)
 
+        # Log all the movement actions
         if action <= 7:
+            # Failed movement action
             if self.players[idx].cannot_move == False:
                 self.players[idx].update_history(action, self.time, reward)
+            # Successful movement action
             else:
                 self.players[idx].update_history(action, self.time, reward)
 
-        if self.food_regen_condition_is_met:  # FOOD REGEN PART always false for now
+        # If food regeneration condition is met then regenerate food particles
+        if self.food_regen_condition_is_met:
             print("Food regenerated!")
             self.food_particles, _ = self.refreshParticles()
             self.food_regen_condition_is_met = False
 
-        # Show particles
+        # Show all particles
         for j in range(len(self.food_particles)):
             if type(self.food_particles[j]) != int:
                 self.food_particles[j].show_particle()
 
         now_time = self.time
 
+        # Loop through all the players
         for i in range(len(self.players)):
+            # If agent is still alive
             if i not in self.killed:
+                # Put rewards and scores into players object
                 if i == idx:
                     self.model.rewards[idx].append(reward)
                     self.model.scores[idx] += reward
 
+                # Find food particles in fixed radius
                 env_particles, env_particle_distance = self.food_in_env(self.players[i])
+
+                # Push the food particles near an agent to its object
                 self.players[i].food_near = env_particle_distance
+
+                # Compute distance vector for the food particles in fixed radius
                 env_food_vector = self.getFoodVector(
                     self.players[i], env_particles
-                )  # VECTOR FOOD
+                )
 
+                # Find players in proximity
                 env_players, env_player_distance = self.players_in_env(self.players[i])
+
+                # Push the players in proximity to this agent to current agent's object
                 self.players[i].players_near = env_player_distance
+
+                # Compute distance vector for players in proximity
                 env_player_vector = self.getPlayerVector(
                     self.players[i], env_players
-                )  # VECTOR player
+                )
 
+                # Change colors of food particles in proximity
                 for index in range(
                     0, len(env_particles)
-                ):  # change color of food in env_particles
+                ):
                     local = env_particles[index]
                     if type(self.food_particles[local]) != int:
                         self.food_particles[local].show_close()
 
+                # Change color of players in proximity
                 if not env_players:
                     self.players[i].show_player()
                 else:
                     self.players[i].show_close()
 
+                # Check if ingestion action is complete or not (if ingesting)
                 if (
                     type(self.players[i]) != int
                     and self.players[i].ingesting_begin_time != 0
@@ -572,6 +613,7 @@ class PrimaVita:
                     self.players[i].ingesting_begin_time = 0
                     self.players[i].cannot_move = False
 
+                # Check if mating action is complete or not (if mating)
                 if (
                     type(self.players[i]) != int
                     and self.players[i].mating_begin_time != 0
@@ -580,12 +622,14 @@ class PrimaVita:
                     self.players[i].mating_begin_time = 0
                     self.players[i].cannot_move = False
 
+                # If the agent's energy is less than or equal to zero (0) kill the agent
                 if type(self.players[i]) != int and self.players[i].energy <= 0:
                     self.players[i].write_data(self.time)
                     self.players[i] = 0
                     self.killed = np.append(self.killed, i)
                     self.model.kill_agent(i)
 
+                # If the agent has reached maximum age then kill the agent
                 if (
                     type(self.players[i]) != int
                     and now_time - self.players[i].born_at >= self.max_age
@@ -595,39 +639,92 @@ class PrimaVita:
                     self.killed = np.append(self.killed, i)
                     self.model.kill_agent(i)
 
+        # Update NN for each agent every self.model_updates time steps
         if now_time % self.model_updates == 0:
             self.model.update_all_agents()
 
-        # Update the window
+        # Update the pygame window
         pygame.display.update()
 
     def update_time(self):
+        """
+            Update time of the environment
+        """
+
         self.time += 1
 
     def food_nearby(self, player):
+        """
+            Find nearby food
+
+            Params
+            ======
+            player (pygeneses.envs.prima_vita.player_class.Player)
+                : The player whose surroundings is to be checked for food particle
+
+            Returns
+            =======
+            i/-1 (int)
+                : The index of closest food particle if available or -1
+        """
+
+        # If player is dead then return -1
         if type(player) == int:
             return -1
+        # Otherwise loop through all food particles
         for i, food_particle in enumerate(self.food_particles):
+            # If food particle hasn't been consumed yet
             if type(food_particle) != int:
+                # Compute euclidean distance between player and food particle
                 ed = (
                     (food_particle.particleX - (player.playerX + 16)) ** 2
                     + (food_particle.particleY - (player.playerY + 16)) ** 2
                 ) ** (1 / 2)
+
+                # If distance is less than or equal to 20 then return index of that food particle
                 if ed <= 20:
                     return i
+
+        # If there isn't any food particle in range of the agent then return -1
         return -1
 
     def food_in_env(self, player):
+        """
+            Return all food particles within a fixed radius of the agent
+
+            Params
+            ======
+            player (pygeneses.envs.prima_vita.player_class.Player)
+                : The player whose surroundings is to be checked for food particle
+
+            Returns
+            =======
+            env       (list)
+                : The index of food particles inside fixed radius of current agent
+            distances (list)
+                : The distances of food particles from the agent
+        """
+
+        # Create empty lists
         env = []
         distances = []
+
+        # If agent is dead return -1
         if type(player) == int:
             return -1
+
+        # Otherwise loop through all food particles
         for i, food_particle in enumerate(self.food_particles):
+
+            # If food particles isn't consumed yet
             if type(food_particle) != int:
+                # Compute euclidean distance of food particle and current agent
                 ed = (
                     (food_particle.particleX - (player.playerX)) ** 2
                     + (food_particle.particleY - (player.playerY)) ** 2
                 ) ** (1 / 2)
+
+                # If distance is less than or equal to 100 then push to lists
                 if ed <= 100:
                     env.append(i)
                     distances.append(ed)
@@ -635,16 +732,41 @@ class PrimaVita:
         return env, distances
 
     def players_in_env(self, host):
+        """
+            Return all players within a fixed radius of the current player
+
+            Params
+            ======
+            host (pygeneses.envs.prima_vita.player_class.Player)
+                : The player whose surroundings is to be checked for food particle
+
+            Returns
+            =======
+            env       (list)
+                : The index of players inside fixed radius of current player
+            distances (list)
+                : The distances of food particles from the agent
+        """
+
+        # Create empty lists
         env = []
         distances = []
+
+        # If player is dead then return -1
         if type(host) == int:
             return [], []
+
+        # Otherwise loop through all players
         for i, player in enumerate(self.players):
+            # If the player is not dead and is not the host itself then
             if (type(player) != int) and (player != host):
+                # Compute euclidean distance between two agents
                 ed = (
                     (host.playerX - (player.playerX)) ** 2
                     + (host.playerY - (player.playerY)) ** 2
                 ) ** (1 / 2)
+
+                # If distance is less than equal to 100 then push to list
                 if ed <= 100:
                     env.append(i)
                     distances.append(ed)
@@ -652,13 +774,41 @@ class PrimaVita:
         return env, distances
 
     def getPlayerVector(self, host, env_players):
+        """
+            Return all player vectors within a fixed radius of the current player
+
+            Params
+            ======
+            host        (pygeneses.envs.prima_vita.player_class.Player)
+                : The player whose surroundings is to be checked for food particle
+            env_players (list)
+                : The indexes of players in proximity to current player
+
+            Returns
+            =======
+            X   (list)
+                : Distance along x-axis
+            Y   (list)
+                : Distance along y-axis
+            sex (list)
+                : Sex of player in radius
+        """
+
+        # Create empty lists
         X = []
         Y = []
         sex = []
+
+        # If current agent is dead then return empty lists
         if type(host) == int:
             return [], []
+
+        # Mapping gender to number
         gender_to_number = {"Female": 1, "Male": 2}
+
+        # Otherwise loop through all agents in proximity
         for idx in env_players:
+            # If player is not dead or the host itself then append to lists
             if (type(self.players[idx]) != int) and (self.players[idx] != host):
                 X.append((host.playerX - self.players[idx].playerX))
                 Y.append((host.playerY - self.players[idx].playerY))
@@ -672,11 +822,35 @@ class PrimaVita:
         return list([X, Y, sex])
 
     def getFoodVector(self, player, env_particles):
+        """
+            Return all food particle vectors within a fixed radius of the current player
+
+            Params
+            ======
+            host          (pygeneses.envs.prima_vita.player_class.Player)
+                : The player whose surroundings is to be checked for food particle
+            env_particles (list)
+                : The indexes of food particles in proximity to current player
+
+            Returns
+            =======
+            X   (list)
+                : Distance along x-axis
+            Y   (list)
+                : Distance along y-axis
+        """
+
+        # Create empty lists
         X = []
         Y = []
+
+        # If current agent is dead then return empty lists
         if type(player) == int:
             return [], []
+
+        # Otherwise loop through all food particles in proximity
         for idx in env_particles:
+            # If the food particles hasn't been consumed yet then push to lists
             if type(self.food_particles[idx]) != int:
                 X.append((player.playerX - self.food_particles[idx].particleX))
                 Y.append((player.playerY - self.food_particles[idx].particleY))
@@ -688,10 +862,30 @@ class PrimaVita:
         return list([X, Y])
 
     def search_mate(self, host):
+        """
+            Search for a mate (for sexual reproduction)
+
+            Params
+            ======
+            host (pygeneses.envs.prima_vita.player_class.Player)
+                : The player whose surroundings is to be checked for food particle
+
+            Returns
+            =======
+            env/-1 (int)
+                : Closest agent in proximity to current agent (to mate with)
+        """
+
         env = []
+
+        # If agent is dead then return -1
         if type(host) == int:
             return -1
+
+        # Otherwise loop through all players
         for i, player in enumerate(self.players):
+            # If player isn't dead and isn't the host itself and is not impotent
+            # and is of appropriate age of reproduction and gender is not opposite of host then
             if (
                 (type(player) != int)
                 and (player != host)
@@ -699,58 +893,113 @@ class PrimaVita:
                 and ((self.time - player.born_at) in range(10, 61))
                 and (player.gender != host.gender)
             ):
+                # Compute euclidean distance between player and host
                 ed = (
                     ((host.playerX + 16) - (player.playerX + 16)) ** 2
                     + ((host.playerY + 16) - (player.playerY + 16)) ** 2
                 ) ** (1 / 2)
+
+                # If distance is less than or equal to 30 then append it to env list
                 if ed <= 30:
                     env.append(i)
 
+        # Return the closes agent, if there is one else return -1
         return env[np.array(env).argsort()[0]] if len(env) > 0 else -1
 
     def search_enemy(self, host):
+        """
+            Search for a player to fight with
+
+            Params
+            ======
+            host (pygeneses.envs.prima_vita.player_class.Player)
+                : The player whose surroundings is to be checked for food particle
+
+            Returns
+            =======
+            env/-1 (int)
+                : Closest agent in proximity to current agent (to fight with)
+        """
+
         env = []
+
+        # If agent is dead then return -1
         if type(host) == int:
             return -1
+
+        # Otherwise loop through all players
         for i, player in enumerate(self.players):
+            # If player isn't dead and isn't the host itself and isn't fighting with anyone else
             if (
                 (type(player) != int)
                 and (player != host)
                 and (player.fighting_with == -1)
             ):
+                # Compute euclidean distance between player and host
                 ed = (
                     ((host.playerX + 16) - (player.playerX + 16)) ** 2
                     + ((host.playerY + 16) - (player.playerY + 16)) ** 2
                 ) ** (1 / 2)
+
+                # If distance is less than or equal to 30 then append it to env list
                 if ed <= 30:
                     env.append(i)
 
+        # Return the closes agent, if there is one else return -1
         return env[np.array(env).argsort()[0]] if len(env) > 0 else -1
 
     def check_particles(self):
+        """
+            Remove particles that are too close to others
+        """
+
+        # Loop through all food particles
         for my_particle in self.food_particles:
+            # Again loop through all food particles
             for j, my_particle_inner in enumerate(self.food_particles):
+                # If food particle isn't consumed then
                 if (
                     my_particle_inner != my_particle
                     and type(my_particle) != int
                     and type(my_particle_inner) != int
                 ):
+                    # Compute euclidean distance
                     ed = (
                         (my_particle.particleX - my_particle_inner.particleX) ** 2
                         + (my_particle.particleY - my_particle_inner.particleY) ** 2
                     ) ** (1 / 2)
+
+                    # If distance is less than 20 then delete the food particle
                     if ed < 20:
                         self.food_particles[j] = 0
 
     def regenerate_species(self):
+        """
+            Generate/Regenerate species based on certain initial population count given
+        """
+
+        # Loop till iterator reaches initial population count
         for i in range(self.initial_population):
+            # Generate a new player and add it to player pool
             self.players = np.append(self.players, Player(i, self.time))
 
     def refreshParticles(self):
+        """
+            Replenish food particles based on certain conditions
+        """
+
+        # Choose the number of particles to be generated
         NEW_PARTICLES = random.randint(
             self.particles_to_regrow[0], self.particles_to_regrow[1]
         )
+
+        # Loop through all new particles
         for j in range(NEW_PARTICLES):
+            # Generate food particle and append to food particles pool
             self.food_particles = np.append(self.food_particles, Particle())
+
+        # Delete food particles which are too close to others
         self.food_particles = self.check_particles()
+
+        # Update the total number of particles
         self.number_of_particles += NEW_PARTICLES
