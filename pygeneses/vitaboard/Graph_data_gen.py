@@ -57,9 +57,9 @@ def gen_fam_graph(address):
         i = values[1]
         if i.shape ==  (2,):
             add_node(f_name, str(i[1])+'-'+str(i[0]), Fam_Tree)
-        elif len(i) == (2,2):
+        elif i.shape == (2,2):
             add_node(f_name, str(i[0][1])+'-'+str(i[0][0]), Fam_Tree)
-            add_node(f_name, str(i[1][2])+'-'+str(i[1][3]), Fam_Tree)
+            add_node(f_name, str(i[1][1])+'-'+str(i[1][0]), Fam_Tree)
     return Fam_Tree
 
 def add_life_exp(life, tob, life_data):
