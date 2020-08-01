@@ -44,7 +44,7 @@ class Player:
         self.action_history.append(np.array([id, tob]))
 
     def write_data(self, time):
-        print(f"\U0001F622 RIP {self.born_at}-{self.index}")
+        print(f"RIP {self.born_at}-{self.index}")
         file_name =  str(self.born_at) + "-" + str(self.index)
         file = open("Players_Data/" + file_name + ".npy", "wb")
         np.save(file, np.array(self.action_history))
