@@ -109,12 +109,14 @@ class Player:
         # Add the initial x, y coordinates as first entry in logs
         self.action_history.append([self.playerX, self.playerY])
 
-    def Add_Parent(self, id, tob):
+    def Add_Parent(self, id, tob, mate_id = -1, mate_tob = -1):
         """
         Add parent information to logs
         """
-
-        self.action_history.append(np.array([id, tob]))
+        if mate_id == -1:
+            self.action_history.append(np.array([id, tob]))
+        else:
+            self.action_history.append(np.array([[id, tob],[mate_id, mate_tob]]))
 
     def write_data(self, time):
         """
@@ -354,7 +356,7 @@ class Player:
 
         return offspring_players, offspring_ids
 
-    def sexual_reproduction(self, mating_begin_time, lenPlayers, gen_offspring=False):
+    def sexual_reproduction(self, mating_begin_time, lenPlayers, gen_offspring=False, mate_id = -1, mate_tob = -1):
         """
         Perform sexual reproduction action
 
@@ -366,6 +368,10 @@ class Player:
             : Number of players currently in environment
         gen_offspring     (bool)
             : Whether to generate
+        mate_id           (int)
+            : Id of the mate
+        mate_tob          (int)
+            : Time of birth of the mate
 
         Returns
         =======
@@ -404,7 +410,7 @@ class Player:
                 offspring_players.append(Player(id_offspring, mating_begin_time))
 
                 # Add current player as parent to all offspring objects
-                offspring_players[i].Add_Parent(self.index, self.born_at)
+                offspring_players[i].Add_Parent(self.index, self.born_at, mate_id, mate_tob)
 
             return offspring_players, offspring_ids
 

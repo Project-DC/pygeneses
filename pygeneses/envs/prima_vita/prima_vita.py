@@ -427,7 +427,7 @@ class PrimaVita:
                     # Get offsprings after sexual reproduction
                     offspring_players, offspring_ids = self.players[
                         idx
-                    ].sexual_reproduction(mating_begin_time, len(self.players), True)
+                    ].sexual_reproduction(mating_begin_time, len(self.players), True, mate_id = mate_idx, mate_tob = self.players[mate_idx].born_at)
 
                     # Perform mating for other parent too but don't generate offsprings
                     self.players[mate_idx].sexual_reproduction(
