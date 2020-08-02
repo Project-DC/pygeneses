@@ -118,7 +118,6 @@ class Player:
         else:
             self.action_history.append(np.array([[id, tob],[mate_id, mate_tob]]))
 
-
     def write_data(self, time):
         """
         Write logs to npy file when player dies
@@ -373,6 +372,7 @@ class Player:
             : Id of the mate
         mate_tob          (int)
             : Time of birth of the mate
+
         Returns
         =======
             offspring_players (list)
