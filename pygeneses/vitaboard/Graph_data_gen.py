@@ -4,12 +4,17 @@ import numpy as np
 import re
 import statistics
 def check_ext(f_names):
-    #Filter Files based on extension (.npy)
     '''
-        Input:
-            f_name :- list containing all the names of files
-        Returns:
-            filtered_names :- list containing all file names containing .npy extension
+    Filter Files based on extension (.npy)
+
+    Params
+    ======
+    f_name (list)
+            :- list containing all the names of files
+    Returns:
+    ======
+    filtered_names (list)
+            :- list containing all file names containing .npy extension
     '''
     filtered_names = []
     for name in f_names:
@@ -21,54 +26,77 @@ def check_ext(f_names):
 
 
 
-def add_node(id, parent_id, Fam_Tree):
-    #Function to add a node to the graph
+def add_node(id, parent_id, fam_tree):
     '''
-        Inputs:
-            id :- file name of the current node (to be added)
-            parent_id :- file name (minus the extension) of the parent of id
-            Fam_Tree :- Dictionary Containing {id: parents}
+        Function to add a node to the graph
+
+        Params :
+        ======
+        id (String)
+                :- file name of the current node (to be added)
+
+        parent_id (String)
+                :- file name (minus the extension) of the parent of id
+
+        fam_tree (Dictionary)
+                :- Dictionary Containing {id: parents}
+
     '''
     if parent_id != None:
         parent_id = parent_id+".npy"
-    if id not in Fam_Tree:
-        Fam_Tree[id] =[parent_id]
+    if id not in fam_tree:
+        fam_tree[id] =[parent_id]
     elif parent_id != []:
-        Fam_Tree[id].append(parent_id)
+        fam_tree[id].append(parent_id)
 
 
 
 def gen_fam_graph(address):
-    #Generate Family graph
     '''
-        Inputs:
-            address :- Address of the folder containing the log Files
-        Returns:
-            Fam_Tree :- Dictionary containing the family Trees. {id :[parent1, parent2]}
+        Generate Family graph
+
+        Params :
+        ======
+        address (String)
+            :- Address of the folder containing the log Files
+
+        Returns :
+        ======
+        fam_tree (Dictionary)
+            :- Dictionary containing the family Trees. {id :[parent1, parent2]}
     '''
     #Initialise Dictionary
-    Fam_Tree = {}
-
+    fam_tree = {}
     f_names = os.listdir(address)
     f_names = check_ext(f_names)
 
     for f_name in f_names:
-        values = np.load(address+'/'+f_name, allow_pickle = True)
-        i = values[1]
-        if i.shape ==  (2,):
-            add_node(f_name, str(i[1])+'-'+str(i[0]), Fam_Tree)
-        elif i.shape == (2,2):
-            add_node(f_name, str(i[0][1])+'-'+str(i[0][0]), Fam_Tree)
-            add_node(f_name, str(i[1][1])+'-'+str(i[1][0]), Fam_Tree)
-    return Fam_Tree
+        log_values = np.load(address+'/'+f_name, allow_pickle = True)
+        parents = log_values[1]
+        if parents.shape ==  (2,):
+            add_node(f_name, str(parents[1])+'-'+str(i[0]), fam_tree)
+        elif parents.shape == (2,2):
+            add_node(f_name, str(parents[0][1])+'-'+str(parents[0][0]), fam_tree)
+            add_node(f_name, str(parents[1][1])+'-'+str(parents[1][0]), fam_tree)
+    return fam_tree
 
 def add_life_exp(life, tob, life_data):
-    #Function to add values to mean and variance
     '''
-        Inputs :-
-            life        :- The life time of the player
-            tob         :- Time of birth of the player
-            life_data   :- Dictionary containing the values {tob : life} for players
+        Function to add values to mean and variance
+
+        Params :-
+        =====
+        life (int)
+            :- The life time of the player
+        tob (int)
+            :- Time of birth of the player
+        life_data(Dictionary)
+            :- Dictionary containing the values {tob : life} for players
+
+        Returns :-
+        =====
+        life_data (Dictionary)
+            :- Dictionary Containing the values {tob : life} for players
     '''
 
     if tob not in life_data.keys():
@@ -78,24 +106,33 @@ def add_life_exp(life, tob, life_data):
     return life_data
 
 def get_life_stats(address):
-    #Return various stats based on lifetime of players
     '''
-        Inputs:
-            address  :-  Address of the folder containing the log Files
+        Return various stats based on lifetime of players
+
+        Params:
+        =====
+        address (String)
+            :-  Address of the folder containing the log Files
         Returns:
-            mean     :- Dictionary containting the mean of lifetimes of players born at a particular time. {time_of_birth: mean}
-            variance :- Dictionary containting the variance of lifetimes of players born at a particular time. {time_of_birth: variance}
-            qof      :- Dictionary containing the Quality of life index of players born at a particulartime . {time: count_qof}
+        =====
+        mean  (Dictionary)
+            :- Dictionary containting the mean of lifetimes of players born at a particular time. {time_of_birth: mean}
+
+        variance (Dictionary)
+            :- Dictionary containting the variance of lifetimes of players born at a particular time. {time_of_birth: variance}
+
+        qof   (Dictionary)
+            :- Dictionary containing the Quality of life index of players born at a particular time . {time: count_qof}
     '''
     f_names = os.listdir(address)
     f_names = check_ext(f_names)
     life_data = {}
     for f_name in f_names:
-        vals = np.load(address+'/'+f_name, allow_pickle = True)
+        log_values = np.load(address+'/'+f_name, allow_pickle = True)
         tob, id = f_name.split('-')
-        tod = vals[-1][1]
-        life = tod-int(tob)
-        life_data = add_life_exp(life, tob, life_data)
+        tod = log_values[-1][1]
+        lifetime = tod-int(tob)
+        life_data = add_life_exp(lifetime, tob, life_data)
     variance = {}
     mean = {}
     qof = {}

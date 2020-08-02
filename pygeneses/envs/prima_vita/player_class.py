@@ -102,14 +102,13 @@ class Player:
         self.mating_begin_time = 0
         self.fighting_with = -1
         self.energy = 200
-
         self.embeddings = np.array([0])
         self.states = []
 
         # Add the initial x, y coordinates as first entry in logs
         self.action_history.append([self.playerX, self.playerY])
 
-    def Add_Parent(self, id, tob, mate_id = -1, mate_tob = -1):
+    def add_parent(self, id, tob, mate_id = -1, mate_tob = -1):
         """
         Add parent information to logs
         """
@@ -352,7 +351,7 @@ class Player:
             offspring_players.append(Player(id_offspring, time_given))
 
             # Add current player as parent to all offspring objects
-            offspring_players[i].Add_Parent(self.index, self.born_at)
+            offspring_players[i].add_parent(self.index, self.born_at)
 
         return offspring_players, offspring_ids
 
@@ -410,7 +409,7 @@ class Player:
                 offspring_players.append(Player(id_offspring, mating_begin_time))
 
                 # Add current player as parent to all offspring objects
-                offspring_players[i].Add_Parent(self.index, self.born_at, mate_id, mate_tob)
+                offspring_players[i].add_parent(self.index, self.born_at, mate_id, mate_tob)
 
             return offspring_players, offspring_ids
 
