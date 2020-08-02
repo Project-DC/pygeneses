@@ -371,7 +371,7 @@ class Player:
             : Whether to generate
         mate_id           (int)
             : Id of the mate
-        mate_dob
+        mate_tob          (int)
             : Time of birth of the mate
         Returns
         =======
