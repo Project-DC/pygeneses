@@ -19,13 +19,26 @@ pygame.display.update()
 
 myfont = pygame.font.SysFont("monospace", 32)
 
-def current_action(action):
-    action_number_to_action = {0: 'Left', 1: 'Right', 2: 'Up', 3: 'Down', 4: 'Up Left',
-    5: 'Up Right', 6: 'Down Left', 7: 'Down Right', 8: 'Stay'}
 
-    actiontext = myfont.render("Action: " + action_number_to_action[action], 1, (255, 255, 255))
+def current_action(action):
+    action_number_to_action = {
+        0: "Left",
+        1: "Right",
+        2: "Up",
+        3: "Down",
+        4: "Up Left",
+        5: "Up Right",
+        6: "Down Left",
+        7: "Down Right",
+        8: "Stay",
+    }
+
+    actiontext = myfont.render(
+        "Action: " + action_number_to_action[action], 1, (255, 255, 255)
+    )
 
     return actiontext
+
 
 file_location = sys.argv[1]
 
