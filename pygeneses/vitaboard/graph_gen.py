@@ -193,6 +193,6 @@ def get_life_stats(address):
 
 
 # Uncomment to check if the functions are working properly
-'''print(get_life_stats("C:\\Users\\PD-PC\\Desktop\\pygeneses\\Players_Data"))
+"""print(get_life_stats("C:\\Users\\PD-PC\\Desktop\\pygeneses\\Players_Data"))
 print("#"*70)
-print(gen_fam_graph("C:\\Users\\PD-PC\\Desktop\\pygeneses\\Players_Data"))'''
+print(gen_fam_graph("C:\\Users\\PD-PC\\Desktop\\pygeneses\\Players_Data"))"""

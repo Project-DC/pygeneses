@@ -221,10 +221,14 @@ class PrimaVita:
             # If a player is not dead then
             if type(self.players[i]) != int:
                 # Get the food particles in environment
-                env_food_vector, env_particle_distance = self.food_in_env(self.players[i])
+                env_food_vector, env_particle_distance = self.food_in_env(
+                    self.players[i]
+                )
 
                 # Get the agents in environment
-                env_player_vector, env_player_distance = self.players_in_env(self.players[i])
+                env_player_vector, env_player_distance = self.players_in_env(
+                    self.players[i]
+                )
 
                 # Stack together the food and player vectors
                 temp_state = [env_food_vector, env_player_vector]
@@ -409,7 +413,13 @@ class PrimaVita:
                     # Get offsprings after sexual reproduction
                     offspring_players, offspring_ids = self.players[
                         idx
-                    ].sexual_reproduction(mating_begin_time, len(self.players), True, mate_id = mate_idx, mate_tob = self.players[mate_idx].born_at)
+                    ].sexual_reproduction(
+                        mating_begin_time,
+                        len(self.players),
+                        True,
+                        mate_id=mate_idx,
+                        mate_tob=self.players[mate_idx].born_at,
+                    )
 
                     # Perform mating for other parent too but don't generate offsprings
                     self.players[mate_idx].sexual_reproduction(
@@ -550,13 +560,21 @@ class PrimaVita:
                     self.model.scores[idx] += reward
 
                 # Find food particles in fixed radius
-                env_food_vector, env_particle_distance, env_particles = self.food_in_env(self.players[i], get_idx=True)
+                (
+                    env_food_vector,
+                    env_particle_distance,
+                    env_particles,
+                ) = self.food_in_env(self.players[i], get_idx=True)
 
                 # Push the food particles near an agent to its object
                 self.players[i].food_near = env_particle_distance
 
                 # Find players in proximity
-                env_player_vector, env_player_distance, env_players = self.players_in_env(self.players[i], get_idx=True)
+                (
+                    env_player_vector,
+                    env_player_distance,
+                    env_players,
+                ) = self.players_in_env(self.players[i], get_idx=True)
 
                 # Push the players in proximity to this agent to current agent's object
                 self.players[i].players_near = env_player_distance
@@ -706,7 +724,7 @@ class PrimaVita:
                     vec.append(food_particle.particleY - player.playerY)
                     distances.append(ed)
 
-        if(not get_idx):
+        if not get_idx:
             return vec, distances
 
         return vec, distances, env
@@ -762,7 +780,7 @@ class PrimaVita:
                     vec.append(gender_to_number[player.gender])
                     distances.append(ed)
 
-        if(not get_idx):
+        if not get_idx:
             return vec, distances
 
         return vec, distances, env
