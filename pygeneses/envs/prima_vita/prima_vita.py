@@ -221,22 +221,10 @@ class PrimaVita:
             # If a player is not dead then
             if type(self.players[i]) != int:
                 # Get the food particles in environment
-                env_particles, env_particle_distance = self.food_in_env(self.players[i])
-
-                # Get all the food particle vectors close to current agent
-                env_food_vector = self.getFoodVector(self.players[i], env_particles)
-
-                # Convert all the vectors into a single vector
-                env_food_vector = sum(env_food_vector, [])
+                env_food_vector, env_particle_distance = self.food_in_env(self.players[i])
 
                 # Get the agents in environment
-                env_players, env_player_distance = self.players_in_env(self.players[i])
-
-                # Get the agents in radius of current agent
-                env_player_vector = self.getPlayerVector(self.players[i], env_players)
-
-                # Convert all the vectors into a single vector
-                env_player_vector = sum(env_player_vector, [])
+                env_player_vector, env_player_distance = self.players_in_env(self.players[i])
 
                 # Stack together the food and player vectors
                 temp_state = [env_food_vector, env_player_vector]
@@ -249,24 +237,18 @@ class PrimaVita:
                 # Convert the food and player vectors stacked together into a single vector
                 temp_state = sum(temp_state, [])
 
-                # Convert this state to numpy.ndarray and append to initial_state
-                initial_state.append(np.array(temp_state))
+                # Pad to state_size - 1
+                temp_state = self.pad_state(np.array(temp_state), self.state_size - 1)
+
+                # Append energy to state
+                temp_state = np.append(temp_state, [self.players[i].energy])
+
+                # Append to initial_state
+                initial_state.append(temp_state)
             else:
                 # If agent is dead append an array with a single value - zero
-                initial_state.append(np.array([0]))
-
-        # Pad all the states
-        initial_state = [
-            self.pad_state(state, self.state_size - 1) for state in initial_state
-        ]
-
-        # Append energy if player isn't dead else append -100
-        initial_state = [
-            np.append(initial_state[i], self.players[i].energy)
-            if type(self.players[i]) != int
-            else np.append(initial_state[i], -100)
-            for i in range(len(self.players))
-        ]
+                temp_state = np.append(np.zeros(20), [-100])
+                initial_state.append(temp_state)
 
         # Return the state as numpy array
         return np.array(initial_state)
@@ -568,22 +550,16 @@ class PrimaVita:
                     self.model.scores[idx] += reward
 
                 # Find food particles in fixed radius
-                env_particles, env_particle_distance = self.food_in_env(self.players[i])
+                env_food_vector, env_particle_distance, env_particles = self.food_in_env(self.players[i], get_idx=True)
 
                 # Push the food particles near an agent to its object
                 self.players[i].food_near = env_particle_distance
 
-                # Compute distance vector for the food particles in fixed radius
-                env_food_vector = self.getFoodVector(self.players[i], env_particles)
-
                 # Find players in proximity
-                env_players, env_player_distance = self.players_in_env(self.players[i])
+                env_player_vector, env_player_distance, env_players = self.players_in_env(self.players[i], get_idx=True)
 
                 # Push the players in proximity to this agent to current agent's object
                 self.players[i].players_near = env_player_distance
-
-                # Compute distance vector for players in proximity
-                env_player_vector = self.getPlayerVector(self.players[i], env_players)
 
                 # Change colors of food particles in proximity
                 for index in range(0, len(env_particles)):
@@ -682,25 +658,30 @@ class PrimaVita:
         # If there isn't any food particle in range of the agent then return -1
         return -1
 
-    def food_in_env(self, player):
+    def food_in_env(self, player, get_idx=False):
         """
         Return all food particles within a fixed radius of the agent
 
         Params
         ======
-        player (pygeneses.envs.prima_vita.player_class.Player)
+        player  (pygeneses.envs.prima_vita.player_class.Player)
             : The player whose surroundings is to be checked for food particle
+        get_idx (bool)
+            : Boolean to decide whether to return index or not
 
         Returns
         =======
-        env       (list)
-            : The index of food particles inside fixed radius of current agent
+        vec       (list)
+            : The food vector
         distances (list)
             : The distances of food particles from the agent
+        env       (list)
+            : The index of food particles inside fixed radius of current agent
         """
 
         # Create empty lists
         env = []
+        vec = []
         distances = []
 
         # If agent is dead return -1
@@ -721,30 +702,43 @@ class PrimaVita:
                 # If distance is less than or equal to 100 then push to lists
                 if ed <= 100:
                     env.append(i)
+                    vec.append(food_particle.particleX - player.playerX)
+                    vec.append(food_particle.particleY - player.playerY)
                     distances.append(ed)
 
-        return env, distances
+        if(not get_idx):
+            return vec, distances
 
-    def players_in_env(self, host):
+        return vec, distances, env
+
+    def players_in_env(self, host, get_idx=False):
         """
         Return all players within a fixed radius of the current player
 
         Params
         ======
-        host (pygeneses.envs.prima_vita.player_class.Player)
+        host    (pygeneses.envs.prima_vita.player_class.Player)
             : The player whose surroundings is to be checked for food particle
+        get_idx (bool)
+            : Boolean to decide whether to return index or not
 
         Returns
         =======
-        env       (list)
-            : The index of players inside fixed radius of current player
+        vec       (list)
+            : The player vector
         distances (list)
             : The distances of food particles from the agent
+        env       (list)
+            : The index of players inside fixed radius of current player
         """
 
         # Create empty lists
         env = []
+        vec = []
         distances = []
+
+        # Mapping gender to number
+        gender_to_number = {"Female": 1, "Male": 2}
 
         # If player is dead then return -1
         if type(host) == int:
@@ -763,97 +757,15 @@ class PrimaVita:
                 # If distance is less than equal to 100 then push to list
                 if ed <= 100:
                     env.append(i)
+                    vec.append(host.playerX - player.playerX)
+                    vec.append(host.playerY - player.playerY)
+                    vec.append(gender_to_number[player.gender])
                     distances.append(ed)
 
-        return env, distances
+        if(not get_idx):
+            return vec, distances
 
-    def getPlayerVector(self, host, env_players):
-        """
-        Return all player vectors within a fixed radius of the current player
-
-        Params
-        ======
-        host        (pygeneses.envs.prima_vita.player_class.Player)
-            : The player whose surroundings is to be checked for food particle
-        env_players (list)
-            : The indexes of players in proximity to current player
-
-        Returns
-        =======
-        X   (list)
-            : Distance along x-axis
-        Y   (list)
-            : Distance along y-axis
-        sex (list)
-            : Sex of player in radius
-        """
-
-        # Create empty lists
-        X = []
-        Y = []
-        sex = []
-
-        # If current agent is dead then return empty lists
-        if type(host) == int:
-            return [], []
-
-        # Mapping gender to number
-        gender_to_number = {"Female": 1, "Male": 2}
-
-        # Otherwise loop through all agents in proximity
-        for idx in env_players:
-            # If player is not dead or the host itself then append to lists
-            if (type(self.players[idx]) != int) and (self.players[idx] != host):
-                X.append((host.playerX - self.players[idx].playerX))
-                Y.append((host.playerY - self.players[idx].playerY))
-                sex.append(gender_to_number[self.players[idx].gender])
-
-        if len(X) == 0:
-            X.append(0)
-            Y.append(0)
-            sex.append(0)
-
-        return list([X, Y, sex])
-
-    def getFoodVector(self, player, env_particles):
-        """
-        Return all food particle vectors within a fixed radius of the current player
-
-        Params
-        ======
-        host          (pygeneses.envs.prima_vita.player_class.Player)
-            : The player whose surroundings is to be checked for food particle
-        env_particles (list)
-            : The indexes of food particles in proximity to current player
-
-        Returns
-        =======
-        X   (list)
-            : Distance along x-axis
-        Y   (list)
-            : Distance along y-axis
-        """
-
-        # Create empty lists
-        X = []
-        Y = []
-
-        # If current agent is dead then return empty lists
-        if type(player) == int:
-            return [], []
-
-        # Otherwise loop through all food particles in proximity
-        for idx in env_particles:
-            # If the food particles hasn't been consumed yet then push to lists
-            if type(self.food_particles[idx]) != int:
-                X.append((player.playerX - self.food_particles[idx].particleX))
-                Y.append((player.playerY - self.food_particles[idx].particleY))
-
-        if len(X) == 0:
-            X.append(0)
-            Y.append(0)
-
-        return list([X, Y])
+        return vec, distances, env
 
     def search_mate(self, host):
         """
