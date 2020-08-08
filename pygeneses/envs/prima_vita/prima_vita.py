@@ -540,7 +540,7 @@ class PrimaVita:
         # If food regeneration condition is met then regenerate food particles
         if self.food_regen_condition_is_met:
             print("Food regenerated!")
-            self.food_particles, _ = self.refreshParticles()
+            self.food_particles, _ = self.refresh_particles()
             self.food_regen_condition_is_met = False
 
         # Show all particles
@@ -907,7 +907,7 @@ class PrimaVita:
             # Generate a new player and add it to player pool
             self.players = np.append(self.players, Player(i, self.time))
 
-    def refreshParticles(self):
+    def refresh_particles(self):
         """
         Replenish food particles based on certain conditions
         """
