@@ -3,7 +3,7 @@
 # Import required libraries
 import os
 import shutil
-import pygame
+# import pygame
 import random
 import numpy as np
 
@@ -122,10 +122,10 @@ class PrimaVita:
         """
 
         # Initialise pygame
-        pygame.init()
+        # pygame.init()
 
         # Title
-        pygame.display.set_caption("Prima Vita")
+        # pygame.display.set_caption("Prima Vita")
 
         # Generate initial population
         self.time = 0
@@ -145,14 +145,14 @@ class PrimaVita:
         )
 
         # Fill the screen with green color
-        screen.fill((0, 178, 0))
+        # screen.fill((0, 178, 0))
 
         # Event loop (# NOT REQUIRED here)
-        for event in pygame.event.get():
-            pass
+        # for event in pygame.event.get():
+        #     pass
 
         # Update pygame screen
-        pygame.display.update()
+        # pygame.display.update()
 
     def reset_logs(self):
         """
@@ -282,11 +282,11 @@ class PrimaVita:
         mate_idx = -1
 
         # Fill the screen with green
-        screen.fill((0, 178, 0))
+        # screen.fill((0, 178, 0))
 
         # Event loop
-        for event in pygame.event.get():
-            pass
+        # for event in pygame.event.get():
+        #     pass
 
         # Action left
         if action == 0:
@@ -428,7 +428,7 @@ class PrimaVita:
 
                     # Add the offsprings to player array
                     for offspring_player in offspring_players:
-                        self.players.append(offspring_player)
+                        np.append(self.players, offspring_player)
 
                     # Increase the total population
                     self.initial_population += len(offspring_players)
@@ -544,9 +544,9 @@ class PrimaVita:
             self.food_regen_condition_is_met = False
 
         # Show all particles
-        for j in range(len(self.food_particles)):
-            if type(self.food_particles[j]) != int:
-                self.food_particles[j].show_particle()
+        # for j in range(len(self.food_particles)):
+        #     if type(self.food_particles[j]) != int:
+        #         self.food_particles[j].show_particle()
 
         now_time = self.time
 
@@ -559,37 +559,37 @@ class PrimaVita:
                     self.model.rewards[idx].append(reward)
                     self.model.scores[idx] += reward
 
-                # Find food particles in fixed radius
-                (
-                    env_food_vector,
-                    env_particle_distance,
-                    env_particles,
-                ) = self.food_in_env(self.players[i], get_idx=True)
-
-                # Push the food particles near an agent to its object
-                self.players[i].food_near = env_particle_distance
-
-                # Find players in proximity
-                (
-                    env_player_vector,
-                    env_player_distance,
-                    env_players,
-                ) = self.players_in_env(self.players[i], get_idx=True)
-
-                # Push the players in proximity to this agent to current agent's object
-                self.players[i].players_near = env_player_distance
+                # # Find food particles in fixed radius
+                # (
+                #     env_food_vector,
+                #     env_particle_distance,
+                #     env_particles,
+                # ) = self.food_in_env(self.players[i], get_idx=True)
+                #
+                # # Push the food particles near an agent to its object
+                # self.players[i].food_near = env_particle_distance
+                #
+                # # Find players in proximity
+                # (
+                #     env_player_vector,
+                #     env_player_distance,
+                #     env_players,
+                # ) = self.players_in_env(self.players[i], get_idx=True)
+                #
+                # # Push the players in proximity to this agent to current agent's object
+                # self.players[i].players_near = env_player_distance
 
                 # Change colors of food particles in proximity
-                for index in range(0, len(env_particles)):
-                    local = env_particles[index]
-                    if type(self.food_particles[local]) != int:
-                        self.food_particles[local].show_close()
+                # for index in range(0, len(env_particles)):
+                #     local = env_particles[index]
+                #     if type(self.food_particles[local]) != int:
+                #         self.food_particles[local].show_close()
 
                 # Change color of players in proximity
-                if not env_players:
-                    self.players[i].show_player()
-                else:
-                    self.players[i].show_close()
+                # if not env_players:
+                #     self.players[i].show_player()
+                # else:
+                #     self.players[i].show_close()
 
                 # Check if ingestion action is complete or not (if ingesting)
                 if (
@@ -632,7 +632,7 @@ class PrimaVita:
             self.model.update_all_agents()
 
         # Update the pygame window
-        pygame.display.update()
+        # pygame.display.update()
 
     def update_time(self):
         """

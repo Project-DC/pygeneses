@@ -1,7 +1,7 @@
 # Player class representing an agent in prima vita environment
 
 # Import required libraries
-import pygame
+# import pygame
 import random
 import time
 import numpy as np
@@ -83,9 +83,9 @@ class Player:
             []
         )  # [Action, Time, Reward, Energy, num_offspring, [offspring ids]]
 
-        self.playerImg = pygame.image.load(
-            os.path.join(os.path.dirname(__file__), "images/player.png")
-        )
+        # self.playerImg = pygame.image.load(
+        #     os.path.join(os.path.dirname(__file__), "images/player.png")
+        # )
         self.playerX = x if x is not None else random.randint(32, SCREEN_WIDTH - 32)
         self.playerY = y if y is not None else random.randint(32, SCREEN_HEIGHT - 32)
         self.PLAYER_WIDTH = 32
@@ -444,29 +444,29 @@ class Player:
         # Add energy of 25 points for ingestion action
         self.energy += 25
 
-    def show_player(self):
-        """
-        Show the player in pygame environment
-        """
-
-        screen.blit(self.playerImg, (self.playerX, self.playerY))
-
-    def show_close(self):
-        """
-        Show the player in pygame environment when it is close to another or is mating with another
-        """
-
-        if self.mating_begin_time != 0:
-            screen.blit(
-                pygame.image.load(
-                    os.path.join(os.path.dirname(__file__), "images/player_mating.png")
-                ),
-                (self.playerX, self.playerY),
-            )
-        else:
-            screen.blit(
-                pygame.image.load(
-                    os.path.join(os.path.dirname(__file__), "images/player_near.png")
-                ),
-                (self.playerX, self.playerY),
-            )
+    # def show_player(self):
+    #     """
+    #     Show the player in pygame environment
+    #     """
+    #
+    #     screen.blit(self.playerImg, (self.playerX, self.playerY))
+    #
+    # def show_close(self):
+    #     """
+    #     Show the player in pygame environment when it is close to another or is mating with another
+    #     """
+    #
+    #     if self.mating_begin_time != 0:
+    #         screen.blit(
+    #             pygame.image.load(
+    #                 os.path.join(os.path.dirname(__file__), "images/player_mating.png")
+    #             ),
+    #             (self.playerX, self.playerY),
+    #         )
+    #     else:
+    #         screen.blit(
+    #             pygame.image.load(
+    #                 os.path.join(os.path.dirname(__file__), "images/player_near.png")
+    #             ),
+    #             (self.playerX, self.playerY),
+    #         )

@@ -3,6 +3,7 @@
 # Import required libraries
 import torch
 import torch.optim as optim
+import multiprocessing
 
 # Import the NN
 from .reinforce_nn import Agent
@@ -178,28 +179,48 @@ class ReinforceModel:
         self.policy_loss[idx] = []
         self.rewards[idx] = 0
 
+    def update_single_agent(self, idx):
+        """
+        Update an agent
+
+        Params
+        ======
+        idx (int)
+            : Id of the agent to be updated
+        """
+
+        # If agent is alive and has experienced someting (i.e. taken some action in lifetime) then
+        if type(self.agents[idx]) != int and len(self.saved_log_probs[idx]) > 0:
+            # Set policy loss to an empty list
+            self.policy_loss[idx] = []
+
+            # Compute log_probs[i] * rewards[i] for current agent
+            for j in range(len(self.saved_log_probs[idx])):
+                self.policy_loss[idx].append(
+                    -(self.saved_log_probs[idx][j] * self.rewards[idx][j])
+                )
+
+            # Sum all the products
+            self.policy_loss[idx] = torch.cat(self.policy_loss[idx]).sum()
+
+            # Backpropagate through the network
+            self.optimizers[idx].zero_grad()
+            self.policy_loss[idx].backward(retain_graph=True)
+            self.optimizers[idx].step()
+
     def update_all_agents(self):
         """
         Update all agent (i.e. backward propagation)
         """
 
         # Loop through all agents
-        for idx in range(len(self.agents)):
-            # If agent is alive and has experienced someting (i.e. taken some action in lifetime) then
-            if type(self.agents[idx]) != int and len(self.saved_log_probs[idx]) > 0:
-                # Set policy loss to an empty list
-                self.policy_loss[idx] = []
-
-                # Compute log_probs[i] * rewards[i] for current agent
-                for j in range(len(self.saved_log_probs[idx])):
-                    self.policy_loss[idx].append(
-                        -(self.saved_log_probs[idx][j] * self.rewards[idx][j])
-                    )
-
-                # Sum all the products
-                self.policy_loss[idx] = torch.cat(self.policy_loss[idx]).sum()
-
-                # Backpropagate through the network
-                self.optimizers[idx].zero_grad()
-                self.policy_loss[idx].backward(retain_graph=True)
-                self.optimizers[idx].step()
+        for idx in range(0, len(self.agents)):
+            self.update_single_agent(idx)
+            # t1 = multiprocessing.Process(target=self.update_single_agent, args=(idx,))
+            # t2 = multiprocessing.Process(target=self.update_single_agent, args=(idx+1,))
+            #
+            # t1.start()
+            # t2.start()
+            #
+            # t1.join()
+            # t2.join()

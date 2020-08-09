@@ -15,7 +15,7 @@ def training_loop(n_episodes=1000, max_t=1000, gamma=1.0, print_every=100):
     running = True
     while running:
         rl_model.update_time()
-        if(rl_model.time == 20):
+        if(rl_model.time == 40):
             running = False
         for i, agent in enumerate(rl_model.model.agents):
             if(type(rl_model.players[i]) != int):

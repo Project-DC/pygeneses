@@ -89,10 +89,10 @@ class Agent(nn.Module):
             : Embedding from NN
         """
 
-        state = torch.from_numpy(state).float().to(self.device)
+        state = torch.from_numpy(state).float().unsqueeze(0).to(self.device)
         probs, embed = self.forward(state)
         probs = probs.cpu()
         embed = embed.cpu()
         m = Categorical(probs)
         action = m.sample()
-        return action, m.log_prob(action), embed
+        return action.item(), m.log_prob(action), embed
