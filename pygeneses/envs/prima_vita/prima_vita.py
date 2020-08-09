@@ -3,7 +3,7 @@
 # Import required libraries
 import os
 import shutil
-# import pygame
+import pygame
 import random
 import numpy as np
 
@@ -60,6 +60,10 @@ class PrimaVita:
        : Speed with which agent moves in the environment (in pixels)
     max_age                     (int)
        : Maximum age that an agent can live up to
+    mode                        (str)
+       : Mode in which to run environment (human/bot)
+    screen                      (pygame.display/None)
+       : Pygame display
     """
 
     def __init__(
@@ -69,6 +73,7 @@ class PrimaVita:
         action_size=13,
         max_regenerations=0,
         model_updates=10,
+        mode="bot"
     ):
         """
         Initializer for PrimaVita class
@@ -85,6 +90,9 @@ class PrimaVita:
             : The maximum number of times population can be regenerated after perishing
         model_updates      (int)
             : Number of ticks after which model for all the population will be updated
+        mode               (str)
+            : Mode in which to run the environment, human - where pygame screen is displayed,
+              bot - where pygame screen isn't created
         """
 
         self.log_dir = "Players_Data"
@@ -109,6 +117,11 @@ class PrimaVita:
         self.speed = 3
         self.max_age = 90
 
+        # If mode is human then pygame environment is shown
+        self.mode = mode
+
+        self.screen = None
+
         self.reset_logs()
 
     def init(self, model_name="reinforce"):
@@ -121,12 +134,6 @@ class PrimaVita:
             Name of the model to be used to train agents
         """
 
-        # Initialise pygame
-        # pygame.init()
-
-        # Title
-        # pygame.display.set_caption("Prima Vita")
-
         # Generate initial population
         self.time = 0
         self.regenerate_species()
@@ -134,7 +141,7 @@ class PrimaVita:
 
         # Put food particles in the environment
         for j in range(self.number_of_particles):
-            self.food_particles = np.append(self.food_particles, Particle())
+            self.food_particles = np.append(self.food_particles, Particle(mode=self.mode))
 
         # Remove food particles which either overlap or are very close to another food particle
         self.check_particles()
@@ -144,15 +151,21 @@ class PrimaVita:
             self.initial_population, self.state_size, self.action_size
         )
 
-        # Fill the screen with green color
-        # screen.fill((0, 178, 0))
+        if(self.mode == "human"):
+            # Initialise pygame
+            pygame.init()
 
-        # Event loop (# NOT REQUIRED here)
-        # for event in pygame.event.get():
-        #     pass
+            # Title
+            pygame.display.set_caption("Prima Vita")
 
-        # Update pygame screen
-        # pygame.display.update()
+            # Set screen
+            self.screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
+
+            # Fill the screen with green color
+            self.screen.fill((0, 178, 0))
+
+            # Update pygame screen
+            pygame.display.update()
 
     def reset_logs(self):
         """
@@ -281,12 +294,13 @@ class PrimaVita:
         reward = 0
         mate_idx = -1
 
-        # Fill the screen with green
-        # screen.fill((0, 178, 0))
+        if(self.mode == "human"):
+            # Fill the screen with green
+            self.screen.fill((0, 178, 0))
 
-        # Event loop
-        # for event in pygame.event.get():
-        #     pass
+            # Event loop
+            for event in pygame.event.get():
+                pass
 
         # Action left
         if action == 0:
@@ -543,10 +557,11 @@ class PrimaVita:
             self.food_particles, _ = self.refresh_particles()
             self.food_regen_condition_is_met = False
 
-        # Show all particles
-        # for j in range(len(self.food_particles)):
-        #     if type(self.food_particles[j]) != int:
-        #         self.food_particles[j].show_particle()
+        if(self.mode == "human"):
+            # Show all particles
+            for j in range(len(self.food_particles)):
+                if type(self.food_particles[j]) != int:
+                    self.food_particles[j].show_particle(self.screen)
 
         now_time = self.time
 
@@ -559,37 +574,38 @@ class PrimaVita:
                     self.model.rewards[idx].append(reward)
                     self.model.scores[idx] += reward
 
-                # # Find food particles in fixed radius
-                # (
-                #     env_food_vector,
-                #     env_particle_distance,
-                #     env_particles,
-                # ) = self.food_in_env(self.players[i], get_idx=True)
-                #
-                # # Push the food particles near an agent to its object
-                # self.players[i].food_near = env_particle_distance
-                #
-                # # Find players in proximity
-                # (
-                #     env_player_vector,
-                #     env_player_distance,
-                #     env_players,
-                # ) = self.players_in_env(self.players[i], get_idx=True)
-                #
-                # # Push the players in proximity to this agent to current agent's object
-                # self.players[i].players_near = env_player_distance
+                if(self.mode == "human"):
+                    # Find food particles in fixed radius
+                    (
+                        env_food_vector,
+                        env_particle_distance,
+                        env_particles,
+                    ) = self.food_in_env(self.players[i], get_idx=True)
 
-                # Change colors of food particles in proximity
-                # for index in range(0, len(env_particles)):
-                #     local = env_particles[index]
-                #     if type(self.food_particles[local]) != int:
-                #         self.food_particles[local].show_close()
+                    # Push the food particles near an agent to its object
+                    self.players[i].food_near = env_particle_distance
 
-                # Change color of players in proximity
-                # if not env_players:
-                #     self.players[i].show_player()
-                # else:
-                #     self.players[i].show_close()
+                    # Find players in proximity
+                    (
+                        env_player_vector,
+                        env_player_distance,
+                        env_players,
+                    ) = self.players_in_env(self.players[i], get_idx=True)
+
+                    # Push the players in proximity to this agent to current agent's object
+                    self.players[i].players_near = env_player_distance
+
+                    # Change colors of food particles in proximity
+                    for index in range(0, len(env_particles)):
+                        local = env_particles[index]
+                        if type(self.food_particles[local]) != int:
+                            self.food_particles[local].show_close(self.screen)
+
+                    # Change color of players in proximity
+                    if not env_players:
+                        self.players[i].show_player(self.screen)
+                    else:
+                        self.players[i].show_close(self.screen)
 
                 # Check if ingestion action is complete or not (if ingesting)
                 if (
@@ -631,8 +647,9 @@ class PrimaVita:
         if now_time % self.model_updates == 0:
             self.model.update_all_agents()
 
-        # Update the pygame window
-        # pygame.display.update()
+        if(self.mode == "human"):
+            # Update the pygame window
+            pygame.display.update()
 
     def update_time(self):
         """
@@ -905,7 +922,7 @@ class PrimaVita:
         # Loop till iterator reaches initial population count
         for i in range(self.initial_population):
             # Generate a new player and add it to player pool
-            self.players = np.append(self.players, Player(i, self.time))
+            self.players = np.append(self.players, Player(i, self.time, mode=self.mode))
 
     def refresh_particles(self):
         """
@@ -920,7 +937,7 @@ class PrimaVita:
         # Loop through all new particles
         for j in range(NEW_PARTICLES):
             # Generate food particle and append to food particles pool
-            self.food_particles = np.append(self.food_particles, Particle())
+            self.food_particles = np.append(self.food_particles, Particle(mode=self.mode))
 
         # Delete food particles which are too close to others
         self.food_particles = self.check_particles()

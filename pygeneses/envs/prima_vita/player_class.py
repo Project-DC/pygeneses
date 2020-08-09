@@ -1,7 +1,7 @@
 # Player class representing an agent in prima vita environment
 
 # Import required libraries
-# import pygame
+import pygame
 import random
 import time
 import numpy as np
@@ -60,22 +60,26 @@ class Player:
         : Embeddings of the player (fetched from NN)
     states                   (list)
         : States that the player experiences at each time step
+    mode                     (str)
+       : Mode in which to run environment (human/bot)
     """
 
-    def __init__(self, i, tob, x=None, y=None):
+    def __init__(self, i, tob, x=None, y=None, mode="bot"):
         """
         Initializer for Player class
 
         Params
         ======
-        i   (int)
+        i    (int)
             : Id of the player out of all players
-        tob (int)
+        tob  (int)
             : Time of birth of the agent (fetched from environment)
-        x   (int)
+        x    (int)
             : Initial x coordinate of the agent (optional)
-        y   (int)
+        y    (int)
             : Initial y coordinate of the agent (optional)
+        mode (str)
+           : Mode in which to run environment (human/bot)
         """
 
         self.index = i
@@ -83,9 +87,10 @@ class Player:
             []
         )  # [Action, Time, Reward, Energy, num_offspring, [offspring ids]]
 
-        # self.playerImg = pygame.image.load(
-        #     os.path.join(os.path.dirname(__file__), "images/player.png")
-        # )
+        if(mode == "human"):
+            self.playerImg = pygame.image.load(
+                os.path.join(os.path.dirname(__file__), "images/player.png")
+            )
         self.playerX = x if x is not None else random.randint(32, SCREEN_WIDTH - 32)
         self.playerY = y if y is not None else random.randint(32, SCREEN_HEIGHT - 32)
         self.PLAYER_WIDTH = 32
@@ -104,6 +109,7 @@ class Player:
         self.energy = 200
         self.embeddings = np.array([0])
         self.states = []
+        self.mode = mode
 
         # Add the initial x, y coordinates as first entry in logs
         self.action_history.append([self.playerX, self.playerY])
@@ -348,7 +354,7 @@ class Player:
             lenPlayers = lenPlayers + 1
 
             # Create new Player objects and add as offsprings
-            offspring_players.append(Player(id_offspring, time_given))
+            offspring_players.append(Player(id_offspring, time_given, mode=self.mode))
 
             # Add current player as parent to all offspring objects
             offspring_players[i].add_parent(self.index, self.born_at)
@@ -413,7 +419,7 @@ class Player:
                 lenPlayers = lenPlayers + 1
 
                 # Create new Player objects and add as offsprings
-                offspring_players.append(Player(id_offspring, mating_begin_time))
+                offspring_players.append(Player(id_offspring, mating_begin_time, mode=self.mode))
 
                 # Add current player as parent to all offspring objects
                 offspring_players[i].add_parent(
@@ -444,29 +450,39 @@ class Player:
         # Add energy of 25 points for ingestion action
         self.energy += 25
 
-    # def show_player(self):
-    #     """
-    #     Show the player in pygame environment
-    #     """
-    #
-    #     screen.blit(self.playerImg, (self.playerX, self.playerY))
-    #
-    # def show_close(self):
-    #     """
-    #     Show the player in pygame environment when it is close to another or is mating with another
-    #     """
-    #
-    #     if self.mating_begin_time != 0:
-    #         screen.blit(
-    #             pygame.image.load(
-    #                 os.path.join(os.path.dirname(__file__), "images/player_mating.png")
-    #             ),
-    #             (self.playerX, self.playerY),
-    #         )
-    #     else:
-    #         screen.blit(
-    #             pygame.image.load(
-    #                 os.path.join(os.path.dirname(__file__), "images/player_near.png")
-    #             ),
-    #             (self.playerX, self.playerY),
-    #         )
+    def show_player(self, screen):
+        """
+        Show the player in pygame environment
+
+        Params
+        ======
+        screen (pygame.display)
+            : Pygame display
+        """
+
+        screen.blit(self.playerImg, (self.playerX, self.playerY))
+
+    def show_close(self, screen):
+        """
+        Show the player in pygame environment when it is close to another or is mating with another
+
+        Params
+        ======
+        screen (pygame.display)
+            : Pygame display
+        """
+
+        if self.mating_begin_time != 0:
+            screen.blit(
+                pygame.image.load(
+                    os.path.join(os.path.dirname(__file__), "images/player_mating.png")
+                ),
+                (self.playerX, self.playerY),
+            )
+        else:
+            screen.blit(
+                pygame.image.load(
+                    os.path.join(os.path.dirname(__file__), "images/player_near.png")
+                ),
+                (self.playerX, self.playerY),
+            )

@@ -1,7 +1,7 @@
 # Particle class representing food particles in prima vita environment
 
 # Import required libraries
-# import pygame
+import pygame
 import random
 import math
 import os
@@ -24,32 +24,48 @@ class Particle:
         : y coordinate of food particle in 2D environment
     """
 
-    def __init__(self):
+    def __init__(self, mode="bot"):
         """
         Initializer for Particle class
+
+        Params
+        ======
+        mode (str)
+           : Mode in which to run environment (human/bot)
         """
 
-        # self.particleImg = pygame.image.load(
-        #     os.path.join(os.path.dirname(__file__), "images/food.png")
-        # )
+        if(mode == "human"):
+            self.particleImg = pygame.image.load(
+                os.path.join(os.path.dirname(__file__), "images/food.png")
+            )
         self.particleX = random.randint(10, SCREEN_WIDTH - 10)
         self.particleY = random.randint(10, SCREEN_HEIGHT - 10)
 
-    # def show_particle(self):
-    #     """
-    #     Show a particle in pygame environment
-    #     """
-    #
-    #     screen.blit(self.particleImg, (self.particleX, self.particleY))
-    #
-    # def show_close(self):
-    #     """
-    #     Show a particle when close to an agent
-    #     """
-    #
-    #     screen.blit(
-    #         pygame.image.load(
-    #             os.path.join(os.path.dirname(__file__), "images/food_near.png")
-    #         ),
-    #         (self.particleX, self.particleY),
-    #     )
+    def show_particle(self, screen):
+        """
+        Show a particle in pygame environment
+
+        Params
+        ======
+        screen (pygame.display)
+            : Pygame display
+        """
+
+        screen.blit(self.particleImg, (self.particleX, self.particleY))
+
+    def show_close(self, screen):
+        """
+        Show a particle when close to an agent
+
+        Params
+        ======
+        screen (pygame.display)
+            : Pygame display
+        """
+
+        screen.blit(
+            pygame.image.load(
+                os.path.join(os.path.dirname(__file__), "images/food_near.png")
+            ),
+            (self.particleX, self.particleY),
+        )
