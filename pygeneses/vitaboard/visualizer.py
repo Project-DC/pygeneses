@@ -1,3 +1,4 @@
+import os
 import pygame
 import sys
 import numpy as np
@@ -51,7 +52,11 @@ life_events = np.load(file_location, allow_pickle=True)
 
 x, y = life_events[0][0], life_events[0][1]
 i = 0
-tob = life_events[2][1] if len(life_events[1]) == 2 else life_events[1][1]
+try:
+    tob = life_events[2][1] if len(life_events[1]) == 2 else life_events[1][1]
+except:
+    print(os.path.basename(file_location).split(".")[0].split("-")[1], "died without doing anything")
+    sys.exit()
 
 life_events = life_events[2:] if len(life_events[1]) == 2 else life_events[1:]
 
@@ -106,4 +111,4 @@ for life_event in life_events:
 
     pygame.display.update()
 
-    time.sleep(0.1)
+    time.sleep(0.5)
