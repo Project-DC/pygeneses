@@ -60,6 +60,10 @@ class PrimaVita:
        : Speed with which agent moves in the environment (in pixels)
     max_age                     (int)
        : Maximum age that an agent can live up to
+    current_population          (int)
+       : Current population of alive people
+    max_allowed_population      (int)
+       : Maximum allowed population of alive people
     mode                        (str)
        : Mode in which to run environment (human/bot)
     screen                      (pygame.display/None)
@@ -116,6 +120,8 @@ class PrimaVita:
         self.model_updates = model_updates
         self.speed = 3
         self.max_age = 90
+        self.current_population = 0
+        self.max_allowed_population = 100
 
         # If mode is human then pygame environment is shown
         self.mode = mode
@@ -248,7 +254,7 @@ class PrimaVita:
 
                 # Save this as state in current agent's object
                 self.players[i].states.append(
-                    np.array([np.array(env_food_vector), np.array(env_player_vector)])
+                    np.array([np.array(env_food_vector), np.array(env_player_vector)], dtype=object)
                 )
 
                 # Convert the food and player vectors stacked together into a single vector
@@ -395,7 +401,7 @@ class PrimaVita:
                 )
 
                 # Kill the agent after asexual reproduction :)
-                self.players[idx].write_data(self.time)
+                self.players[idx].write_data(self.time, self.current_population)
                 self.players[idx] = 0
                 self.killed = np.append(self.killed, idx)
 
@@ -628,7 +634,7 @@ class PrimaVita:
 
                 # If the agent's energy is less than or equal to zero (0) kill the agent
                 if type(self.players[i]) != int and self.players[i].energy <= 0:
-                    self.players[i].write_data(self.time)
+                    self.players[i].write_data(self.time, self.current_population)
                     self.players[i] = 0
                     self.killed = np.append(self.killed, i)
                     self.model.kill_agent(i)
@@ -638,7 +644,7 @@ class PrimaVita:
                     type(self.players[i]) != int
                     and now_time - self.players[i].born_at >= self.max_age
                 ):
-                    self.players[i].write_data(self.time)
+                    self.players[i].write_data(self.time, self.current_population)
                     self.players[i] = 0
                     self.killed = np.append(self.killed, i)
                     self.model.kill_agent(i)
@@ -650,6 +656,26 @@ class PrimaVita:
         if(self.mode == "human"):
             # Update the pygame window
             pygame.display.update()
+
+        # Compute number of alive agents
+        self.current_population = len(self.players) - len(self.killed)
+
+        # If current population exceeds a max threshold then kill people randomly
+        if(self.current_population > self.max_allowed_population):
+            # Compute number of extra agents
+            extra_agent_count = self.current_population - self.max_allowed_population
+
+            print("Max population exceeded! Number of people to be killed: %d" % (extra_agent_count))
+            for _ in range(extra_agent_count):
+                # Alive agents index
+                alive_agents_index = list(set(np.arange(len(self.players))) - set(self.killed))
+                idx = random.choice(alive_agents_index)
+                self.current_population -= 1
+                self.players[idx].write_data(self.time, self.current_population)
+                self.players[idx] = 0
+                self.killed = np.append(self.killed, idx)
+                self.model.kill_agent(idx)
+
 
     def update_time(self):
         """

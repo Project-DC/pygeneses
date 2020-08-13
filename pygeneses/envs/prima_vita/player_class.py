@@ -123,25 +123,27 @@ class Player:
         else:
             self.action_history.append(np.array([[id, tob], [mate_id, mate_tob]]))
 
-    def write_data(self, time):
+    def write_data(self, time, alive_count):
         """
         Write logs to npy file when player dies
 
         Params
         ======
-        time (int)
+        time        (int)
             : Time (in ticks) of death of the player
+        alive_count (int)
+            : Number of agents alive
         """
 
         # Show in front end API
-        print(f"RIP {self.born_at}-{self.index}")
+        print(f"RIP {self.born_at}-{self.index}, alive count = {alive_count}")
 
         # Form filename to save logs into
         file_name = str(self.born_at) + "-" + str(self.index)
 
         # Open file at location to dump logs
         file = open("Players_Data/" + file_name + ".npy", "wb")
-        np.save(file, np.array(self.action_history))
+        np.save(file, np.array(self.action_history, dtype=object))
         file.close()
 
         # Average embeddings over entire life
@@ -213,7 +215,7 @@ class Player:
                         self.playerX,
                         self.playerY,
                         self.states[-1],
-                    ]
+                    ], dtype=object
                 )
             )
         # If action number is 10 (i.e. asexual reproduction)
@@ -230,7 +232,7 @@ class Player:
                         self.playerX,
                         self.playerY,
                         self.states[-1],
-                    ]
+                    ], dtype=object
                 )
             )
         # If action number is 11 (i.e. sexual reproduction)
@@ -248,7 +250,7 @@ class Player:
                         self.playerX,
                         self.playerY,
                         self.states[-1],
-                    ]
+                    ], dtype=object
                 )
             )
         # If action number is 12 (i.e. fight)
@@ -264,7 +266,7 @@ class Player:
                         self.playerX,
                         self.playerY,
                         self.states[-1],
-                    ]
+                    ], dtype=object
                 )
             )
 
