@@ -10,17 +10,14 @@ pygame.init()
 
 pygame.display.set_caption("Prima Vita")
 
+screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
+
 screen.fill((0, 178, 0))
-
-for event in pygame.event.get():
-    pass
-
-pygame.display.update()
 
 myfont = pygame.font.SysFont("monospace", 32)
 
 
-def current_action(action):
+def current_action_time(result, action, timestamp):
     action_number_to_action = {
         0: "Left",
         1: "Right",
@@ -31,13 +28,21 @@ def current_action(action):
         6: "Down Left",
         7: "Down Right",
         8: "Stay",
+        9: "Ingestion",
+        10: "Asexual Reproduction",
+        11: "Sexual Reproduction",
+        12: "Fight"
     }
 
     actiontext = myfont.render(
-        "Action: " + action_number_to_action[action], 1, (255, 255, 255)
+        "Action: " + result + action_number_to_action.get(action, "Unknown"), 1, (255, 255, 255)
     )
 
-    return actiontext
+    timetext = myfont.render(
+        "Time: " + str(timestamp), 1, (255, 255, 255)
+    )
+
+    return actiontext, timetext
 
 
 file_location = sys.argv[1]
@@ -50,11 +55,14 @@ tob = life_events[2][1] if len(life_events[1]) == 2 else life_events[1][1]
 
 life_events = life_events[2:] if len(life_events[1]) == 2 else life_events[1:]
 
-player = Player(i, tob, x, y)
+player = Player(i, tob, x, y, mode="human")
 
 for life_event in life_events:
+    result = "" if life_event[2] != -10 else "Failed "
     action = life_event[0]
-    scoretext = current_action(action)
+    timestamp = life_event[1]
+
+    actiontext, timetext = current_action_time(result, action, timestamp)
 
     screen.fill((0, 178, 0))
 
@@ -92,9 +100,10 @@ for life_event in life_events:
     elif action == 8:  # Stay
         player.energy -= 2
 
-    player.show_player()
-    screen.blit(scoretext, (5, 10))
+    player.show_player(screen)
+    screen.blit(actiontext, (5, 10))
+    screen.blit(timetext, (5, 30))
 
     pygame.display.update()
 
-    time.sleep(0.5)
+    time.sleep(0.1)
