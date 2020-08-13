@@ -64,6 +64,8 @@ class PrimaVita:
        : Current population of alive people
     max_allowed_population      (int)
        : Maximum allowed population of alive people
+    kill_type                   (str)
+       : Killing method to use when population reaches a max cap
     mode                        (str)
        : Mode in which to run environment (human/bot)
     screen                      (pygame.display/None)
@@ -77,7 +79,7 @@ class PrimaVita:
         action_size=13,
         max_regenerations=0,
         model_updates=10,
-        mode="bot"
+        mode="bot",
     ):
         """
         Initializer for PrimaVita class
@@ -122,6 +124,7 @@ class PrimaVita:
         self.max_age = 90
         self.current_population = 0
         self.max_allowed_population = 100
+        self.kill_type = "random"
 
         # If mode is human then pygame environment is shown
         self.mode = mode
@@ -147,7 +150,9 @@ class PrimaVita:
 
         # Put food particles in the environment
         for j in range(self.number_of_particles):
-            self.food_particles = np.append(self.food_particles, Particle(mode=self.mode))
+            self.food_particles = np.append(
+                self.food_particles, Particle(mode=self.mode)
+            )
 
         # Remove food particles which either overlap or are very close to another food particle
         self.check_particles()
@@ -157,7 +162,7 @@ class PrimaVita:
             self.initial_population, self.state_size, self.action_size
         )
 
-        if(self.mode == "human"):
+        if self.mode == "human":
             # Initialise pygame
             pygame.init()
 
@@ -254,7 +259,10 @@ class PrimaVita:
 
                 # Save this as state in current agent's object
                 self.players[i].states.append(
-                    np.array([np.array(env_food_vector), np.array(env_player_vector)], dtype=object)
+                    np.array(
+                        [np.array(env_food_vector), np.array(env_player_vector)],
+                        dtype=object,
+                    )
                 )
 
                 # Convert the food and player vectors stacked together into a single vector
@@ -300,7 +308,7 @@ class PrimaVita:
         reward = 0
         mate_idx = -1
 
-        if(self.mode == "human"):
+        if self.mode == "human":
             # Fill the screen with green
             self.screen.fill((0, 178, 0))
 
@@ -563,7 +571,7 @@ class PrimaVita:
             self.food_particles, _ = self.refresh_particles()
             self.food_regen_condition_is_met = False
 
-        if(self.mode == "human"):
+        if self.mode == "human":
             # Show all particles
             for j in range(len(self.food_particles)):
                 if type(self.food_particles[j]) != int:
@@ -580,7 +588,7 @@ class PrimaVita:
                     self.model.rewards[idx].append(reward)
                     self.model.scores[idx] += reward
 
-                if(self.mode == "human"):
+                if self.mode == "human":
                     # Find food particles in fixed radius
                     (
                         env_food_vector,
@@ -653,7 +661,7 @@ class PrimaVita:
         if now_time % self.model_updates == 0:
             self.model.update_all_agents()
 
-        if(self.mode == "human"):
+        if self.mode == "human":
             # Update the pygame window
             pygame.display.update()
 
@@ -661,21 +669,32 @@ class PrimaVita:
         self.current_population = len(self.players) - len(self.killed)
 
         # If current population exceeds a max threshold then kill people randomly
-        if(self.current_population > self.max_allowed_population):
+        if self.kill_type != "" and self.current_population > self.max_allowed_population:
             # Compute number of extra agents
-            extra_agent_count = self.current_population - self.max_allowed_population
+            extra_agent_count = (
+                self.current_population - self.max_allowed_population
+                if self.kill_type == "difference"
+                else random.randint(
+                    self.current_population - self.max_allowed_population,
+                    self.current_population - 1,
+                )
+            )
 
-            print("Max population exceeded! Number of people to be killed: %d" % (extra_agent_count))
+            print(
+                "Max population exceeded! Number of people to be killed: %d"
+                % (extra_agent_count)
+            )
             for _ in range(extra_agent_count):
                 # Alive agents index
-                alive_agents_index = list(set(np.arange(len(self.players))) - set(self.killed))
+                alive_agents_index = list(
+                    set(np.arange(len(self.players))) - set(self.killed)
+                )
                 idx = random.choice(alive_agents_index)
                 self.current_population -= 1
                 self.players[idx].write_data(self.time, self.current_population)
                 self.players[idx] = 0
                 self.killed = np.append(self.killed, idx)
                 self.model.kill_agent(idx)
-
 
     def update_time(self):
         """
@@ -963,7 +982,9 @@ class PrimaVita:
         # Loop through all new particles
         for j in range(NEW_PARTICLES):
             # Generate food particle and append to food particles pool
-            self.food_particles = np.append(self.food_particles, Particle(mode=self.mode))
+            self.food_particles = np.append(
+                self.food_particles, Particle(mode=self.mode)
+            )
 
         # Delete food particles which are too close to others
         self.food_particles = self.check_particles()

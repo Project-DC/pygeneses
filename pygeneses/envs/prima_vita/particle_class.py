@@ -34,7 +34,7 @@ class Particle:
            : Mode in which to run environment (human/bot)
         """
 
-        if(mode == "human"):
+        if mode == "human":
             self.particleImg = pygame.image.load(
                 os.path.join(os.path.dirname(__file__), "images/food.png")
             )

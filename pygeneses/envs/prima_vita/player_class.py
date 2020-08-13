@@ -87,7 +87,7 @@ class Player:
             []
         )  # [Action, Time, Reward, Energy, num_offspring, [offspring ids]]
 
-        if(mode == "human"):
+        if mode == "human":
             self.playerImg = pygame.image.load(
                 os.path.join(os.path.dirname(__file__), "images/player.png")
             )
@@ -215,7 +215,8 @@ class Player:
                         self.playerX,
                         self.playerY,
                         self.states[-1],
-                    ], dtype=object
+                    ],
+                    dtype=object,
                 )
             )
         # If action number is 10 (i.e. asexual reproduction)
@@ -232,7 +233,8 @@ class Player:
                         self.playerX,
                         self.playerY,
                         self.states[-1],
-                    ], dtype=object
+                    ],
+                    dtype=object,
                 )
             )
         # If action number is 11 (i.e. sexual reproduction)
@@ -250,7 +252,8 @@ class Player:
                         self.playerX,
                         self.playerY,
                         self.states[-1],
-                    ], dtype=object
+                    ],
+                    dtype=object,
                 )
             )
         # If action number is 12 (i.e. fight)
@@ -266,7 +269,8 @@ class Player:
                         self.playerX,
                         self.playerY,
                         self.states[-1],
-                    ], dtype=object
+                    ],
+                    dtype=object,
                 )
             )
 
@@ -421,7 +425,9 @@ class Player:
                 lenPlayers = lenPlayers + 1
 
                 # Create new Player objects and add as offsprings
-                offspring_players.append(Player(id_offspring, mating_begin_time, mode=self.mode))
+                offspring_players.append(
+                    Player(id_offspring, mating_begin_time, mode=self.mode)
+                )
 
                 # Add current player as parent to all offspring objects
                 offspring_players[i].add_parent(
