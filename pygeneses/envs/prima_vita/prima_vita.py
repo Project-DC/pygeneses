@@ -106,18 +106,22 @@ class PrimaVita:
         self.state_size = state_size
         self.action_size = action_size
         self.time = -1
+
         self.regenerate_times = 0
         self.max_regenerations = max_regenerations
         self.allow_regenerate = True if max_regenerations > 0 else False
+
         self.food_regen_condition_is_met = False
-        self.players = np.array([])
-        self.killed = np.array([])
-        self.food_particles = np.array([])
-        self.number_of_particles = random.randint(70, 80)
         self.particles_to_regrow = (
             20,
             40,
         )
+
+        self.players = np.array([])
+        self.killed = np.array([])
+        self.food_particles = np.array([])
+        self.number_of_particles = random.randint(70, 80)
+
         self.model = 0
         self.model_updates = model_updates
         self.speed = 3
