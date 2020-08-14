@@ -3,6 +3,7 @@ import pygame
 import sys
 import numpy as np
 import time
+import argparse
 
 from pygeneses.envs.prima_vita.global_constants import *
 from pygeneses.envs.prima_vita.player_class import Player
@@ -46,8 +47,13 @@ def current_action_time(result, action, timestamp):
 
     return actiontext, timetext
 
+parser = argparse.ArgumentParser()
+parser.add_argument('-p', '--path', required=True, help='Log file path')
+parser.add_argument('-s', '--speed', required=False, help='Speed of frame movement (in seconds)', default=0.5)
+args = vars(parser.parse_args())
 
-file_location = sys.argv[1]
+file_location = args['path']
+speed = float(args['speed'])
 
 life_events = np.load(file_location, allow_pickle=True)
 
@@ -130,4 +136,4 @@ for life_event in life_events:
 
     pygame.display.update()
 
-    time.sleep(0.5)
+    time.sleep(speed)
