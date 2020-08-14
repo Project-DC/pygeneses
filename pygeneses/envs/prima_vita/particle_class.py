@@ -24,12 +24,16 @@ class Particle:
         : y coordinate of food particle in 2D environment
     """
 
-    def __init__(self, mode="bot"):
+    def __init__(self, x=None, y=None, mode="bot"):
         """
         Initializer for Particle class
 
         Params
         ======
+        x    (int)
+            : Initial x coordinate of the agent (optional)
+        y    (int)
+            : Initial y coordinate of the agent (optional)
         mode (str)
            : Mode in which to run environment (human/bot)
         """
@@ -38,8 +42,8 @@ class Particle:
             self.particleImg = pygame.image.load(
                 os.path.join(os.path.dirname(__file__), "images/food.png")
             )
-        self.particleX = random.randint(10, SCREEN_WIDTH - 10)
-        self.particleY = random.randint(10, SCREEN_HEIGHT - 10)
+        self.particleX = x if x is not None else random.randint(10, SCREEN_WIDTH - 10)
+        self.particleY = y if y is not None else random.randint(10, SCREEN_HEIGHT - 10)
 
     def show_particle(self, screen):
         """

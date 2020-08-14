@@ -6,6 +6,7 @@ import time
 
 from pygeneses.envs.prima_vita.global_constants import *
 from pygeneses.envs.prima_vita.player_class import Player
+from pygeneses.envs.prima_vita.particle_class import Particle
 
 pygame.init()
 
@@ -70,6 +71,17 @@ for life_event in life_events:
     actiontext, timetext = current_action_time(result, action, timestamp)
 
     screen.fill((0, 178, 0))
+
+    food_in_proximity = life_event[-1][0]
+    players_in_proximity = life_event[-1][1]
+
+    particles = []
+    players = []
+
+    for i in range(len(food_in_proximity)//2):
+        food_info = food_in_proximity[i:i+2]
+        particles.append(Particle(x=(player.playerX + food_info[0]), y=(player.playerY + food_info[1]), mode='human'))
+        particles[-1].show_close(screen)
 
     for event in pygame.event.get():
         pass
