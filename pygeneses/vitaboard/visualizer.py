@@ -80,8 +80,15 @@ for life_event in life_events:
 
     for i in range(len(food_in_proximity)//2):
         food_info = food_in_proximity[i:i+2]
-        particles.append(Particle(x=(player.playerX + food_info[0]), y=(player.playerY + food_info[1]), mode='human'))
-        particles[-1].show_close(screen)
+        if(len(food_info) > 0):
+            particles.append(Particle(x=(player.playerX + food_info[0]), y=(player.playerY + food_info[1]), mode='human'))
+            particles[-1].show_close(screen)
+
+    for i in range(len(players_in_proximity)//3):
+        player_info = players_in_proximity[i:i+3]
+        if(len(player_info) > 0):
+            players.append(Player(i=i, tob=i, x=(player.playerX + player_info[0]), y=(player.playerY + player_info[1]), mode='human'))
+            players[-1].show_close(screen)
 
     for event in pygame.event.get():
         pass
