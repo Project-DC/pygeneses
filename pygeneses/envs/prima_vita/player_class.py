@@ -19,6 +19,8 @@ class Player:
     ============
     index                    (int)
         : Index of current player among all players
+    log_dir                     (str)
+       : The path to log directory where agent's life history to be logged
     action_history           (list)
         : List storing logs of all actions (both successful and failed), initial (x, y) coordinates
           and parent id(s)
@@ -64,7 +66,7 @@ class Player:
        : Mode in which to run environment (human/bot)
     """
 
-    def __init__(self, i, tob, x=None, y=None, mode="bot"):
+    def __init__(self, i, log_dir, tob, x=None, y=None, mode="bot"):
         """
         Initializer for Player class
 
@@ -83,6 +85,7 @@ class Player:
         """
 
         self.index = i
+        self.log_dir = log_dir
         self.action_history = (
             []
         )  # [Action, Time, Reward, Energy, num_offspring, [offspring ids]]
@@ -142,7 +145,7 @@ class Player:
         file_name = str(self.born_at) + "-" + str(self.index)
 
         # Open file at location to dump logs
-        file = open("Players_Data/" + file_name + ".npy", "wb")
+        file = open(self.log_dir + "/" + file_name + ".npy", "wb")
         np.save(file, np.array(self.action_history, dtype=object))
         file.close()
 
@@ -150,7 +153,7 @@ class Player:
         self.embeddings = self.embeddings / (time - self.born_at)
 
         # Open file at location to dump embeddings
-        file = open("Players_Data/Embeddings/" + file_name + ".npy", "wb")
+        file = open(os.path.join(self.log_dir, "Embeddings/") + file_name + ".npy", "wb")
         np.save(file, self.embeddings)
         file.close()
 
@@ -360,7 +363,7 @@ class Player:
             lenPlayers = lenPlayers + 1
 
             # Create new Player objects and add as offsprings
-            offspring_players.append(Player(id_offspring, time_given, mode=self.mode))
+            offspring_players.append(Player(id_offspring, self.log_dir, time_given, mode=self.mode))
 
             # Add current player as parent to all offspring objects
             offspring_players[i].add_parent(self.index, self.born_at)
@@ -426,7 +429,7 @@ class Player:
 
                 # Create new Player objects and add as offsprings
                 offspring_players.append(
-                    Player(id_offspring, mating_begin_time, mode=self.mode)
+                    Player(id_offspring, self.log_dir, mating_begin_time, mode=self.mode)
                 )
 
                 # Add current player as parent to all offspring objects

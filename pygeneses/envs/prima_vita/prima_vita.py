@@ -6,6 +6,7 @@ import shutil
 import pygame
 import random
 import numpy as np
+import time
 
 # Import other classes
 from .player_class import Player
@@ -101,7 +102,7 @@ class PrimaVita:
               bot - where pygame screen isn't created
         """
 
-        self.log_dir = "Players_Data"
+        self.log_dir = "Players_Data_" + str(round(time.time()))
         self.initial_population = initial_population
         self.state_size = state_size
         self.action_size = action_size
@@ -135,7 +136,10 @@ class PrimaVita:
 
         self.screen = None
 
-        self.reset_logs()
+        os.mkdir(self.log_dir)
+        os.mkdir(os.path.join(self.log_dir, "Embeddings"))
+
+        # self.reset_logs()
         self.init()
 
     def init(self):
@@ -183,18 +187,18 @@ class PrimaVita:
             # Update pygame screen
             pygame.display.update()
 
-    def reset_logs(self):
-        """
-        Delete directory containing logs if it already exists
-        """
-
-        # Check if log_dir already exists, if it does delete the directory and everything in it
-        if os.path.exists(self.log_dir):
-            shutil.rmtree(self.log_dir)
-
-        # Create log directory and a directory inside this that holds embeddings for each agent
-        os.mkdir(self.log_dir)
-        os.mkdir(os.path.join(self.log_dir, "Embeddings"))
+    # def reset_logs(self):
+    #     """
+    #     Delete directory containing logs if it already exists
+    #     """
+    #
+    #     # Check if log_dir already exists, if it does delete the directory and everything in it
+    #     if os.path.exists(self.log_dir):
+    #         shutil.rmtree(self.log_dir)
+    #
+    #     # Create log directory and a directory inside this that holds embeddings for each agent
+    #     os.mkdir(self.log_dir)
+    #     os.mkdir(os.path.join(self.log_dir, "Embeddings"))
 
     def pad_state(self, state, maxlen):
         """
@@ -998,7 +1002,7 @@ class PrimaVita:
         # Loop till iterator reaches initial population count
         for i in range(self.initial_population):
             # Generate a new player and add it to player pool
-            self.players = np.append(self.players, Player(i, self.time, mode=self.mode))
+            self.players = np.append(self.players, Player(i, self.log_dir, self.time, mode=self.mode))
 
     def refresh_particles(self):
         """
