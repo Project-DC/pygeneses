@@ -122,7 +122,7 @@ class PrimaVita:
         self.food_particles = np.array([])
         self.number_of_particles = random.randint(70, 80)
 
-        self.model = 0
+        self.model = "reinforce"
         self.model_updates = model_updates
         self.speed = 3
         self.max_age = 90
@@ -136,8 +136,9 @@ class PrimaVita:
         self.screen = None
 
         self.reset_logs()
+        self.init()
 
-    def init(self, model_name="reinforce"):
+    def init(self):
         """
         Initialise the environment
 
@@ -162,7 +163,7 @@ class PrimaVita:
         self.check_particles()
 
         # Initialize the model, convert string to name of model and evaluate that to convert to class name
-        self.model = eval(model_to_class[model_name])(
+        self.model = eval(model_to_class[self.model])(
             self.initial_population, self.state_size, self.action_size
         )
 
@@ -238,8 +239,9 @@ class PrimaVita:
         """
 
         # If everyone is killed then return -1
+        running = True
         if len(self.killed) == len(self.players):
-            return -1
+            running = False
 
         # List containing states of all the agents
         initial_state = []
@@ -286,7 +288,28 @@ class PrimaVita:
                 initial_state.append(temp_state)
 
         # Return the state as numpy array
-        return np.array(initial_state)
+        return np.array(initial_state), running
+
+    def run(self):
+        """
+        Take an action, make changes to environment, return rewards
+        """
+
+        # Get initial states and running condition
+        states, running = self.get_current_state()
+
+        # While agents are alive
+        while running:
+            # Update time tick
+            self.update_time()
+
+            # Loop through all the players
+            for i in range(len(self.players)):
+                # Take an action for current index
+                self.take_action(i, states[i])
+
+                # Get updated state
+                states, running = self.get_current_state()
 
     def take_action(self, idx, state):
         """
@@ -299,6 +322,10 @@ class PrimaVita:
         state (numpy.ndarray)
             : State that the agent currently experiences
         """
+
+        # If player is killed then he/she cannot take any action
+        if(type(self.players[idx]) == int):
+            return
 
         # Predict action and return embedding using RL model used
         action, embed = self.model.predict_action(idx, state)
