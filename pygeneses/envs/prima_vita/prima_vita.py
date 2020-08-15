@@ -8,15 +8,15 @@ import pygame
 import random
 import numpy as np
 import time
+import importlib
 
 # Import other classes
 from .player_class import Player
 from .particle_class import Particle
 from .global_constants import *
-from pygeneses.models.reinforce.reinforce import ReinforceModel
 
 # Dictionary to map from string to name of model
-model_to_class = {"reinforce": "ReinforceModel"}
+model_to_class = {"reinforce": importlib.import_module('pygeneses.models.reinforce.reinforce').ReinforceModel}
 
 
 class PrimaVita:
@@ -174,7 +174,7 @@ class PrimaVita:
         self.check_particles()
 
         # Initialize the model, convert string to name of model and evaluate that to convert to class name
-        self.model = eval(model_to_class[self.model])(
+        self.model = model_to_class[self.model](
             self.initial_population, self.state_size, self.action_size
         )
 
