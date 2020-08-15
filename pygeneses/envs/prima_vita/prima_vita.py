@@ -140,6 +140,9 @@ class PrimaVita:
 
         self.screen = None
 
+        if os.path.exists(self.log_dir):
+            shutil.rmtree(self.log_dir)
+
         os.mkdir(self.log_dir)
         os.mkdir(os.path.join(self.log_dir, "Embeddings"))
 
@@ -220,9 +223,14 @@ class PrimaVita:
         elif len(state) == maxlen:
             return state
 
-    def get_current_state(self):
+    def get_current_state(self, idx=None):
         """
         Return the current state of all the agents in the environment
+
+        Params
+        ======
+        idx (int)
+             : Index of current actor
 
         Returns
         =======
@@ -245,38 +253,57 @@ class PrimaVita:
         for i in range(len(self.players)):
             # If a player is not dead then
             if type(self.players[i]) != int:
-                # Get the food particles in environment
-                env_food_vector, env_particle_distance = self.food_in_env(
-                    self.players[i]
-                )
-
-                # Get the agents in environment
-                env_player_vector, env_player_distance = self.players_in_env(
-                    self.players[i]
-                )
-
-                # Stack together the food and player vectors
-                temp_state = [env_food_vector, env_player_vector]
-
-                # Save this as state in current agent's object
-                self.players[i].states.append(
-                    np.array(
-                        [np.array(env_food_vector), np.array(env_player_vector)],
-                        dtype=object,
+                # Update only current actor and surrounding player's state
+                if (idx == None) or (i in self.players[idx].players_near or i == idx):
+                    # Get the food particles in environment
+                    env_food_vector, env_particle_distance, env_particle_index = self.food_in_env(
+                        self.players[i], get_idx=True
                     )
-                )
 
-                # Convert the food and player vectors stacked together into a single vector
-                temp_state = sum(temp_state, [])
+                    # Get the agents in environment
+                    env_player_vector, env_player_distance, env_player_index = self.players_in_env(
+                        self.players[i], get_idx=True
+                    )
 
-                # Pad to state_size - 1
-                temp_state = self.pad_state(np.array(temp_state), self.state_size - 1)
+                    # Stack together the food and player vectors
+                    temp_state = [env_food_vector, env_player_vector]
 
-                # Append energy to state
-                temp_state = np.append(temp_state, [self.players[i].energy])
+                    # Save this as state in current agent's object
+                    self.players[i].states.append(
+                        np.array(
+                            [np.array(env_food_vector, dtype=object), np.array(env_player_vector, dtype=object)],
+                            dtype=object,
+                        )
+                    )
 
-                # Append to initial_state
-                initial_state.append(temp_state)
+                    # Update food_near and players_near for current player
+                    self.players[i].food_near = env_particle_index
+                    self.players[i].players_near = env_player_index
+
+                    # Convert the food and player vectors stacked together into a single vector
+                    temp_state = sum(temp_state, [])
+
+                    # Pad to state_size - 1
+                    temp_state = self.pad_state(np.array(temp_state), self.state_size - 1)
+
+                    # Append energy to state
+                    temp_state = np.append(temp_state, [self.players[i].energy])
+
+                    # Append to initial_state
+                    initial_state.append(temp_state)
+                # Otherwise copy old state
+                else:
+                    # Convert state to 1D array
+                    temp_state = np.hstack(self.players[i].states[-1])
+
+                    # Pad state to state_size - 1
+                    temp_state = self.pad_state(np.array(temp_state), self.state_size - 1)
+
+                    # Append energy to state
+                    temp_state = np.append(temp_state, [self.players[i].energy])
+
+                    # Append to initial_state
+                    initial_state.append(temp_state)
             else:
                 # If agent is dead append an array with a single value - zero
                 temp_state = np.append(np.zeros(20), [-100])
@@ -309,11 +336,13 @@ class PrimaVita:
 
             # Loop through all the players
             for i in range(len(self.players)):
-                # Take an action for current index
-                self.take_action(i, states[i])
+                if(type(self.players[i]) != int):
+                    # Take an action for current index
+                    self.take_action(i, states[i].astype(np.uint8))
+                    idx = i if type(self.players[i]) != int else None
 
-                # Get updated state
-                states, running = self.get_current_state()
+                    # Get updated state
+                    states, running = self.get_current_state(idx)
 
     def take_action(self, idx, state):
         """
