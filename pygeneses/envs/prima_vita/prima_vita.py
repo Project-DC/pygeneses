@@ -2,6 +2,7 @@
 
 # Import required libraries
 import os
+import glob
 import shutil
 import pygame
 import random
@@ -81,6 +82,7 @@ class PrimaVita:
         max_regenerations=0,
         model_updates=10,
         mode="bot",
+        log_dir_info=None
     ):
         """
         Initializer for PrimaVita class
@@ -100,9 +102,11 @@ class PrimaVita:
         mode               (str)
             : Mode in which to run the environment, human - where pygame screen is displayed,
               bot - where pygame screen isn't created
+        log_dir_info       (str)
+            : To be appended to the log directory name for specifying the task
         """
 
-        self.log_dir = "Players_Data_" + str(round(time.time()))
+        self.log_dir = "Players_Data_" + str(round(time.time())) if log_dir_info == None else "Players_Data_" + log_dir_info
         self.initial_population = initial_population
         self.state_size = state_size
         self.action_size = action_size
@@ -129,7 +133,7 @@ class PrimaVita:
         self.max_age = 90
         self.current_population = 0
         self.max_allowed_population = 100
-        self.kill_type = "random"
+        self.kill_type = "difference"
 
         # If mode is human then pygame environment is shown
         self.mode = mode
@@ -186,19 +190,6 @@ class PrimaVita:
 
             # Update pygame screen
             pygame.display.update()
-
-    # def reset_logs(self):
-    #     """
-    #     Delete directory containing logs if it already exists
-    #     """
-    #
-    #     # Check if log_dir already exists, if it does delete the directory and everything in it
-    #     if os.path.exists(self.log_dir):
-    #         shutil.rmtree(self.log_dir)
-    #
-    #     # Create log directory and a directory inside this that holds embeddings for each agent
-    #     os.mkdir(self.log_dir)
-    #     os.mkdir(os.path.join(self.log_dir, "Embeddings"))
 
     def pad_state(self, state, maxlen):
         """
@@ -294,9 +285,14 @@ class PrimaVita:
         # Return the state as numpy array
         return np.array(initial_state), running
 
-    def run(self):
+    def run(self, stop_at=None):
         """
         Take an action, make changes to environment, return rewards
+
+        Params
+        ======
+        stop_at (int)
+            : Stop after generating approximately these many logs
         """
 
         # Get initial states and running condition
@@ -306,6 +302,10 @@ class PrimaVita:
         while running:
             # Update time tick
             self.update_time()
+
+            # Check if max logs reached
+            if stop_at != None and len(glob.glob(os.path.join(self.log_dir, "*.npy"))) >= stop_at:
+                break
 
             # Loop through all the players
             for i in range(len(self.players)):
