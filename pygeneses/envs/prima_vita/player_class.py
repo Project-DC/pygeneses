@@ -66,21 +66,25 @@ class Player:
        : Mode in which to run environment (human/bot)
     """
 
-    def __init__(self, i, log_dir, tob, x=None, y=None, mode="bot"):
+    def __init__(self, i, log_dir, tob, energy, x=None, y=None, mode="bot"):
         """
         Initializer for Player class
 
         Params
         ======
-        i    (int)
+        i       (int)
             : Id of the player out of all players
-        tob  (int)
+        log_dir (str)
+           : The path to log directory where agent's life history to be logged
+        tob     (int)
             : Time of birth of the agent (fetched from environment)
-        x    (int)
+        energy  (int)
+            : Energy of the player (when energy is consumed player dies)
+        x       (int)
             : Initial x coordinate of the agent (optional)
-        y    (int)
+        y       (int)
             : Initial y coordinate of the agent (optional)
-        mode (str)
+        mode    (str)
            : Mode in which to run environment (human/bot)
         """
 
@@ -109,7 +113,7 @@ class Player:
         self.is_impotent = np.random.choice([True, False], p=[0.3, 0.7])
         self.mating_begin_time = 0
         self.fighting_with = -1
-        self.energy = 200
+        self.energy = energy
         self.embeddings = np.array([0])
         self.states = []
         self.mode = mode

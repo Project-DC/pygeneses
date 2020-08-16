@@ -54,6 +54,10 @@ class PrimaVita:
        : Total number of food particles in the environment at the beginning of time (TICK = 0)
     particles_to_regrow         (int)
        : Number of particles to be regrown
+    initial_energy              (int)
+       : Initial energy of agents
+    state_size                  (int)
+       : Size to which state is to be padded
     model                       (pygeneses.models)
        : Instance of pygeneses.models (RL algorithms)
     model_updates               (int)
@@ -121,6 +125,9 @@ class PrimaVita:
             20,
             40,
         )
+
+        self.initial_energy = 200
+        self.state_size = 21
 
         self.players = np.array([])
         self.killed = np.array([])
@@ -1031,7 +1038,7 @@ class PrimaVita:
         # Loop till iterator reaches initial population count
         for i in range(self.initial_population):
             # Generate a new player and add it to player pool
-            self.players = np.append(self.players, Player(i, self.log_dir, self.time, mode=self.mode))
+            self.players = np.append(self.players, Player(i, self.log_dir, self.time, self.initial_energy, mode=self.mode))
 
     def refresh_particles(self):
         """
