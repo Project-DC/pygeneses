@@ -8,3 +8,6 @@ Currently we have a single environment consisting of a single species called "Pr
 
 Prima Vita is a species of artificially simulated beings created as part of Project DC. This repository holds a simulation environment created in pygame which is to be used with Deep Reinforcement Learning algorithms to find out the evolution of Prima Vita.
 
+## License
+
+Pygeneses is licensed under GNU GPL v3 ![LICENSE.md]LICENSE
