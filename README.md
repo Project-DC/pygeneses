@@ -10,4 +10,4 @@ Prima Vita is a species of artificially simulated beings created as part of Proj
 
 ## License
 
-Pygeneses is licensed under GNU GPL v3 ![LICENSE.md]LICENSE
+Pygeneses is licensed under GNU GPL v3 [LICENSE](LICENSE.md)
