@@ -1,3 +1,5 @@
+import os
+import codecs
 import pathlib
 from setuptools import setup, find_packages
 
@@ -7,10 +9,23 @@ HERE = pathlib.Path(__file__).parent
 # The text of the README file
 README = (HERE / "README.md").read_text()
 
+def read(rel_path):
+    here = os.path.abspath(os.path.dirname(__file__))
+    with codecs.open(os.path.join(here, rel_path), 'r') as fp:
+        return fp.read()
+
+def get_version(rel_path):
+    for line in read(rel_path).splitlines():
+        if line.startswith('__version__'):
+            delim = '"' if '"' in line else "'"
+            return line.split(delim)[1]
+    else:
+        raise RuntimeError("Unable to find version string.")
+
 # This call to setup() does all the work
 setup(
     name="pygeneses",
-    version="0.1",
+    version=get_version("pygeneses/__init__.py"),
     description=(
         "PyTorch based framework for training artificial agents in bio-inspired"
         " environments"
