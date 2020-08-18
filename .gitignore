@@ -4,5 +4,5 @@ __pycache__
 *.npy
 build/*
 dist/*
-pyevolution.egg-info/*
+pygeneses.egg-info/*
 *.zip

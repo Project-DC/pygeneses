@@ -16,7 +16,11 @@ from .particle_class import Particle
 from .global_constants import *
 
 # Dictionary to map from string to name of model
-model_to_class = {"reinforce": importlib.import_module('pygeneses.models.reinforce.reinforce').ReinforceModel}
+model_to_class = {
+    "reinforce": importlib.import_module(
+        "pygeneses.models.reinforce.reinforce"
+    ).ReinforceModel
+}
 
 
 class PrimaVita:
@@ -80,13 +84,9 @@ class PrimaVita:
 
     def __init__(
         self,
-        initial_population=10,
-        state_size=21,
-        action_size=13,
-        max_regenerations=0,
-        model_updates=10,
+        params_dic={},
         mode="bot",
-        log_dir_info=None
+        log_dir_info=None,
     ):
         """
         Initializer for PrimaVita class
@@ -110,50 +110,48 @@ class PrimaVita:
             : To be appended to the log directory name for specifying the task
         """
 
-        self.log_dir = "Players_Data_" + str(round(time.time())) if log_dir_info == None else "Players_Data_" + log_dir_info
-        self.initial_population = initial_population
-        self.state_size = state_size
-        self.action_size = action_size
-        self.time = -1
-
-        self.regenerate_times = 0
-        self.max_regenerations = max_regenerations
-        self.allow_regenerate = True if max_regenerations > 0 else False
-
-        self.food_regen_condition_is_met = False
-        self.particles_to_regrow = (
-            20,
-            40,
+        # Cannot be updated by user
+        self.log_dir = (
+            "Players_Data_" + str(round(time.time()))
+            if log_dir_info == None
+            else "Players_Data_" + log_dir_info
         )
-
-        self.initial_energy = 200
-        self.state_size = 21
-
+        self.time = -1
+        self.regenerate_times = 0
+        self.allow_regenerate = True if 'max_regenerations' in params_dic and params_dic['max_regenerations'] > 0 else False
+        self.food_regen_condition_is_met = False
         self.players = np.array([])
         self.killed = np.array([])
         self.food_particles = np.array([])
+        self.current_population = 0
+        self.screen = None
         self.number_of_particles = random.randint(70, 80)
 
-        self.model = "reinforce"
-        self.model_updates = model_updates
-        self.speed = 3
-        self.max_age = 90
-        self.current_population = 0
-        self.max_allowed_population = 100
-        self.kill_type = "difference"
+        # Can take values from user
+        self.initial_population = params_dic['initial_population'] if 'initial_population' in params_dic.keys() else 10
+        self.state_size = params_dic['state_size'] if 'state_size' in params_dic.keys() else 21
+        self.action_size = params_dic['action_size'] if 'action_size' in params_dic.keys() else 13
+        # self.max_regenerations = params_dic['max_regenerations'] if 'max_regenerations' in params_dic.keys() else 0
+        # self.particles_to_regrow = (20, 40)
+        self.initial_energy = params_dic['initial_energy'] if 'initial_energy' in params_dic.keys() else 200
+        self.model = params_dic['model'] if 'model' in params_dic.keys() else 'reinforce'
+        self.model_updates = params_dic['model_updates'] if 'model_updates' in params_dic.keys() else 10
+        self.speed = params_dic['speed'] if 'speed' in params_dic.keys() else 3
+        self.max_age = params_dic['max_age'] if 'max_age' in params_dic.keys() else 90
+        self.max_allowed_population = params_dic['max_allowed_population'] if 'max_allowed_population' in params_dic.keys() else 100
+        self.kill_type = params_dic['kill_type'] if 'kill_type' in params_dic.keys() else 'difference'
 
         # If mode is human then pygame environment is shown
         self.mode = mode
 
-        self.screen = None
-
+        # Delete log_dir by same name if it exists already
         if os.path.exists(self.log_dir):
             shutil.rmtree(self.log_dir)
 
         os.mkdir(self.log_dir)
         os.mkdir(os.path.join(self.log_dir, "Embeddings"))
 
-        # self.reset_logs()
+        # Initialize environment
         self.init()
 
     def init(self):
@@ -263,14 +261,18 @@ class PrimaVita:
                 # Update only current actor and surrounding player's state
                 if (idx == None) or (i in self.players[idx].players_near or i == idx):
                     # Get the food particles in environment
-                    env_food_vector, env_particle_distance, env_particle_index = self.food_in_env(
-                        self.players[i], get_idx=True
-                    )
+                    (
+                        env_food_vector,
+                        env_particle_distance,
+                        env_particle_index,
+                    ) = self.food_in_env(self.players[i], get_idx=True)
 
                     # Get the agents in environment
-                    env_player_vector, env_player_distance, env_player_index = self.players_in_env(
-                        self.players[i], get_idx=True
-                    )
+                    (
+                        env_player_vector,
+                        env_player_distance,
+                        env_player_index,
+                    ) = self.players_in_env(self.players[i], get_idx=True)
 
                     # Stack together the food and player vectors
                     temp_state = [env_food_vector, env_player_vector]
@@ -278,7 +280,10 @@ class PrimaVita:
                     # Save this as state in current agent's object
                     self.players[i].states.append(
                         np.array(
-                            [np.array(env_food_vector, dtype=object), np.array(env_player_vector, dtype=object)],
+                            [
+                                np.array(env_food_vector, dtype=object),
+                                np.array(env_player_vector, dtype=object),
+                            ],
                             dtype=object,
                         )
                     )
@@ -291,7 +296,9 @@ class PrimaVita:
                     temp_state = sum(temp_state, [])
 
                     # Pad to state_size - 1
-                    temp_state = self.pad_state(np.array(temp_state), self.state_size - 1)
+                    temp_state = self.pad_state(
+                        np.array(temp_state), self.state_size - 1
+                    )
 
                     # Append energy to state
                     temp_state = np.append(temp_state, [self.players[i].energy])
@@ -304,7 +311,9 @@ class PrimaVita:
                     temp_state = np.hstack(self.players[i].states[-1])
 
                     # Pad state to state_size - 1
-                    temp_state = self.pad_state(np.array(temp_state), self.state_size - 1)
+                    temp_state = self.pad_state(
+                        np.array(temp_state), self.state_size - 1
+                    )
 
                     # Append energy to state
                     temp_state = np.append(temp_state, [self.players[i].energy])
@@ -338,12 +347,15 @@ class PrimaVita:
             self.update_time()
 
             # Check if max logs reached
-            if stop_at != None and len(glob.glob(os.path.join(self.log_dir, "*.npy"))) >= stop_at:
+            if (
+                stop_at != None
+                and len(glob.glob(os.path.join(self.log_dir, "*.npy"))) >= stop_at
+            ):
                 break
 
             # Loop through all the players
             for i in range(len(self.players)):
-                if(type(self.players[i]) != int):
+                if type(self.players[i]) != int:
                     # Take an action for current index
                     self.take_action(i, states[i].astype(np.uint8))
                     idx = i if type(self.players[i]) != int else None
@@ -364,7 +376,7 @@ class PrimaVita:
         """
 
         # If player is killed then he/she cannot take any action
-        if(type(self.players[idx]) == int):
+        if type(self.players[idx]) == int:
             return
 
         # Predict action and return embedding using RL model used
@@ -461,7 +473,9 @@ class PrimaVita:
                 # Perform asexual reproduction and get offsprings
                 offspring_players, offspring_ids = self.players[
                     idx
-                ].asexual_reproduction(len(self.players), self.time, self.initial_energy)
+                ].asexual_reproduction(
+                    len(self.players), self.time, self.initial_energy
+                )
 
                 # Put the offsprings to player array
                 for offspring_player in offspring_players:
@@ -741,7 +755,10 @@ class PrimaVita:
         self.current_population = len(self.players) - len(self.killed)
 
         # If current population exceeds a max threshold then kill people randomly
-        if self.kill_type != "" and self.current_population > self.max_allowed_population:
+        if (
+            self.kill_type != ""
+            and self.current_population > self.max_allowed_population
+        ):
             # Compute number of extra agents
             extra_agent_count = (
                 self.current_population - self.max_allowed_population
@@ -1039,7 +1056,10 @@ class PrimaVita:
         # Loop till iterator reaches initial population count
         for i in range(self.initial_population):
             # Generate a new player and add it to player pool
-            self.players = np.append(self.players, Player(i, self.log_dir, self.time, self.initial_energy, mode=self.mode))
+            self.players = np.append(
+                self.players,
+                Player(i, self.log_dir, self.time, self.initial_energy, mode=self.mode),
+            )
 
     def refresh_particles(self):
         """

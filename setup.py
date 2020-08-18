@@ -11,7 +11,10 @@ README = (HERE / "README.md").read_text()
 setup(
     name="pygeneses",
     version="0.1",
-    description="PyTorch based framework for training artificial agents in bio-inspired environments",
+    description=(
+        "PyTorch based framework for training artificial agents in bio-inspired"
+        " environments"
+    ),
     long_description=README,
     long_description_content_type="text/markdown",
     url="https://github.com/Project-DC/pyevolve",
@@ -27,8 +30,6 @@ setup(
         "Programming Language :: Python :: 3.6",
     ],
     packages=[package for package in find_packages()],
-    package_data={'pygeneses': [
-        'envs/prima_vita/images/*.png'
-    ]},
+    package_data={"pygeneses": ["envs/prima_vita/images/*.png"]},
     install_requires=["pygame", "numpy", "torch==1.4.0"],
 )

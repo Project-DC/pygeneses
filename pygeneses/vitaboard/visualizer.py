@@ -34,26 +34,33 @@ def current_action_time(result, action, timestamp):
         9: "Ingestion",
         10: "Asexual Reproduction",
         11: "Sexual Reproduction",
-        12: "Fight"
+        12: "Fight",
     }
 
     actiontext = myfont.render(
-        "Action: " + result + action_number_to_action.get(action, "Unknown"), 1, (255, 255, 255)
+        "Action: " + result + action_number_to_action.get(action, "Unknown"),
+        1,
+        (255, 255, 255),
     )
 
-    timetext = myfont.render(
-        "Time: " + str(timestamp), 1, (255, 255, 255)
-    )
+    timetext = myfont.render("Time: " + str(timestamp), 1, (255, 255, 255))
 
     return actiontext, timetext
 
+
 parser = argparse.ArgumentParser()
-parser.add_argument('-p', '--path', required=True, help='Log file path')
-parser.add_argument('-s', '--speed', required=False, help='Speed of frame movement (in seconds)', default=0.5)
+parser.add_argument("-p", "--path", required=True, help="Log file path")
+parser.add_argument(
+    "-s",
+    "--speed",
+    required=False,
+    help="Speed of frame movement (in seconds)",
+    default=0.5,
+)
 args = vars(parser.parse_args())
 
-file_location = args['path']
-speed = float(args['speed'])
+file_location = args["path"]
+speed = float(args["speed"])
 
 life_events = np.load(file_location, allow_pickle=True)
 
@@ -62,7 +69,10 @@ i = 0
 try:
     tob = life_events[2][1] if len(life_events[1]) == 2 else life_events[1][1]
 except:
-    print(os.path.basename(file_location).split(".")[0].split("-")[1], "died without doing anything")
+    print(
+        os.path.basename(file_location).split(".")[0].split("-")[1],
+        "died without doing anything",
+    )
     sys.exit()
 
 life_events = life_events[2:] if len(life_events[1]) == 2 else life_events[1:]
@@ -84,16 +94,30 @@ for life_event in life_events:
     particles = []
     players = []
 
-    for i in range(len(food_in_proximity)//2):
-        food_info = food_in_proximity[i:i+2]
-        if(len(food_info) > 0):
-            particles.append(Particle(x=(player.playerX + food_info[0]), y=(player.playerY + food_info[1]), mode='human'))
+    for i in range(len(food_in_proximity) // 2):
+        food_info = food_in_proximity[i : i + 2]
+        if len(food_info) > 0:
+            particles.append(
+                Particle(
+                    x=(player.playerX + food_info[0]),
+                    y=(player.playerY + food_info[1]),
+                    mode="human",
+                )
+            )
             particles[-1].show_close(screen)
 
-    for i in range(len(players_in_proximity)//3):
-        player_info = players_in_proximity[i:i+3]
-        if(len(player_info) > 0):
-            players.append(Player(i=i, tob=i, x=(player.playerX + player_info[0]), y=(player.playerY + player_info[1]), mode='human'))
+    for i in range(len(players_in_proximity) // 3):
+        player_info = players_in_proximity[i : i + 3]
+        if len(player_info) > 0:
+            players.append(
+                Player(
+                    i=i,
+                    tob=i,
+                    x=(player.playerX + player_info[0]),
+                    y=(player.playerY + player_info[1]),
+                    mode="human",
+                )
+            )
             players[-1].show_close(screen)
 
     for event in pygame.event.get():

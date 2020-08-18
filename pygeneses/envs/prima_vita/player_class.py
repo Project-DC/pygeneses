@@ -157,7 +157,9 @@ class Player:
         self.embeddings = self.embeddings / (time - self.born_at)
 
         # Open file at location to dump embeddings
-        file = open(os.path.join(self.log_dir, "Embeddings/") + file_name + ".npy", "wb")
+        file = open(
+            os.path.join(self.log_dir, "Embeddings/") + file_name + ".npy", "wb"
+        )
         np.save(file, self.embeddings)
         file.close()
 
@@ -368,7 +370,15 @@ class Player:
             lenPlayers = lenPlayers + 1
 
             # Create new Player objects and add as offsprings
-            offspring_players.append(Player(id_offspring, self.log_dir, time_given, initial_energy, mode=self.mode))
+            offspring_players.append(
+                Player(
+                    id_offspring,
+                    self.log_dir,
+                    time_given,
+                    initial_energy,
+                    mode=self.mode,
+                )
+            )
 
             # Add current player as parent to all offspring objects
             offspring_players[i].add_parent(self.index, self.born_at)
@@ -379,7 +389,7 @@ class Player:
         self,
         mating_begin_time,
         lenPlayers,
-        initial_energy,
+        initial_energy=None,
         gen_offspring=False,
         mate_id=-1,
         mate_tob=-1,
@@ -437,7 +447,13 @@ class Player:
 
                 # Create new Player objects and add as offsprings
                 offspring_players.append(
-                    Player(id_offspring, self.log_dir, mating_begin_time, initial_energy, mode=self.mode)
+                    Player(
+                        id_offspring,
+                        self.log_dir,
+                        mating_begin_time,
+                        initial_energy,
+                        mode=self.mode,
+                    )
                 )
 
                 # Add current player as parent to all offspring objects

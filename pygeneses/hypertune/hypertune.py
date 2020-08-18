@@ -49,8 +49,11 @@ class HyperTune:
         """
 
         for value in self.values:
-            object = class_import[self.model_class](log_dir_info=self.hyperparameter + "_" + str(value))
-            setattr(object, self.hyperparameter, value)
+            params_dic = {self.hyperparameter: value}
+            object = class_import[self.model_class](
+                    params_dic=params_dic,
+                    log_dir_info=self.hyperparameter + "_" + str(value)
+            )
             print("-" * 100)
             print(" ".join(self.hyperparameter.split("_")).capitalize(), ": ", value)
             print("-" * 100)
