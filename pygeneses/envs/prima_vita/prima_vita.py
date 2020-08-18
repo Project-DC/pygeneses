@@ -461,7 +461,7 @@ class PrimaVita:
                 # Perform asexual reproduction and get offsprings
                 offspring_players, offspring_ids = self.players[
                     idx
-                ].asexual_reproduction(len(self.players), self.time)
+                ].asexual_reproduction(len(self.players), self.time, self.initial_energy)
 
                 # Put the offsprings to player array
                 for offspring_player in offspring_players:
@@ -515,6 +515,7 @@ class PrimaVita:
                     ].sexual_reproduction(
                         mating_begin_time,
                         len(self.players),
+                        self.initial_energy,
                         True,
                         mate_id=mate_idx,
                         mate_tob=self.players[mate_idx].born_at,

@@ -329,17 +329,18 @@ class Player:
             # Reduce energy by 5 for movement
             self.energy -= 5
 
-    def asexual_reproduction(self, lenPlayers, time_given):
+    def asexual_reproduction(self, lenPlayers, time_given, initial_energy):
         """
         Perform asexual reproduction action
 
         Params
         ======
-        lenPlayers (int)
+        lenPlayers     (int)
             : Number of players currently in environment
-        time_given (int)
+        time_given     (int)
             : Current time (taken from environment)
-
+        initial_energy (int)
+           : Initial energy of agents
         Returns
         =======
             offspring_players (list)
@@ -367,7 +368,7 @@ class Player:
             lenPlayers = lenPlayers + 1
 
             # Create new Player objects and add as offsprings
-            offspring_players.append(Player(id_offspring, self.log_dir, time_given, mode=self.mode))
+            offspring_players.append(Player(id_offspring, self.log_dir, time_given, initial_energy, mode=self.mode))
 
             # Add current player as parent to all offspring objects
             offspring_players[i].add_parent(self.index, self.born_at)
@@ -378,6 +379,7 @@ class Player:
         self,
         mating_begin_time,
         lenPlayers,
+        initial_energy
         gen_offspring=False,
         mate_id=-1,
         mate_tob=-1,
@@ -397,6 +399,8 @@ class Player:
             : Id of the mate
         mate_tob          (int)
             : Time of birth of the mate
+        initial_energy    (int)
+           : Initial energy of agents
 
         Returns
         =======
@@ -433,7 +437,7 @@ class Player:
 
                 # Create new Player objects and add as offsprings
                 offspring_players.append(
-                    Player(id_offspring, self.log_dir, mating_begin_time, mode=self.mode)
+                    Player(id_offspring, self.log_dir, mating_begin_time, initial_energy, mode=self.mode)
                 )
 
                 # Add current player as parent to all offspring objects
