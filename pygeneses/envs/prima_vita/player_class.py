@@ -379,7 +379,7 @@ class Player:
         self,
         mating_begin_time,
         lenPlayers,
-        initial_energy
+        initial_energy,
         gen_offspring=False,
         mate_id=-1,
         mate_tob=-1,
