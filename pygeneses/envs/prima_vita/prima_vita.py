@@ -140,6 +140,7 @@ class PrimaVita:
         self.max_age = params_dic['max_age'] if 'max_age' in params_dic.keys() else 90
         self.max_allowed_population = params_dic['max_allowed_population'] if 'max_allowed_population' in params_dic.keys() else 100
         self.kill_type = params_dic['kill_type'] if 'kill_type' in params_dic.keys() else 'difference'
+        self.sensory_radius = params_dic['sensory_radius'] if 'sensory_radius' in params_dic.keys() else 100
 
         # If mode is human then pygame environment is shown
         self.mode = mode
@@ -869,7 +870,7 @@ class PrimaVita:
                 ) ** (1 / 2)
 
                 # If distance is less than or equal to 100 then push to lists
-                if ed <= 100:
+                if ed <= self.sensory_radius:
                     env.append(i)
                     vec.append(food_particle.particleX - player.playerX)
                     vec.append(food_particle.particleY - player.playerY)
@@ -924,7 +925,7 @@ class PrimaVita:
                 ) ** (1 / 2)
 
                 # If distance is less than equal to 100 then push to list
-                if ed <= 100:
+                if ed <= self.sensory_radius:
                     env.append(i)
                     vec.append(host.playerX - player.playerX)
                     vec.append(host.playerY - player.playerY)
