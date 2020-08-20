@@ -3,7 +3,8 @@ import os
 import numpy as np
 import re
 import statistics
-
+from collections import OrderedDict
+import json
 
 def check_ext(f_names):
     """
@@ -98,7 +99,7 @@ def gen_fam_graph(address):
     return fam_tree
 
 
-def add_life_exp(life, tob, life_data):
+def add_life_exp(life, tob, life_data, id):
     """
     Function to add values to mean and variance
 
@@ -110,6 +111,8 @@ def add_life_exp(life, tob, life_data):
         : Time of birth of the player
     life_data (dict)
         : Dictionary containing the values {tob : life} for players
+    id        (string)
+        : String containing the name of the player
 
     Returns
     =======
@@ -119,10 +122,11 @@ def add_life_exp(life, tob, life_data):
     # Check if tob does not already exist as a key in the dictionary life_data
     if tob not in life_data.keys():
         # Add a new entry in life_data
-        life_data[tob] = [life]
+        life_data[tob] = [[life],[id]]
     else:
         # If tob exists as a key in life_Data, append 'life' to the value at key tob
-        life_data[tob].append(life)
+        life_data[tob][0].append(life)
+        life_data[tob][1].append(id)
     # Return the dictionary life_data
     return life_data
 
@@ -152,7 +156,7 @@ def get_life_stats(address):
     # Filter out files that do not have .npy extension
     f_names = check_ext(f_names)
     # Initialise a dict life_data
-    life_data = {}
+    life_data = OrderedDict()
     # Iterate over all file names stored in the list f_names
     for f_name in f_names:
         # Load the values stored in the file named f_name
@@ -164,35 +168,39 @@ def get_life_stats(address):
         # Calculate the lifetime of the player
         lifetime = tod - int(tob)
         # Update life_data
-        life_data = add_life_exp(lifetime, tob, life_data)
+        life_data = add_life_exp(lifetime, tob, life_data, id)
     # Initialise dictionaries to store various statistics
     variance = {}
     mean = {}
     qof = {}
 
     # Iterate over the keys of life_data
-    for i in life_data.keys():
+    for j in life_data.keys():
+        i = str(j)
         # Check if Value at key 'i' holds information of only one player
-        if len(life_data[i]) == 1:
+        if len(life_data[j][0]) == 1:
             # Set value at key 'i' to 0 for variance
-            variance[i] = 0
+            variance[i] = list([ 0 , [ life_data[j][1] ] ])
             # Set mean equal to the value of dictionary mean at key 'i'
-            mean[i] = life_data[i][0]
-            # Set qof as 1 if the player lived for more than 30 units of time else set qof to 0
-            qof[i] = 1 if life_data[i][0] >= 30 else 0
+            mean[i] = list(life_data[j][0][0])
+            # Set qof as 1 if the player lived for more than 85 units of time else set qof to 0
+            qof[i] = list(int(1) if life_data[j][0][0] >= 85 else int(0))
             # Move over to the next iteration
             continue
         # Set the value of qof at key 'i' to the count of players living for more than 30 units of time
-        qof[i] = sum(np.array(life_data[i]) > 30)
+        qof[i] = list([int(sum(np.array(life_data[j][0])) > 85) , life_data[j][1]])
         # Calculate the variance of life for the values in life_data at key 'i'
-        variance[i] = statistics.stdev(life_data[i])
+        variance[i] = [statistics.stdev(life_data[j][0]), life_data[j][1]]
         # Calculate the mean of the life for the values in life_data at key 'i'
-        mean[i] = statistics.mean(life_data[i])
+        mean[i] = [statistics.mean(life_data[j][0]), life_data[j][1]]
     # Return the mean, variance and qof
+    mean = json.dumps(mean)
+    variance = json.dumps(variance)
+    qof = json.dumps(qof)
     return mean, variance, qof
 
 
 # Uncomment to check if the functions are working properly
-"""print(get_life_stats("C:\\Users\\PD-PC\\Desktop\\pygeneses\\Players_Data"))
+print(get_life_stats("C:\\Users\\PD-PC\\Desktop\\Projects\\pygeneses\\Players_Data"))
 print("#"*70)
-print(gen_fam_graph("C:\\Users\\PD-PC\\Desktop\\pygeneses\\Players_Data"))"""
+print(gen_fam_graph("C:\\Users\\PD-PC\\Desktop\\Projects\\pygeneses\\Players_Data"))
