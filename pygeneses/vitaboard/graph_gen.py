@@ -154,26 +154,21 @@ def get_life_stats(address):
     qof = []
 
     for j in life_data.keys():
-        # Check if Value at key 'i' holds information of only one player
+        # Check if jth index holds information of only one player
         if len(life_data[j][0]) == 1:
-            # Set value at key 'i' to 0 for variance
             variance.append({"tob": j, "value": 0 , "agents": [life_data[j][1]]})
-            # Set mean equal to the value of dictionary mean at key 'i'
             mean.append({"tob": j, "value": life_data[j][0][0], "agents": [life_data[j][1]]})
-            # Set qof as 1 if the player lived for more than 85 units of time else set qof to 0
             qof.append({"tob": j, "value": int(1) if life_data[j][0][0] >= 85 else int(0), "agents": [life_data[j][1]]})
-            # Move over to the next iteration
             continue
-        # Set the value of qof at key 'i' to the count of players living for more than 30 units of time
+
         qof.append({"tob": j, "value": int(sum(np.array(life_data[j][0])) > 85) , "agents": life_data[j][1]})
-        # Calculate the variance of life for the values in life_data at key 'i'
         variance.append({"tob": j, "value": statistics.stdev(life_data[j][0]), "agents": life_data[j][1]})
-        # Calculate the mean of the life for the values in life_data at key 'i'
         mean.append({"tob": j, "value": statistics.mean(life_data[j][0]), "agents": life_data[j][1]})
+
     # Return the mean, variance and qof
     mean = json.dumps(mean, indent=2)
-    variance = json.dumps(variance)
-    qof = json.dumps(qof)
+    variance = json.dumps(variance, indent=2)
+    qof = json.dumps(qof, indent=2)
     return mean, variance, qof
 
 
