@@ -5,14 +5,8 @@
     box-sizing: border-box;
 }
 
-/*Hiding the tab content*/
-[data-tab-content] {
-    display: none;
-}
-
-/*Displaying the tab content*/
-.active [data-tab-content] {
-    display: block;
+input:focus, button:focus {
+    outline: none;
 }
 
 /*Full container properties*/
@@ -98,41 +92,113 @@ header{
     outline: none;
 }
 
+.vitagroups, .vitastats {
+    position: absolute;
+    bottom: 0%;
+    left: 0%;
+    width: 100%;
+    opacity: 0;
+    pointer-events: none;
+}
+
 /*Content Display*/
-.contents {
-    height: 90vh;
+.page {
+    height: 89vh;
     width: 100%;
 }
 
-.tab-content {
-    height: 100%;
-    width: 100%;
+.form {
+    width: 400px;
+    padding-top: 40px;
+    margin-left: 30px;
 }
 
-.content.active {
-    height: 100%;
-    width: 100%;
+.form input {
+    margin-bottom: 15px;
+    width: 400px;
+    font-size: larger;
+    border-top: none;
+    border-left: none;
+    border-right: none;
+    border-bottom-color: rgb(100, 98, 98);
+}
+
+.form button {
+    float: right;
+    width: 90px;
+    border-radius: 10px;
+    font-size: large;
+    background: transparent;
+}
+
+.vgsettings {
     display: flex;
+    flex-direction: row;
     justify-content: space-evenly;
     align-items: center;
 }
 
-/*Containers*/
-.box1 {
-    border: 2px yellow solid;
-    width: 600px;
+.vg1 {
+    border: 2px red solid;
     height: 550px;
+    width: 750px;
 }
 
-.box2 {
-    border: 2px red solid;
-    width: 600px;
+.vg2 {
+    border: 2px green solid;
     height: 550px;
+    width: 750px;
+}
+
+.vssettings {
+    display: grid;
+    grid-template-columns: 5% 1fr 1fr 5% ;
+    grid-template-rows: 1fr 1fr ;
+    grid-template-areas: 
+    "g1 g2"
+    "g3 g4";
+    grid-gap: 10px;
+}
+
+.vs1 {
+    grid-area: g1;
+    grid-column: 2/3;
+    border: 1px solid red;
+    height: 250px;
+    width: 570px;
+    align-self: center;
+}
+
+.vs2 {
+    grid-area: g2;
+    grid-column: 3/4;
+    border: 1px solid green;
+    height: 250px;
+    width: 570px;
+    align-self: center;
+}
+
+.vs3 {
+    grid-area: g3;
+    grid-column: 2/3;
+    border: 1px solid blue;
+    height: 250px;
+    width: 570px;
+    align-self: center;
+}
+
+.vs4 {
+    grid-area: g4;
+    grid-column: 3/4;
+    border: 1px solid yellow;
+    height: 250px;
+    width: 570px;
+    align-self: center;
 }
 
 /*Footer*/
 footer {
-    height: 3.65vh;
+    height: 4vh;
     width: 100vw;
     color: #fff;
     background-color: #e7717d;

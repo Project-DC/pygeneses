@@ -4,12 +4,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>VitaBoard</title>
-    <script src="./script.js" defer></script>
     <link rel="stylesheet" href="./styles.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 </head>
 <body>
-    
     <div class="container">
 
         <header>
@@ -18,64 +16,48 @@
 
             <nav>
                 <ul class="tabs">
-                    <li data-tab-target="#clusters" class="active tab">Embedding Clusters</li>
-                    <li data-tab-target="#familytree" class="tab">Family Trees</li>
-                    <li data-tab-target="#graphs" class="tab">Graphs</li>
-                    <li data-tab-target="#visualizer" class="tab">Life Visualizer</li>
+                    <li  class="tab active">VitaViz</li>
+                    <li  class="tab">VitaGroups</li>
+                    <li  class="tab">VitaStats</li>
                 </ul>
             </nav>
 
         </header>
-    
-        <div class="contents">
-    
-            <div class="tab-content">
-    
-                <div id="clusters" data-tab-content class="content active">
-                    <div class="box1">
-                        Here comes box 1 of tab 1
-                    </div>
-                    <div class="box2">
-                        Here comes box 2 of tab 1
-                    </div>
-                </div>
-    
-                <div id="familytree" data-tab-content class="content">
-                    <div class="box1">
-                        Here comes box 1 of tab 2
-                    </div>
-                    <div class="box2">
-                        Here comes box 2 of tab 2
-                    </div>
-                </div>
 
-                <div id="graphs" data-tab-content class="content">
-                    <div class="box1">
-                        Here comes box 1 of tab 3
-                    </div>
-                    <div class="box2">
-                        Here comes box 2 of tab 3
-                    </div>
-                </div>
+        <main>
 
-                <div id="visualizer" data-tab-content class="content">
-                    <div class="box1">
-                        Here comes box 1 of tab 4
-                    </div>
-                    <div class="box2">
-                        Here comes box 2 of tab 4
-                    </div>
+            <section class="page vitaviz">
+                <div class="form">
+                    <input type="text" placeholder="Enter the log file path..."><br>
+                    <input type="text" placeholder="Enter the Speed..."><br>
+                    <button>RUN</button>
                 </div>
-    
-            </div>
-    
-        </div>
+            </section>
+
+            <section class="page vitagroups vgsettings">
+                    <div class="vg1">2D</div>
+                    <div class="vg2">3D</div>
+            </section>
+            
+            <section class="page vitastats vssettings">
+                <div class="vs1">G1</div>
+                <div class="vs2">G2</div>
+                <div class="vs3">G3</div>
+                <div class="vs4">G4</div>
+            </section>
+
+        </main>
 
         <footer>
             <p>Made with <i class="fa fa-heart pulse"></i> by Developers of Project DC</p>
         </footer>
 
     </div>
+
+    <!-- GSAP version 3 cdn doesnot require separate cdns for Timeline and TweenMax -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.5.0/gsap.min.js"></script>
+
+    <script src="./script.js"></script>
 
 </body>
 </html>
