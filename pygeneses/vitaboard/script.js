@@ -37,8 +37,8 @@ function init() {
       const tl = gsap.timeline();
 
       console.log(pageNumber);
-      tl.fromTo(currentPage, 0.3, { opacity: 1 }, {opacity: 0 })
-      .fromTo(nextPage, 0.3, { opacity: 0 }, {opacity: 1 });
+      tl.fromTo(currentPage, 0.3, { opacity: 1, pointerEvents: "all" }, {opacity: 0, pointerEvents: "none" })
+      .fromTo(nextPage, 0.3, { opacity: 0, pointerEvents: "none" }, {opacity: 1, pointerEvents: "all" });
       // .fromTo(currentText, 0.3, { opacity: 1 }, {opacity: 0 })
       // .fromTo(nextPage, 0.3, { opacity: 0 }, {opacity: 1 });
 

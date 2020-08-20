@@ -5,7 +5,7 @@
     box-sizing: border-box;
 }
 
-input:focus, button:focus {
+input:focus, button:focus, select:focus {
     outline: none;
 }
 
@@ -50,7 +50,7 @@ header{
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 30px 10%;
+    padding: 20px 5%;
     background-color: #e7717d;
 }
 
@@ -103,7 +103,7 @@ header{
 
 /*Content Display*/
 .page {
-    height: 89vh;
+    height: 90vh;
     width: 100%;
 }
 
@@ -128,7 +128,11 @@ header{
     width: 90px;
     border-radius: 10px;
     font-size: large;
-    background: transparent;
+    background-color: rgb(168, 151, 151);
+    color: white;
+    padding: 3px 3px;
+    border: none;
+    cursor: pointer;
 }
 
 .vgsettings {
@@ -140,60 +144,53 @@ header{
 
 .vg1 {
     border: 2px red solid;
-    height: 550px;
-    width: 750px;
+    height: 60%;
+    width: 48%;
 }
 
 .vg2 {
     border: 2px green solid;
-    height: 550px;
-    width: 750px;
+    height: 60%;
+    width: 48%;
+}
+
+.dropdown select {
+    width: 100%;
+    cursor: pointer;
+    font-size: medium;
 }
 
 .vssettings {
-    display: grid;
-    grid-template-columns: 5% 1fr 1fr 5% ;
-    grid-template-rows: 1fr 1fr ;
-    grid-template-areas: 
-    "g1 g2"
-    "g3 g4";
-    grid-gap: 10px;
+    width: 100%;
+    border: 2px red solid;
+    height: 92%;
+    display: flex;
+    flex-wrap: wrap;
+    align-content: flex-start;
 }
 
 .vs1 {
-    grid-area: g1;
-    grid-column: 2/3;
-    border: 1px solid red;
-    height: 250px;
-    width: 570px;
-    align-self: center;
+    height: 50%;
+    width: 50%;
+    background-color: brown;
 }
 
 .vs2 {
-    grid-area: g2;
-    grid-column: 3/4;
-    border: 1px solid green;
-    height: 250px;
-    width: 570px;
-    align-self: center;
+    height: 50%;
+    width: 50%;
+    background-color: blue;
 }
 
 .vs3 {
-    grid-area: g3;
-    grid-column: 2/3;
-    border: 1px solid blue;
-    height: 250px;
-    width: 570px;
-    align-self: center;
+    height: 50%;
+    width: 50%;
+    background-color: orange;
 }
 
 .vs4 {
-    grid-area: g4;
-    grid-column: 3/4;
-    border: 1px solid yellow;
-    height: 250px;
-    width: 570px;
-    align-self: center;
+    height: 50%;
+    width: 50%;
+    background-color: yellow;
 }
 
 /*Footer*/
