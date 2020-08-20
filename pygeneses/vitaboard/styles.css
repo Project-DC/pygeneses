@@ -5,14 +5,8 @@
     box-sizing: border-box;
 }
 
-/*Hiding the tab content*/
-[data-tab-content] {
-    display: none;
-}
-
-/*Displaying the tab content*/
-.active [data-tab-content] {
-    display: block;
+input:focus, button:focus, select:focus {
+    outline: none;
 }
 
 /*Full container properties*/
@@ -56,7 +50,7 @@ header{
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 30px 10%;
+    padding: 20px 5%;
     background-color: #e7717d;
 }
 
@@ -98,41 +92,110 @@ header{
     outline: none;
 }
 
+.vitagroups, .vitastats {
+    position: absolute;
+    bottom: 0%;
+    left: 0%;
+    width: 100%;
+    opacity: 0;
+    pointer-events: none;
+}
+
 /*Content Display*/
-.contents {
+.page {
     height: 90vh;
     width: 100%;
 }
 
-.tab-content {
-    height: 100%;
-    width: 100%;
+.form {
+    width: 400px;
+    padding-top: 40px;
+    margin-left: 30px;
 }
 
-.content.active {
-    height: 100%;
-    width: 100%;
+.form input {
+    margin-bottom: 15px;
+    width: 400px;
+    font-size: larger;
+    border-top: none;
+    border-left: none;
+    border-right: none;
+    border-bottom-color: rgb(100, 98, 98);
+}
+
+.form button {
+    float: right;
+    width: 90px;
+    border-radius: 10px;
+    font-size: large;
+    background-color: rgb(168, 151, 151);
+    color: white;
+    padding: 3px 3px;
+    border: none;
+    cursor: pointer;
+}
+
+.vgsettings {
     display: flex;
+    flex-direction: row;
     justify-content: space-evenly;
     align-items: center;
 }
 
-/*Containers*/
-.box1 {
-    border: 2px yellow solid;
-    width: 600px;
-    height: 550px;
+.vg1 {
+    border: 2px red solid;
+    height: 60%;
+    width: 48%;
 }
 
-.box2 {
+.vg2 {
+    border: 2px green solid;
+    height: 60%;
+    width: 48%;
+}
+
+.dropdown select {
+    width: 100%;
+    cursor: pointer;
+    font-size: medium;
+}
+
+.vssettings {
+    width: 100%;
     border: 2px red solid;
-    width: 600px;
-    height: 550px;
+    height: 92%;
+    display: flex;
+    flex-wrap: wrap;
+    align-content: flex-start;
+}
+
+.vs1 {
+    height: 50%;
+    width: 50%;
+    background-color: brown;
+}
+
+.vs2 {
+    height: 50%;
+    width: 50%;
+    background-color: blue;
+}
+
+.vs3 {
+    height: 50%;
+    width: 50%;
+    background-color: orange;
+}
+
+.vs4 {
+    height: 50%;
+    width: 50%;
+    background-color: yellow;
 }
 
 /*Footer*/
 footer {
-    height: 3.65vh;
+    height: 4vh;
     width: 100vw;
     color: #fff;
     background-color: #e7717d;
