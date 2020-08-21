@@ -1,8 +1,6 @@
 from flask import Flask, request, render_template, redirect, flash, jsonify
 import os
 
-from .visualizer import visualize
-
 app = Flask(__name__)
 
 app.config['SEND_FILE_MAX_AGE_DEFAULT'] = 0
@@ -28,3 +26,6 @@ def index():
         os.remove('pass_params.txt')
 
         return jsonify({"status": "Visualizer ran successfully!"})
+
+if __name__ == "__main__":
+    app.run()

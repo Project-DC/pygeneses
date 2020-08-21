@@ -45,6 +45,9 @@ setup(
         "Programming Language :: Python :: 3.6",
     ],
     packages=[package for package in find_packages()],
-    package_data={"pygeneses": ["envs/prima_vita/images/*.png"]},
+    package_data={"pygeneses": ["envs/prima_vita/images/*.png", "vitaboard/static/css/font-awesome.min.css",
+                                "vitaboard/static/css/styles.css", "vitaboard/static/js/gsap.min.js",
+                                "vitaboard/static/js/jquery.min.js", "vitaboard/static/js/script.js",
+                                "vitaboard/templates/index.html"]},
     install_requires=["pygame", "numpy", "torch==1.4.0", "Flask"],
 )
