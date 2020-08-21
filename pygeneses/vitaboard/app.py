@@ -1,5 +1,6 @@
 from flask import Flask, request, render_template, redirect, flash, jsonify
 import os
+import pkgutil
 
 app = Flask(__name__)
 
@@ -21,9 +22,14 @@ def index():
             file.write(file_location + '\n')
             file.write(speed + '\n')
 
+        visualizer_contents = pkgutil.get_data(__name__, "visualizer.py").decode()
+        with open('./visualizer.py', 'w') as file:
+            file.write(visualizer_contents)
+
         os.system('python visualizer.py')
 
         os.remove('pass_params.txt')
+        os.remove('visualizer.py')
 
         return jsonify({"status": "Visualizer ran successfully!"})
 
