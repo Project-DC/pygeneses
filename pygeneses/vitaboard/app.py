@@ -22,7 +22,9 @@ def index():
         with open('pass_params.txt', 'w') as file:
             file.write(file_location + '\n')
             file.write(speed + '\n')
-            
+
         os.system('python visualizer.py')
+
+        os.remove('pass_params.txt')
 
         return jsonify({"status": "Visualizer ran successfully!"})

@@ -49,3 +49,22 @@ function init() {
 }
 
 init();
+
+$("#pygame").click(function() {
+  var file_location = $("#file_location").val();
+  var speed = $("#speed").val();
+
+  if(!file_location || !speed) {
+    alert("Both fields are compulsory!");
+  } else {
+    $.ajax({
+      url: "/",
+      type: "post",
+      data: {"file_location": file_location, "speed": speed},
+      dataType: "json",
+      success: function(result) {
+        alert(result.status);
+      }
+    });
+  }
+});
