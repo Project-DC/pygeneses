@@ -108,14 +108,14 @@ header{
 }
 
 .form {
-    width: 400px;
+    width: 600px;
     padding-top: 40px;
     margin-left: 30px;
 }
 
 .form input {
     margin-bottom: 15px;
-    width: 400px;
+    width: 100%;
     font-size: larger;
     border-top: none;
     border-left: none;
@@ -133,6 +133,11 @@ header{
     padding: 3px 3px;
     border: none;
     cursor: pointer;
+    box-shadow: 5px 5px rgba(0, 0, 0, 0.2);
+}
+
+.form button:hover {
+    transform: scale(1.1);
 }
 
 .vgsettings {
@@ -162,7 +167,6 @@ header{
 
 .vssettings {
     width: 100%;
-    border: 2px red solid;
     height: 92%;
     display: flex;
     flex-wrap: wrap;
