@@ -6,3 +6,7 @@ build/*
 dist/*
 pygeneses.egg-info/*
 *.zip
+*.rar
+*.tar*
+*.gz
+.vscode/
