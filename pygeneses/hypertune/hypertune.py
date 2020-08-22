@@ -3,6 +3,8 @@
 # Import required libraries
 import importlib
 import itertools
+import math
+import random
 
 # Import required environment class
 class_import = {"PrimaVita": importlib.import_module('pygeneses.envs.prima_vita').PrimaVita}
@@ -23,7 +25,7 @@ class HyperTune:
         : Approximate number of logs to be generated
     """
 
-    def __init__(self, model_class, hyperparameters, values, stop_at):
+    def __init__(self, model_class, hyperparameters, values, stop_at, randomize_percent=1):
         """
         Initializer for HyperTune class
 
@@ -43,6 +45,7 @@ class HyperTune:
         self.hyperparameters = hyperparameters
         self.values = values
         self.stop_at = stop_at
+        self.randomize_percent = randomize_percent
 
     def hypertuner(self):
         """
@@ -50,6 +53,9 @@ class HyperTune:
         """
 
         cross_product = list(itertools.product(*self.values))
+        cross_product = random.sample(cross_product, k=math.ceil(self.randomize_percent * len(cross_product)))
+
+        print("Training on", len(cross_product), "combinations!")
 
         for i in range(len(cross_product)):
             log_dir_info = ""
