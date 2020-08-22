@@ -159,15 +159,44 @@ header{
     width: 48%;
 }
 
-.dropdown select {
-    width: 100%;
-    cursor: pointer;
+.vsform {
+    padding-bottom: 5px;
+    width: 98%;
+    margin: auto;
+}
+
+.vsform input {
+    width: 93%;
+    margin-top: -6%;
     font-size: medium;
+    height: 30px;
+    border-top: none;
+    border-left: none;
+    border-right: none;
+    border-bottom-color: rgb(100, 98, 98);
+}
+
+.vsform button {
+    width: 5%;
+    font-size: medium;
+    height: 30px;
+    background-color: rgb(168, 151, 151);
+    color: white;
+    border-radius: 10px;
+    padding: 3px 3px;
+    border: none;
+    cursor: pointer;
+    box-shadow: 5px 5px rgba(0, 0, 0, 0.2);
+    margin-left: 0.8%;
+}
+
+.vsform button:hover {
+    transform: scale(1.1);
 }
 
 .vssettings {
     width: 100%;
-    height: 92%;
+    height: 91%;
     display: flex;
     flex-wrap: wrap;
     align-content: flex-start;
