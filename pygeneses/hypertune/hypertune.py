@@ -2,6 +2,7 @@
 
 # Import required libraries
 import importlib
+import itertools
 
 # Import required environment class
 class_import = {"PrimaVita": importlib.import_module('pygeneses.envs.prima_vita').PrimaVita}
@@ -22,7 +23,7 @@ class HyperTune:
         : Approximate number of logs to be generated
     """
 
-    def __init__(self, model_class, hyperparameter, values, stop_at):
+    def __init__(self, model_class, hyperparameters, values, stop_at):
         """
         Initializer for HyperTune class
 
@@ -30,8 +31,8 @@ class HyperTune:
         ======
         model_class    (str)
             : Name of model environment to tune hyperparameters for
-        hyperparameter (str)
-            : Hyperparameter to tune
+        hyperparameters (str)
+            : Hyperparameters to tune
         values         (list)
             : Value list which should be checked with current hyperparameter
         stop_at        (int)
@@ -39,7 +40,7 @@ class HyperTune:
         """
 
         self.model_class = model_class
-        self.hyperparameter = hyperparameter
+        self.hyperparameters = hyperparameters
         self.values = values
         self.stop_at = stop_at
 
@@ -48,13 +49,20 @@ class HyperTune:
         Runs environment with every value of hyperparameter specified
         """
 
-        for value in self.values:
-            params_dic = {self.hyperparameter: value}
+        cross_product = list(itertools.product(*self.values))
+
+        for i in range(len(cross_product)):
+            log_dir_info = ""
+            params_dic = {}
+            for j in range(len(self.hyperparameters)):
+                params_dic[self.hyperparameters[j]] = cross_product[i][j]
+                log_dir_info += str(self.hyperparameters[j]) + "_" + str(cross_product[i][j]) + "_"
+
             object = class_import[self.model_class](
                     params_dic=params_dic,
-                    log_dir_info=self.hyperparameter + "_" + str(value)
+                    log_dir_info=log_dir_info[:-1]
             )
             print("-" * 100)
-            print(" ".join(self.hyperparameter.split("_")).capitalize(), ": ", value)
+            print(params_dic)
             print("-" * 100)
             object.run(stop_at=self.stop_at)
