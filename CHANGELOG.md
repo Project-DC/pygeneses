@@ -8,3 +8,7 @@
 
 - Added randomized search in hypertune
 - Added example notebook for random search
+
+# 0.1.3
+
+- Added vitastats graph using chart.js
