@@ -95,6 +95,7 @@ def add_life_exp(life, tob, life_data, id):
     life_data (dict)
         : Dictionary Containing the values {tob : life} for players
     """
+
     # Check if tob already exists in life_data or not
     if tob not in life_data.keys():
         life_data[tob] = [[life],[id]]
@@ -154,16 +155,18 @@ def get_life_stats(address):
     qof = []
 
     for j in life_data.keys():
+        life, id = life_data[j]
+
         # Check if jth index holds information of only one player
-        if len(life_data[j][0]) == 1:
-            variance.append({"tob": j, "value": 0 , "agents": [life_data[j][1]]})
-            mean.append({"tob": j, "value": life_data[j][0][0], "agents": [life_data[j][1]]})
-            qof.append({"tob": j, "value": int(1) if life_data[j][0][0] >= 85 else int(0), "agents": [life_data[j][1]]})
+        if len(life) == 1:
+            variance.append({"tob": j, "value": 0 , "agents": [id]})
+            mean.append({"tob": j, "value": life, "agents": [id]})
+            qof.append({"tob": j, "value": int(1) if life >= 60 else int(0), "agents": [id] if life >= 60 else []})
             continue
 
-        qof.append({"x": j, "y": int(sum(np.array(life_data[j][0])) > 85) , "agents": life_data[j][1]})
-        variance.append({"x": j, "y": statistics.stdev(life_data[j][0]), "agents": life_data[j][1]})
-        mean.append({"x": j, "y": statistics.mean(life_data[j][0]), "agents": life_data[j][1]})
+        qof.append({"x": j, "y": int(sum(np.array(life) >= 60))/len(life) , "agents": [id[idx] for idx in range(len(life)) if life[idx] >= 60]})
+        variance.append({"x": j, "y": statistics.stdev(life), "agents": id})
+        mean.append({"x": j, "y": statistics.mean(life), "agents": id})
 
     # Return the mean, variance and qof
     mean = json.dumps(mean, indent=2)
@@ -174,6 +177,8 @@ def get_life_stats(address):
 
 # Uncomment to check if the functions are working properly
 if __name__ == "__main__":
-    print(get_life_stats("C:\\Users\\PD-PC\\Desktop\\Projects\\pygeneses\\Players_Data"))
-    print("#"*70)
-    print(gen_fam_graph("C:\\Users\\PD-PC\\Desktop\\Projects\\pygeneses\\Players_Data"))
+    mean, variance, qof = get_life_stats("/Users/frankhart/Downloads/Players_Data")
+    print(qof)
+    # print(get_life_stats("C:\\Users\\PD-PC\\Desktop\\Projects\\pygeneses\\Players_Data"))
+    # print("#"*70)
+    # print(gen_fam_graph("C:\\Users\\PD-PC\\Desktop\\Projects\\pygeneses\\Players_Data"))
