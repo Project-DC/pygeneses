@@ -12,3 +12,4 @@
 # 0.1.3
 
 - Added vitastats graph using chart.js
+- Fixed QoL (Quality of Life) graph to return ratio rather than count
