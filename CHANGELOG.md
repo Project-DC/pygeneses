@@ -11,7 +11,7 @@
 
 # 0.1.3
 
-- Added vitastats graph using chart.js
+- Added vitastats graph using chart.js (no clicking allowed in points)
 - Fixed QoL (Quality of Life) graph to return ratio rather than count
 - Fixed negative mean issue
 - Fixed incorrect computation of variance
