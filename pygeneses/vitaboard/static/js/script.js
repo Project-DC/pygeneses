@@ -2,12 +2,6 @@ function init() {
 
   const tabs = document.querySelectorAll('.tab');
   const pages = document.querySelectorAll('.page');
-  const backgrounds = [
-      `radial-gradient(#2B3760, #0B1023)`,
-      `radial-gradient(#4E4343, #161616)`,
-      `radial-gradient(#BDC3C7, #2C3E50)`,
-      `radial-gradient(#4E3022, #161616)`
-  ];
 
   let current = 0;
 
