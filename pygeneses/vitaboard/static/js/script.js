@@ -50,12 +50,18 @@ $("#pygame").click(function() {
   if(!file_location || !speed) {
     alert("Both fields are compulsory!");
   } else {
+    Swal.fire({
+      icon: "info",
+      title: "Please wait",
+      text: "Generating visualizer..."
+    });
     $.ajax({
       url: "/",
       type: "post",
       data: {"file_location": file_location, "speed": speed},
       dataType: "json",
       success: function(result) {
+        windows.swal.close();
         alert(result.status);
       }
     });
@@ -92,13 +98,16 @@ $("#stats").click(function() {
         var ctx_mean_1 = document.getElementById('g4').getContext('2d');
         $("#g4").css('background', 'white');
 
+        var color = 'rgb(255, 99, 132)';
+        var radius = 7;
+
         var data_mean = {
             datasets: [{
                 label: 'Average Death Age',
-                backgroundColor: 'rgb(255, 99, 132)',
-                pointBackgroundColor: 'rgb(255, 99, 132)',
-                pointRadius: 10,
-                pointHoverRadius: 10,
+                backgroundColor: color,
+                pointBackgroundColor: color,
+                pointRadius: radius,
+                pointHoverRadius: radius,
                 data: JSON.parse(result.mean)
             }]
         };
@@ -106,10 +115,10 @@ $("#stats").click(function() {
         var data_variance = {
             datasets: [{
                 label: 'Variance of Age',
-                backgroundColor: 'rgb(255, 99, 132)',
-                pointBackgroundColor: 'rgb(255, 99, 132)',
-                pointRadius: 10,
-                pointHoverRadius: 10,
+                backgroundColor: color,
+                pointBackgroundColor: color,
+                pointRadius: radius,
+                pointHoverRadius: radius,
                 data: JSON.parse(result.variance)
             }]
         };
@@ -117,10 +126,10 @@ $("#stats").click(function() {
         var data_qof = {
             datasets: [{
                 label: 'Quality of Life',
-                backgroundColor: 'rgb(255, 99, 132)',
-                pointBackgroundColor: 'rgb(255, 99, 132)',
-                pointRadius: 10,
-                pointHoverRadius: 10,
+                backgroundColor: color,
+                pointBackgroundColor: color,
+                pointRadius: radius,
+                pointHoverRadius: radius,
                 data: JSON.parse(result.qof)
             }]
         };
@@ -129,7 +138,21 @@ $("#stats").click(function() {
             scales: {
                 xAxes: [{
                     type: 'linear',
-                    position: 'bottom'
+                    position: 'bottom',
+                    scaleLabel: {
+                      display: true,
+                      labelString: 'Time of birth (in ticks)',
+                      fontStyle: 'bold',
+                      fontSize: 14
+                    }
+                }],
+                yAxes: [{
+                    scaleLabel: {
+                      display: true,
+                      labelString: 'Average death age',
+                      fontStyle: 'bold',
+                      fontSize: 14
+                    }
                 }]
             },
             // onClick: function(evt) {
@@ -151,7 +174,21 @@ $("#stats").click(function() {
             scales: {
                 xAxes: [{
                     type: 'linear',
-                    position: 'bottom'
+                    position: 'bottom',
+                    scaleLabel: {
+                      display: true,
+                      labelString: 'Time of birth (in ticks)',
+                      fontStyle: 'bold',
+                      fontSize: 14
+                    }
+                }],
+                yAxes: [{
+                    scaleLabel: {
+                      display: true,
+                      labelString: 'Variance in age',
+                      fontStyle: 'bold',
+                      fontSize: 14
+                    }
                 }]
             },
             // onClick: function(evt) {
@@ -173,7 +210,21 @@ $("#stats").click(function() {
             scales: {
                 xAxes: [{
                     type: 'linear',
-                    position: 'bottom'
+                    position: 'bottom',
+                    scaleLabel: {
+                      display: true,
+                      labelString: 'Time of birth (in ticks)',
+                      fontStyle: 'bold',
+                      fontSize: 14
+                    }
+                }],
+                yAxes: [{
+                    scaleLabel: {
+                      display: true,
+                      labelString: 'Quality of Life',
+                      fontStyle: 'bold',
+                      fontSize: 14
+                    }
                 }]
             },
             // onClick: function(evt) {
@@ -195,7 +246,21 @@ $("#stats").click(function() {
             scales: {
                 xAxes: [{
                     type: 'linear',
-                    position: 'bottom'
+                    position: 'bottom',
+                    scaleLabel: {
+                      display: true,
+                      labelString: 'Time of birth (in ticks)',
+                      fontStyle: 'bold',
+                      fontSize: 14
+                    }
+                }],
+                yAxes: [{
+                    scaleLabel: {
+                      display: true,
+                      labelString: 'Average death age',
+                      fontStyle: 'bold',
+                      fontSize: 14
+                    }
                 }]
             },
             // onClick: function(evt) {
