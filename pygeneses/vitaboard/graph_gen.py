@@ -140,6 +140,9 @@ def get_life_stats(address):
         tob, id = os.path.basename(f_name).split("-")
         tob = int(tob)
 
+        if(len(log_values) == 2):
+            continue
+
         # Extract the tod (time of death) of the player
         tod = log_values[-1][1]
 
@@ -165,8 +168,8 @@ def get_life_stats(address):
             continue
 
         qof.append({"x": j, "y": int(sum(np.array(life) >= 60))/len(life) , "agents": [id[idx] for idx in range(len(life)) if life[idx] >= 60]})
-        variance.append({"x": j, "y": statistics.stdev(life), "agents": id})
-        mean.append({"x": j, "y": statistics.mean(life), "agents": id})
+        variance.append({"x": j, "y": np.array(life).var(), "agents": id})
+        mean.append({"x": j, "y": np.array(life).mean(), "agents": id})
 
     # Return the mean, variance and qof
     mean = json.dumps(mean, indent=2)
