@@ -161,9 +161,9 @@ def get_life_stats(address):
             qof.append({"tob": j, "value": int(1) if life_data[j][0][0] >= 85 else int(0), "agents": [life_data[j][1]]})
             continue
 
-        qof.append({"tob": j, "value": int(sum(np.array(life_data[j][0])) > 85) , "agents": life_data[j][1]})
-        variance.append({"tob": j, "value": statistics.stdev(life_data[j][0]), "agents": life_data[j][1]})
-        mean.append({"tob": j, "value": statistics.mean(life_data[j][0]), "agents": life_data[j][1]})
+        qof.append({"x": j, "y": int(sum(np.array(life_data[j][0])) > 85) , "agents": life_data[j][1]})
+        variance.append({"x": j, "y": statistics.stdev(life_data[j][0]), "agents": life_data[j][1]})
+        mean.append({"x": j, "y": statistics.mean(life_data[j][0]), "agents": life_data[j][1]})
 
     # Return the mean, variance and qof
     mean = json.dumps(mean, indent=2)

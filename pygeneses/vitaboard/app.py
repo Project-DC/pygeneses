@@ -2,6 +2,8 @@ from flask import Flask, request, render_template, redirect, flash, jsonify
 import os
 import pkgutil
 
+from .graph_gen import get_life_stats
+
 app = Flask(__name__)
 
 app.config['SEND_FILE_MAX_AGE_DEFAULT'] = 0
@@ -32,6 +34,16 @@ def index():
         os.remove('visualizer.py')
 
         return jsonify({"status": "Visualizer ran successfully!"})
+
+@app.route('/stats', methods=['POST'])
+def stats():
+
+    if request.method == 'POST':
+        location = request.form['location']
+
+        mean, variance, qof = get_life_stats(location)
+
+        return jsonify({"mean": mean, "variance": variance, "qof": qof})
 
 if __name__ == "__main__":
     app.run()
