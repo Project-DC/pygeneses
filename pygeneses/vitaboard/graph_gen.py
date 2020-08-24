@@ -3,7 +3,6 @@ import os
 import glob
 import numpy as np
 import re
-import statistics
 from collections import OrderedDict
 import json
 
