@@ -20,3 +20,4 @@
 
 - Fixed subpackage imports
 - Attached visualizer to vitastats graphs
+- Fix path issue in get_life_stats (vitastats backend)
