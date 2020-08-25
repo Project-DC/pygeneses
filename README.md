@@ -1,6 +1,6 @@
 # PyGeneses
 
-![GitHub](https://img.shields.io/github/license/Project-DC/pygeneses)  ![GitHub stars](https://img.shields.io/github/stars/Project-DC/pygeneses?style=plastic)  ![GitHub contributors](https://img.shields.io/github/contributors/Project-DC/pygeneses)  ![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)  ![GitHub last commit](https://img.shields.io/github/last-commit/Project-DC/pygeneses)
+[![GitHub](https://img.shields.io/github/license/Project-DC/pygeneses)](https://github.com/Project-DC/pygeneses/blob/master/LICENSE)  ![GitHub stars](https://img.shields.io/github/stars/Project-DC/pygeneses?style=plastic)  ![GitHub contributors](https://img.shields.io/github/contributors/Project-DC/pygeneses)  ![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)  ![GitHub last commit](https://img.shields.io/github/last-commit/Project-DC/pygeneses)
 
 PyGeneses is a deep reinforcement learning framework for evolution simulation environments. PyGeneses provides a high level API for training agents using standard Deep Reinforcement Learning Algorithms in environments with in-built neural networks for performing policy evaluation. Users can thus focus on the main problem - to observe interesting patterns amongst these artificial species in various simulated environments.
 
