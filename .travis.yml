@@ -3,8 +3,7 @@ python:
   "3.7"
 install:
   python setup.py install
-before script:
+script:
   - wget https://raw.githubusercontent.com/Project-DC/pygeneses/master/test-script.py
   - mv test-script.py test-script-master.py
-script:
   - python test-script-master.py
