@@ -74,7 +74,7 @@ def gen_fam_graph(address):
     return fam_tree
 
 
-def add_life_exp(life, tob, life_data, id):
+def add_life_exp(life, tob, life_data, id, address):
     """
     Function to add values to mean and variance
 
@@ -86,8 +86,10 @@ def add_life_exp(life, tob, life_data, id):
         : Time of birth of the player
     life_data (dict)
         : Dictionary containing the values {tob : life} for players
-    id        (string)
+    id        (str)
         : String containing the name of the player
+    address   (str)
+        : Address of the folder containing the log Files
 
     Returns
     =======
@@ -97,10 +99,10 @@ def add_life_exp(life, tob, life_data, id):
 
     # Check if tob already exists in life_data or not
     if tob not in life_data.keys():
-        life_data[tob] = [[life],[id]]
+        life_data[tob] = [[life],[os.path.join(address, str(tob) + "-" + str(id))]]
     else:
         life_data[tob][0].append(life)
-        life_data[tob][1].append(id)
+        life_data[tob][1].append(os.path.join(address, str(tob) + "-" + str(id)))
 
     return life_data
 
@@ -149,7 +151,7 @@ def get_life_stats(address):
         lifetime = tod - tob
 
         # Update life_data
-        life_data = add_life_exp(lifetime, tob, life_data, id)
+        life_data = add_life_exp(lifetime, tob, life_data, id, address)
 
     # Initialise dictionaries to store various statistics
     variance = []

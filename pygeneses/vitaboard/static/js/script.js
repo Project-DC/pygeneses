@@ -161,7 +161,7 @@ $("#stats").click(function() {
               var list = "<ul>";
               var name = "";
               coordinates.agents.forEach(ele => {
-                list += "<li><button type='button' class='ids-agents'>" + coordinates.x + "-" + ele + "</button></li>";
+                list += "<li><button type='button' class='ids-agents'>" + ele + "</button></li>";
               });
               list += "</ul>";
 
@@ -195,7 +195,7 @@ $("#stats").click(function() {
               var coordinates = data_variance.datasets[0].data[element[0]._index];
               var list = "<ul>";
               coordinates.agents.forEach(ele => {
-                list += "<li><button type='button' class='ids-agents'>" + coordinates.x + "-" + ele + "</button></li>";
+                list += "<li><button type='button' class='ids-agents'>" + ele + "</button></li>";
               });
               list += "</ul>";
 
@@ -229,7 +229,7 @@ $("#stats").click(function() {
               var coordinates = data_qof.datasets[0].data[element[0]._index];
               var list = "<ul>";
               coordinates.agents.forEach(ele => {
-                list += "<li><button type='button' class='ids-agents'>" + coordinates.x + "-" + ele + "</button></li>";
+                list += "<li><button type='button' class='ids-agents'>" + ele + "</button></li>";
               });
               list += "</ul>";
 
@@ -263,7 +263,7 @@ $("#stats").click(function() {
               var coordinates = data_mean.datasets[0].data[element[0]._index];
               var list = "<ul>";
               coordinates.agents.forEach(ele => {
-                list += "<li><button type='button' class='ids-agents'>" + coordinates.x + "-" + ele + "</button></li>";
+                list += "<li><button type='button' class='ids-agents'>" + ele + "</button></li>";
               });
               list += "</ul>";
 
@@ -308,7 +308,7 @@ $("#ids").on("click", "button.ids-agents", function() {
   $.ajax({
     url: "/",
     type: "post",
-    data: {"file_location": $("#location").val() + "/" + $(this).text(), "speed": "0.5"},
+    data: {"file_location": $(this).text(), "speed": "0.5"},
     success: function(result) {
       window.swal.close();
       alert(result.status);
