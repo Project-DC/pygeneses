@@ -155,19 +155,17 @@ $("#stats").click(function() {
                     }
                 }]
             },
-            // onClick: function(evt) {
-            //   var element = chart.getElementAtEvent(evt);
-            //   var coordinates = data.datasets[0].data[element[0]._index];
-            //   $.ajax({
-            //     url: "/",
-            //     type: "post",
-            //     data: {"x": coordinates.x, "y": coordinates.y, "id": coordinates.id},
-            //     dataType: "json",
-            //     success: function(result) {
-            //       alert("Success!");
-            //     }
-            //   });
-            // }
+            onClick: function(evt) {
+              var element = chart_mean.getElementAtEvent(evt);
+              var coordinates = data_mean.datasets[0].data[element[0]._index];
+              var list = "<ul>";
+              coordinates.agents.forEach(ele => {
+                list += "<li>" + coordinates.x + "-" + ele + "</li>";
+              });
+              list += "</ul>";
+
+              $("#ids").html(list);
+            }
         }
 
         var option_variance = {
@@ -191,19 +189,17 @@ $("#stats").click(function() {
                     }
                 }]
             },
-            // onClick: function(evt) {
-            //   var element = chart.getElementAtEvent(evt);
-            //   var coordinates = data.datasets[0].data[element[0]._index];
-            //   $.ajax({
-            //     url: "/",
-            //     type: "post",
-            //     data: {"x": coordinates.x, "y": coordinates.y, "id": coordinates.id},
-            //     dataType: "json",
-            //     success: function(result) {
-            //       alert("Success!");
-            //     }
-            //   });
-            // }
+            onClick: function(evt) {
+              var element = chart_variance.getElementAtEvent(evt);
+              var coordinates = data_variance.datasets[0].data[element[0]._index];
+              var list = "<ul>";
+              coordinates.agents.forEach(ele => {
+                list += "<li>" + coordinates.x + "-" + ele + "</li>";
+              });
+              list += "</ul>";
+
+              $("#ids").html(list);
+            }
         }
 
         var option_qof = {
@@ -227,19 +223,17 @@ $("#stats").click(function() {
                     }
                 }]
             },
-            // onClick: function(evt) {
-            //   var element = chart.getElementAtEvent(evt);
-            //   var coordinates = data.datasets[0].data[element[0]._index];
-            //   $.ajax({
-            //     url: "/",
-            //     type: "post",
-            //     data: {"x": coordinates.x, "y": coordinates.y, "id": coordinates.id},
-            //     dataType: "json",
-            //     success: function(result) {
-            //       alert("Success!");
-            //     }
-            //   });
-            // }
+            onClick: function(evt) {
+              var element = chart_qof.getElementAtEvent(evt);
+              var coordinates = data_qof.datasets[0].data[element[0]._index];
+              var list = "<ul>";
+              coordinates.agents.forEach(ele => {
+                list += "<li>" + coordinates.x + "-" + ele + "</li>";
+              });
+              list += "</ul>";
+
+              $("#ids").html(list);
+            }
         }
 
         var option_mean_1 = {
@@ -263,19 +257,17 @@ $("#stats").click(function() {
                     }
                 }]
             },
-            // onClick: function(evt) {
-            //   var element = chart.getElementAtEvent(evt);
-            //   var coordinates = data.datasets[0].data[element[0]._index];
-            //   $.ajax({
-            //     url: "/",
-            //     type: "post",
-            //     data: {"x": coordinates.x, "y": coordinates.y, "id": coordinates.id},
-            //     dataType: "json",
-            //     success: function(result) {
-            //       alert("Success!");
-            //     }
-            //   });
-            // }
+            onClick: function(evt) {
+              var element = chart_mean_1.getElementAtEvent(evt);
+              var coordinates = data_mean.datasets[0].data[element[0]._index];
+              var list = "<ul>";
+              coordinates.agents.forEach(ele => {
+                list += "<li>" + coordinates.x + "-" + ele + "</li>";
+              });
+              list += "</ul>";
+
+              $("#ids").html(list);
+            }
         }
 
         var chart_mean = new Chart(ctx_mean,{
@@ -296,7 +288,7 @@ $("#stats").click(function() {
           options:option_qof
         });
 
-        var chart_mean = new Chart(ctx_mean_1,{
+        var chart_mean_1 = new Chart(ctx_mean_1,{
           type: 'scatter',
           data: data_mean,
           options:option_mean_1
