@@ -159,8 +159,9 @@ $("#stats").click(function() {
               var element = chart_mean.getElementAtEvent(evt);
               var coordinates = data_mean.datasets[0].data[element[0]._index];
               var list = "<ul>";
+              var name = "";
               coordinates.agents.forEach(ele => {
-                list += "<li>" + coordinates.x + "-" + ele + "</li>";
+                list += "<li><button type='button' class='ids-agents'>" + coordinates.x + "-" + ele + "</button></li>";
               });
               list += "</ul>";
 
@@ -194,7 +195,7 @@ $("#stats").click(function() {
               var coordinates = data_variance.datasets[0].data[element[0]._index];
               var list = "<ul>";
               coordinates.agents.forEach(ele => {
-                list += "<li>" + coordinates.x + "-" + ele + "</li>";
+                list += "<li><button type='button' class='ids-agents'>" + coordinates.x + "-" + ele + "</button></li>";
               });
               list += "</ul>";
 
@@ -228,7 +229,7 @@ $("#stats").click(function() {
               var coordinates = data_qof.datasets[0].data[element[0]._index];
               var list = "<ul>";
               coordinates.agents.forEach(ele => {
-                list += "<li>" + coordinates.x + "-" + ele + "</li>";
+                list += "<li><button type='button' class='ids-agents'>" + coordinates.x + "-" + ele + "</button></li>";
               });
               list += "</ul>";
 
@@ -262,7 +263,7 @@ $("#stats").click(function() {
               var coordinates = data_mean.datasets[0].data[element[0]._index];
               var list = "<ul>";
               coordinates.agents.forEach(ele => {
-                list += "<li>" + coordinates.x + "-" + ele + "</li>";
+                list += "<li><button type='button' class='ids-agents'>" + coordinates.x + "-" + ele + "</button></li>";
               });
               list += "</ul>";
 
@@ -296,4 +297,21 @@ $("#stats").click(function() {
       }
     });
   }
+});
+
+$("#ids").on("click", "button.ids-agents", function() {
+  Swal.fire({
+    icon: "info",
+    title: "Please wait",
+    text: "Generating visualizer..."
+  });
+  $.ajax({
+    url: "/",
+    type: "post",
+    data: {"file_location": $("#location").val() + "/" + $(this).text(), "speed": "0.5"},
+    success: function(result) {
+      window.swal.close();
+      alert(result.status);
+    }
+  });
 });
