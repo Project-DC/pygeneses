@@ -15,3 +15,8 @@
 - Fixed QoL (Quality of Life) graph to return ratio rather than count
 - Fixed negative mean issue
 - Fixed incorrect computation of variance
+
+# 0.1.4
+
+- Fixed subpackage imports
+- Attached visualizer to vitastats graphs
