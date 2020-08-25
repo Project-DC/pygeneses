@@ -8,4 +8,3 @@ before script:
   - mv test-script.py test-script-master.py
 script:
   - if [ "$TRAVIS_BRANCH" != "master"]; then python test-script-master.py; fi
-  - python test-script.py
