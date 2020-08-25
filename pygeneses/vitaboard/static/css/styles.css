@@ -25,7 +25,7 @@ li {
     font-family: Arial, Helvetica, sans-serif;
     font-weight: 800;
     font-size: 16px;
-    
+
     text-decoration: none;
 }
 
@@ -155,14 +155,8 @@ header{
 
 .vg1 {
     border: 2px red solid;
-    height: 60%;
-    width: 48%;
-}
-
-.vg2 {
-    border: 2px green solid;
-    height: 60%;
-    width: 48%;
+    height: 80%;
+    width: 90%;
 }
 
 .vsform {
@@ -206,10 +200,10 @@ header{
     display: grid;
     grid-template-columns: 1fr 1fr;
     grid-template-rows: 1fr 1fr;
-    grid-template-areas: 
+    grid-template-areas:
     "g1 g2"
     "g3 g4";
-    
+
 }
 
 .vssettings canvas {
@@ -234,14 +228,14 @@ header{
 .vs3 {
     grid-area: g3;
     height: 90%;
-    width: 90%;    
+    width: 90%;
     margin: auto;
 }
 
 .vs4 {
     grid-area: g4;
     height: 90%;
-    width: 90%;    
+    width: 90%;
     margin: auto;
 }
 
