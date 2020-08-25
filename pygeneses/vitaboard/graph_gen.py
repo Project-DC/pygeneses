@@ -171,9 +171,9 @@ def get_life_stats(address):
         mean.append({"x": j, "y": np.array(life).mean(), "agents": id})
 
     # Return the mean, variance and qof
-    mean = json.dumps(mean, indent=2)
-    variance = json.dumps(variance, indent=2)
-    qof = json.dumps(qof, indent=2)
+    mean = json.dumps(mean)
+    variance = json.dumps(variance)
+    qof = json.dumps(qof)
     return mean, variance, qof
 
 
