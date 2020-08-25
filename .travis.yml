@@ -7,4 +7,4 @@ before script:
   - wget https://raw.githubusercontent.com/Project-DC/pygeneses/master/test-script.py
   - mv test-script.py test-script-master.py
 script:
-  - if [ "$TRAVIS_BRANCH" != "master"]; then python test-script-master.py; fi
+  - if [ "$TRAVIS_BRANCH" != "master" ]; then python test-script-master.py; fi
