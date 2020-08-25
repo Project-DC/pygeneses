@@ -301,6 +301,12 @@ header{
     width: 48%;
 }
 
+#ids {
+    width: 90%;
+    margin-top: 8%;
+    margin: auto;
+}
+
 /*Footer*/
 /* footer {
     margin-top: 1%;
