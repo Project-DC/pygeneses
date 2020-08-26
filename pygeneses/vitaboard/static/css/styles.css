@@ -20,15 +20,6 @@ body{
     width: 100%;
 }
 
-/*Global settings for the navbar links*/
-li {
-    font-family: Arial, Helvetica, sans-serif;
-    font-weight: 800;
-    font-size: 16px;
-
-    text-decoration: none;
-}
-
 /*Setting the navbar space*/
 header{
     height: 6vh;
@@ -54,6 +45,13 @@ header{
     list-style-type: none;
     padding: 20px 20px;
     color: #fff;
+}
+
+.tabs li {
+    font-family: Arial, Helvetica, sans-serif;
+    font-weight: 800;
+    font-size: 16px;
+    text-decoration: none;
 }
 
 .tabs li:nth-child(1) {
@@ -299,6 +297,26 @@ header{
     width: 90%;
     margin-top: 10%;
     margin-left: 10%;
+}
+
+#ids ul li {
+    margin: 0.4rem 0;
+    outline: none;
+    text-decoration: none;
+    list-style: none;
+}
+
+.ids-agents {
+    font-size: 16px;
+    border-radius: 1rem;
+    padding: 8px 10px;
+    width: 70%;
+    text-align: center;
+    background-color: transparent;
+}
+
+#ids ul li button:hover {
+    transform: scale(1.1);
 }
 
 /*Footer*/
