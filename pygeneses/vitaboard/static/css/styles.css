@@ -29,24 +29,6 @@ li {
     text-decoration: none;
 }
 
-li:nth-child(1) {
-    margin-right: 10px;
-}
-
-li:nth-child(2) {
-    margin-left: 10px;
-    margin-right: 10px;
-}
-
-li:nth-child(3) {
-    margin-left: 10px;
-    margin-right: 10px;
-}
-
-li:nth-child(4) {
-    margin-left: 10px;
-}
-
 /*Setting the navbar space*/
 header{
     height: 6vh;
@@ -72,6 +54,24 @@ header{
     list-style-type: none;
     padding: 20px 20px;
     color: #fff;
+}
+
+.tabs li:nth-child(1) {
+    margin-right: 10px;
+}
+
+.tabs li:nth-child(2) {
+    margin-left: 10px;
+    margin-right: 10px;
+}
+
+.tabs li:nth-child(3) {
+    margin-left: 10px;
+    margin-right: 10px;
+}
+
+.tabs li:nth-child(4) {
+    margin-left: 10px;
 }
 
 .tab {
@@ -297,8 +297,8 @@ header{
 
 #ids {
     width: 90%;
-    margin-top: 8%;
-    margin: auto;
+    margin-top: 10%;
+    margin-left: 10%;
 }
 
 /*Footer*/
