@@ -1,0 +1,705 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta name="description" content="">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>simC - Documentation</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link href="https://fonts.googleapis.com/css?family=Nunito+Sans:300,400,600,700,800,900" rel="stylesheet">
+    <link rel="stylesheet" href="scribbler-global.css">
+    <link rel="stylesheet" href="scribbler-doc.css">
+    <link rel="author" href="humans.txt">
+  </head>
+  <body>
+    <div class="doc__bg"></div>
+    <nav class="header">
+      <h1 class="logo">simC <span class="logo__thin">Docs</span></h1>
+      <ul class="menu">
+        <div class="menu__item toggle"><span></span></div>
+        <li class="menu__item"><a href="https://github.com/cimplec/sim-c" class="link link--dark"><i class="fa fa-github"></i> Github</a></li>
+        <li class="menu__item"><a href="index.html" class="link link--dark"><i class="fa fa-home"></i> Home</a></li>
+      </ul>
+    </nav>
+    <div class="wrapper">
+      <aside class="doc__nav">
+        <ul>
+          <li class="js-btn selected">Introduction</li>
+          <li class="js-btn">Arithmetic Operators</li>
+          <li class="js-btn">Relational Operators</li>
+          <li class="js-btn">Logical Operators</li>
+          <li class="js-btn">Variables</li>
+          <li class="js-btn">Strings</li>
+          <li class="js-btn">Print Statement</li>
+          <li class="js-btn">Loops</li>
+          <li class="js-btn">Comments</li>
+          <li class="js-btn">Input Statement</li>
+          <li class="js-btn">Conditional Statements</li>
+          <li class="js-btn">Code Blocks</li>
+          <li class="js-btn">Functions</li>
+          <li class="js-btn">Pointers</li>
+        </ul>
+      </aside>
+      <article class="doc__content">
+        <section class="js-section">
+          <h3 class="section__title">Introduction</h3>
+            <h4 class="section__title">What is simC?</h4>
+            <p style="text-align: justify;">
+              Often people have trouble programming in C (especially beginners) due to its low level syntax and
+              unavailability of stable third party libraries. We present sim-C a high-level front end for C
+              which creates a dynamically typed syntax for C. User can write code in this high level syntax and
+              then compile it to optimized C code. sim-C does not process the code and simply translates it to
+              C thus, there is no possibility of the code running slowly. So, with sim-C users can write code
+              faster using the high level syntax and at the same time be able to harness the power and speed of a
+              C program. Let us make C cool again.
+            </p>
+
+            <h4 class="section__title">Pipeline</h4>
+              <img style="display: block; margin: 0 auto;" src="images/simc-pipeline.png" alt="Not found">
+
+            <h4 class="section__title">Steps to run</h4>
+              <ul>
+                <li><p>Open any text editor of choice</p></li>
+                <li><p>Write code using simC high-level syntax</p></li>
+                <li><p>Run the file using simC compiler:</p>
+                  <pre class="code code--block">
+                  <code>
+                    $ simc test.simc
+                  </code>
+                </pre></li>
+                <li><p>C code file is generated with the same name as the simc file, but with extension .c</p></li>
+              </ul>
+
+        </section>
+        <section class="js-section">
+          <h3 class="section__title">Arithmetic Operators</h3>
+            <table id="customers">
+            <tr>
+              <th>Operator</th>
+              <th>simC</th>
+              <th>C</th>
+            </tr>
+            <tr>
+              <td>+ (Addition)</td>
+              <td>1 + 2</td>
+              <td>1 + 2</td>
+            </tr>
+            <tr>
+              <td>- (Subtraction)</td>
+              <td>1 - 2</td>
+              <td>1 - 2</td>
+            </tr>
+            <tr>
+              <td>* (Multiplication)</td>
+              <td>1 * 2</td>
+              <td>1 * 2</td>
+            </tr>
+            <tr>
+              <td>/ (Division)</td>
+              <td>1 / 2</td>
+              <td>1 / 2</td>
+            </tr>
+            <tr>
+              <td>% (Modulus)</td>
+              <td>1 % 2</td>
+              <td>1 % 2</td>
+            </tr>
+          </table>
+        </section>
+        <section class="js-section">
+          <h3 class="section__title">Relational Operators</h3>
+            <table id="customers">
+            <tr>
+              <th>Operator</th>
+              <th>simC</th>
+              <th>C</th>
+            </tr>
+            <tr>
+              <td>< (Lesser than)</td>
+              <td>1 < 2</td>
+              <td>1 < 2</td>
+            </tr>
+            <tr>
+              <td>> (Greater than)</td>
+              <td>1 > 2</td>
+              <td>1 > 2</td>
+            </tr>
+            <tr>
+              <td>== (Equal to)</td>
+              <td>1 == 2</td>
+              <td>1 == 2</td>
+            </tr>
+            <tr>
+              <td><= (Lesser than or equal to)</td>
+              <td>1 <= 2</td>
+              <td>1 >= 2</td>
+            </tr>
+            <tr>
+              <td>>= (Greater than or equal to)</td>
+              <td>1 >= 2</td>
+              <td>1 >= 2</td>
+            </tr>
+            <tr>
+              <td>!= (Not equal to)</td>
+              <td>1 != 2</td>
+              <td>1 != 2</td>
+            </tr>
+          </table>
+        </section>
+        <section class="js-section">
+          <h3 class="section__title">Logical Operators</h3>
+            <table id="customers">
+            <tr>
+              <th>Operator</th>
+              <th>simC</th>
+              <th>C</th>
+            </tr>
+            <tr>
+              <td>&& (and)</td>
+              <td>1 and 2</td>
+              <td>1 && 2</td>
+            </tr>
+            <tr>
+              <td>|| (or)</td>
+              <td>1 or 2</td>
+              <td>1 || 2</td>
+            </tr>
+          </table>
+        </section>
+        <section class="js-section">
+          <h3 class="section__title">Variables</h3>
+            <h4 class="section__title">Declaration</h4>
+              <p>simC code:</p>
+              <pre class="code code--block">
+              <code>
+              var a
+              </code>
+              </pre>
+              <p>C code:</p>
+              <pre class="code code--block">
+              <code>
+              not_known a;
+              </code>
+              </pre>
+              <p><strong><u>Note</u></strong>: simC is a dynamically typed syntax for C so variable declarations do not require explicit mention of types.</p>
+              <p><strong><u>Note</u></strong>: Identifiers cannot be named after a C keyword.</p>
+            <h4 class="section__title">Initialization</h4>
+              <p>simC code:</p>
+              <pre class="code code--block">
+              <code>
+              var a = 2
+              </code>
+              </pre>
+              <p>C code:</p>
+              <pre class="code code--block">
+              <code>
+              int a = 2;
+              </code>
+              </pre>
+            <h4 class="section__title">Assignment</h4>
+              <p>simC code:</p>
+              <pre class="code code--block">
+              <code>
+              a = 2
+              </code>
+              </pre>
+              <p>C code:</p>
+              <pre class="code code--block">
+              <code>
+              a = 2;
+              </code>
+              </pre>
+        </section>
+        <section class="js-section">
+          <h3 class="section__title">Strings</h3>
+            <p>simC code:</p>
+            <pre class="code code--block">
+            <code>
+            var a = "Hello"
+            </code>
+            </pre>
+            <p>C code:</p>
+            <pre class="code code--block">
+            <code>
+            char* a = "Hello";
+            </code>
+            </pre>
+        </section>
+        <section class="js-section">
+          <h3 class="section__title">Print statement</h3>
+            <h4 class="section__title">Print a string</h4>
+              <p>simC code:</p>
+              <pre class="code code--block">
+              <code>
+              print("Hello World")
+              </code>
+              </pre>
+              <p>C code:</p>
+              <pre class="code code--block">
+              <code>
+              printf("Hello World");
+              </code>
+              </pre>
+            <h4 class="section__title">Print a numeric constant</h4>
+              <p>simC code:</p>
+              <pre class="code code--block">
+              <code>
+              print(3.14159)
+              </code>
+              </pre>
+              <p>C code:</p>
+              <pre class="code code--block">
+              <code>
+              printf("%f", 3.14159);
+              </code>
+              </pre>
+            <h4 class="section__title">Print a variable</h4>
+              <p>simC code:</p>
+              <pre class="code code--block">
+              <code>
+              var a_var = 42
+              print(a_var)
+              </code>
+              </pre>
+              <p>C code:</p>
+              <pre class="code code--block">
+              <code>
+              int a_var = 42;
+              printf("%d", a_var);
+              </code>
+              </pre>
+            <h4 class="section__title">Print with variables embedded in strings</h4>
+              <p>simC code:</p>
+              <pre class="code code--block">
+              <code>
+              var a_var = 42
+              print("The value of a_var = {a_var}")
+              </code>
+              </pre>
+              <p>C code:</p>
+              <pre class="code code--block">
+              <code>
+              int a_var = 42;
+              printf("The value of a_var = %d", a_var);
+              </code>
+              </pre>
+        </section>
+        <section class="js-section">
+          <h3 class="section__title">Loops</h3>
+            <h4 class="section__title">For loop</h4>
+              <p>simC code:</p>
+              <pre class="code code--block">
+              <code>
+              for i in 1 to 10 by +1 {
+              &nbsp;&nbsp;&nbsp;&nbsp;print(i)
+              }
+              </code>
+              </pre>
+              <p>C code:</p>
+              <pre class="code code--block">
+              <code>
+              for(int i=0; i<10; i++) {
+              &nbsp;&nbsp;&nbsp;&nbsp;printf("%d", i);
+              }
+              </code>
+              </pre>
+            <h4 class="section__title">While loop</h4>
+              <p>simC code:</p>
+              <pre class="code code--block">
+              <code>
+              var i = 0
+              while(i < 10) {
+              &nbsp;&nbsp;&nbsp;&nbsp;print(i)
+              }
+              </code>
+              </pre>
+              <p>C code:</p>
+              <pre class="code code--block">
+              <code>
+              int i = 0;
+              while(i < 10) {
+              &nbsp;&nbsp;&nbsp;&nbsp;printf("%d", i);
+              }
+              </code>
+              </pre>
+            <h4 class="section__title">Do while loop</h4>
+              <p>simC code:</p>
+              <pre class="code code--block">
+              <code>
+              var i = 0
+              do {
+                print(i)
+              } while(i <= 0)
+              </code>
+              </pre>
+              <p>C code:</p>
+              <pre class="code code--block">
+              <code>
+              int i = 0;
+              do {
+                printf("%d", i);
+              } while(i <= 0);
+              </code>
+              </pre>
+        </section>
+        <section class="js-section">
+          <h3 class="section__title">Comments</h3>
+            <h4 class="section__title">Single line comments</h4>
+              <p>simC code:</p>
+              <pre class="code code--block">
+              <code>
+              // This is a single line comment.
+              </code>
+              </pre>
+              <p>C code:</p>
+              <pre class="code code--block">
+              <code>
+              // This is a single line comment.
+              </code>
+              </pre>
+            <h4 class="section__title">Multi line comments</h4>
+              <p>simC code:</p>
+              <pre class="code code--block">
+              <code>
+              /*
+                This is a multi line comment
+                simC - High level dynamically typed C
+              */
+              </code>
+              </pre>
+              <p>C code:</p>
+              <pre class="code code--block">
+              <code>
+              /*
+                This is a multi line comment
+                simC - High level dynamically typed C
+              */
+              </code>
+              </pre>
+        </section>
+        <section class="js-section">
+          <h3 class="section__title">Input Statement</h3>
+          <h4 class="section__title">Integer input</h4>
+          <p>simC code:</p>
+          <pre class="code code--block">
+            <code>
+              var a = input(“Enter a number : “, “i”)
+            </code>
+          </pre>
+          <p>C code:</p>
+          <pre class="code code--block">
+            <code>
+              int a;
+              printf("Enter a number : ");
+              scanf("%d", &a);
+            </code>
+          </pre>
+          <h4 class="section__title">Float input</h4>
+          <p>simC code:</p>
+          <pre class="code code--block">
+            <code>
+              var a = input(“Enter a number : “, “f”)
+            </code>
+          </pre>
+          <p>C code:</p>
+          <pre class="code code--block">
+            <code>
+              float a;
+              printf("Enter a number : ");
+              scanf("%f", &a);
+            </code>
+          </pre>
+          <h4 class="section__title">Double input</h4>
+          <p>simC code:</p>
+          <pre class="code code--block">
+            <code>
+              var a = input(“Enter a number : “, “d”)
+            </code>
+          </pre>
+          <p>C code:</p>
+          <pre class="code code--block">
+            <code>
+              double a;
+              printf("Enter a number : ");
+              scanf("%lf", &a);
+            </code>
+          </pre>
+          <h4 class="section__title">String input</h4>
+          <p>simC code:</p>
+          <pre class="code code--block">
+            <code>
+              var a = input(“Enter a string : “, “s”)
+            </code>
+          </pre>
+          <p>C code:</p>
+          <pre class="code code--block">
+            <code>
+              char* a;
+              printf("Enter a string : ");
+              scanf("%s", &a);
+            </code>
+          </pre>
+        </section>
+        <section class="js-section">
+          <h3 class="section__title">Conditional Statements</h3>
+          <h4 class="section__title">if statement</h4>
+          <p>simC code:</p>
+          <pre class="code code--block">
+            <code>
+              if(condition){
+                statement1;
+                statement2;
+              }
+            </code>
+          </pre>
+          <p>C code:</p>
+          <pre class="code code--block">
+            <code>
+              if(condition){
+                statement1;
+                statement2;
+              }
+            </code>
+          </pre>
+          <h4 class="section__title">if-else statement</h4>
+          <p>simC code:</p>
+          <pre class="code code--block">
+            <code>
+              if(condition){
+                statement1;
+                statement2;
+              }
+              else{
+                statement3;
+                statement4;
+              }
+            </code>
+          </pre>
+          <p>C code:</p>
+          <pre class="code code--block">
+            <code>
+              if(condition){
+                statement1;
+                statement2;
+              }
+              else{
+                statement3;
+                statement4;
+              }
+            </code>
+          </pre>
+          <h4 class="section__title">Nested if-else (if-else ladder)</h4>
+          <p>simC code:</p>
+          <pre class="code code--block">
+            <code>
+              if(condition1){
+                statement1;
+                statement2;
+              }
+              else if(condition2){
+                statement3;
+                statement4;
+              }
+              else{
+                statement5;
+                statement6;
+              }
+            </code>
+          </pre>
+          <p>C code:</p>
+          <pre class="code code--block">
+            <code>
+              if(condition1){
+                statement1;
+                statement2;
+              }
+              else if(condition2){
+                statement3;
+                statement4;
+              }
+              else{
+                statement5;
+                statement6;
+              }
+            </code>
+          </pre>
+          <h4 class="section__title">Switch Case</h4>
+          <p>simC code:</p>
+          <pre class="code code--block">
+            <code>
+              switch (expression) {
+                case constant_expression : statement
+                default : statement
+              }
+            </code>
+          </pre>
+          <p>C code:</p>
+          <pre class="code code--block">
+            <code>
+              switch (expression) {
+                case constant_expression : statement
+                default : statement
+              }
+            </code>
+          </pre>
+          <h4 class="section__title">break statement</h4>
+          <p>simC code:</p>
+          <pre class="code code--block">
+            <code>
+              break
+            </code>
+          </pre>
+          <p>C code:</p>
+          <pre class="code code--block">
+            <code>
+              break;
+            </code>
+          </pre>
+          <h4 class="section__title">continue statement</h4>
+          <p>simC code:</p>
+          <pre class="code code--block">
+            <code>
+              continue
+            </code>
+          </pre>
+          <p>C code:</p>
+          <pre class="code code--block">
+            <code>
+              continue;
+            </code>
+          </pre>
+          <h4 class="section__title">exit statement</h4>
+          <p>simC code:</p>
+          <pre class="code code--block">
+            <code>
+              exit(integer)
+            </code>
+          </pre>
+          <p>C code:</p>
+          <pre class="code code--block">
+            <code>
+              exit(integer)
+            </code>
+          </pre>
+          <h4 class="section__title">return statement</h4>
+          <h5 class="section__title">return expression</h5>
+          <p>simC code:</p>
+          <pre class="code code--block">
+            <code>
+              return (expression)
+            </code>
+          </pre>
+          <p>C code:</p>
+          <pre class="code code--block">
+            <code>
+              return (expression);
+            </code>
+          </pre>
+          <h5 class="section__title">return void</h5>
+          <p>simC code:</p>
+          <pre class="code code--block">
+            <code>
+              return
+            </code>
+          </pre>
+          <p>C code:</p>
+          <pre class="code code--block">
+            <code>
+              return;
+            </code>
+          </pre>
+        </section>
+        <section class="js-section">
+          <h3 class="section__title">Code Blocks</h3>
+          <p>simC code:</p>
+          <pre class="code code--block">
+            <code>
+              {
+                var a = 1
+              }
+            </code>
+          </pre>
+          <p>C code:</p>
+          <pre class="code code--block">
+            <code>
+              {
+                int a = 1;
+              }
+            </code>
+          </pre>
+        </section>
+        <section class="js-section">
+          <h3 class="section__title">Functions</h3>
+          <h4 class="section__title">Function Definition</h4>
+          <pre class="code code--block">
+            <code>
+              def sum(a, b) {
+                a = a + 1
+                b = b + 1
+                return a + b
+              }
+            </code>
+          </pre>
+          <p>C code:</p>
+          <pre class="code code--block">
+            <code>
+              int sum(int a, int b) {
+                a = a + 1
+                b = b + 1
+                return a + b;
+              }
+            </code>
+          </pre>
+          <h4 class="section__title">Function Calling</h4>
+          <pre class="code code--block">
+            <code>
+              sum(1, 2)
+            </code>
+          </pre>
+          <p>C code:</p>
+          <pre class="code code--block">
+            <code>
+              sum(1, 2);
+            </code>
+          </pre>
+        </section>
+        <section class="js-section">
+          <h3 class="section__title">Pointers</h3>
+          <h3 class="section__title">Pointer Declaration</h3>
+          <p>simC code:</p>
+          <pre class="code code--block">
+            <code>
+              var *n
+            </code>
+          </pre>
+          <p>C code:</p>
+          <pre class="code code--block">
+            <code>
+              not_known *n;
+            </code>
+          </pre>
+          <h3 class="section__title">Pointer Declaration and Assignment</h3>
+          <p>simC code:</p>
+          <pre class="code code--block">
+            <code>
+              var a
+              var *n = &a
+            </code>
+          </pre>
+          <p>C code:</p>
+          <pre class="code code--block">
+            <code>
+              not_known a;
+              not_known *n = &a;
+            </code>
+          </pre>
+        </section>
+      </article>
+    </div>
+
+    <footer class="footer">Scribbler is a free HTML template created exclusively for <a href="https://tympanus.net/codrops/" target="_blank" class="link link--light">Codrops</a>.</footer>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js"></script>
+    <script>hljs.initHighlightingOnLoad();</script>
+    <script src="scribbler.js"></script>
+  </body>
+</html>
