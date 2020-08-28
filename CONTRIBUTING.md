@@ -1,4 +1,4 @@
-# Contributing to X
+# Contributing to PyGeneses
 
 ## Pull Requests (PRs)
 
