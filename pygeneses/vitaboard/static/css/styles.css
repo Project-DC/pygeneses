@@ -151,7 +151,7 @@ header{
 }
 
 .vgform input {
-    width: 93%;
+    width: 90%;
     margin-top: -6%;
     font-size: medium;
     height: 30px;
@@ -162,7 +162,7 @@ header{
 }
 
 .vgform button {
-    width: 5%;
+    width: 100px;
     font-size: medium;
     height: 30px;
     background-color: rgb(168, 151, 151);
@@ -199,7 +199,7 @@ header{
 }
 
 .vsform input {
-    width: 93%;
+    width: 90%;
     margin-top: -6%;
     font-size: medium;
     height: 30px;
@@ -210,7 +210,7 @@ header{
 }
 
 .vsform button {
-    width: 5%;
+    width: 100px;
     font-size: medium;
     height: 30px;
     background-color: rgb(168, 151, 151);
