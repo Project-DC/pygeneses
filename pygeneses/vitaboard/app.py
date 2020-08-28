@@ -73,9 +73,18 @@ def stats():
     if request.method == 'POST':
         location = request.form['location']
 
+        if not os.path.exists(location):
+            return jsonify({"title": "Error", "text": "The location " + location + " does not exist",
+                            "icon": "error"})
+
         mean, variance, qof = get_life_stats(location)
 
-        return jsonify({"mean": mean, "variance": variance, "qof": qof})
+        if mean == -1 and variance == -1 and qof == -1:
+            return jsonify({"title": "Error", "text": "The location " + location + " does not have any log files",
+                            "icon": "error"})
+
+        return jsonify({"title": "Success", "text": "Stats generated successfully",
+                        "icon": "success", "mean": mean, "variance": variance, "qof": qof})
 
 if __name__ == "__main__":
     app.run()

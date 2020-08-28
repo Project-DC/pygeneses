@@ -176,7 +176,12 @@ $("#stats").click(function() {
       dataType: "json",
       success: function(result) {
         window.swal.close();
-        
+        Swal.fire({
+          icon: result.icon,
+          title: result.title,
+          text: result.text
+        });
+
         var ctx_mean = document.getElementById('g1').getContext('2d');
         $("#g1").css('background', 'white');
 

@@ -132,6 +132,9 @@ def get_life_stats(address):
     # Get all npy files from address
     f_names = glob.glob(os.path.join(address, '*.npy'))
 
+    if len(f_names) == 0:
+        return -1, -1, -1
+
     life_data = {}
 
     for f_name in f_names:
