@@ -63,8 +63,12 @@ $("#pygame").click(function() {
       data: {"file_location": file_location, "speed": speed},
       dataType: "json",
       success: function(result) {
-        windows.swal.close();
-        alert(result.status);
+        window.swal.close();
+        Swal.fire({
+          icon: result.icon,
+          title: result.title,
+          text: result.text
+        });
       }
     });
   }

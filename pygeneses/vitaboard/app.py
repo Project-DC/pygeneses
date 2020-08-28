@@ -20,6 +20,14 @@ def index():
         file_location = request.form['file_location']
         speed = request.form['speed']
 
+        if not os.path.exists(file_location):
+            return jsonify({"title": "Error", "text": "The location " + file_location + " does not exist",
+                            "icon": "error"})
+
+        if ".npy" not in file_location:
+            return jsonify({"title": "Error", "text": "You need to pass a npy file",
+                            "icon": "error"})
+
         with open('pass_params.txt', 'w') as file:
             file.write(file_location + '\n')
             file.write(speed + '\n')
@@ -33,7 +41,8 @@ def index():
         os.remove('pass_params.txt')
         os.remove('visualizer.py')
 
-        return jsonify({"status": "Visualizer ran successfully!"})
+        return jsonify({"title": "Success", "text": "Visualizer ran successfully",
+                        "icon": "success"})
 
 @app.route('/groups', methods=['POST'])
 def groups():
