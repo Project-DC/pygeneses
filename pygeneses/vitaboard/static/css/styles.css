@@ -144,11 +144,47 @@ header{
     transform: scale(1.1);
 }
 
+.vgform {
+    padding-bottom: 5px;
+    width: 98%;
+    margin: auto;
+}
+
+.vgform input {
+    width: 93%;
+    margin-top: -6%;
+    font-size: medium;
+    height: 30px;
+    border-top: none;
+    border-left: none;
+    border-right: none;
+    border-bottom-color: rgb(100, 98, 98);
+}
+
+.vgform button {
+    width: 5%;
+    font-size: medium;
+    height: 30px;
+    background-color: rgb(168, 151, 151);
+    color: white;
+    border-radius: 10px;
+    padding: 3px 3px;
+    border: none;
+    cursor: pointer;
+    box-shadow: 5px 5px rgba(0, 0, 0, 0.2);
+    margin-left: 0.8%;
+}
+
+.vgform button:hover {
+    transform: scale(1.1);
+}
+
 .vgsettings {
     display: flex;
     flex-direction: row;
-    justify-content: space-evenly;
+    justify-content: center;
     align-items: center;
+    height: 80%;
 }
 
 .vg1 {
