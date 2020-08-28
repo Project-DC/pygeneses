@@ -28,3 +28,4 @@
 - Updated button names to make more sense
 - Add checks in vitaviz path
 - Add checks in vitagroups path
+- Add checks in vitastats path
