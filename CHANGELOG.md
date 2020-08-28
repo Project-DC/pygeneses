@@ -25,3 +25,4 @@
 # 0.1.5
 
 - Added t-SNE visualization in vitagroups
+- Updated button names to make more sense
