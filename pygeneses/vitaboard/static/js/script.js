@@ -70,6 +70,84 @@ $("#pygame").click(function() {
   }
 });
 
+$("#groups").click(function() {
+  var location = $("#location-groups").val();
+
+  if(!location) {
+    alert("Location is required!");
+  } else {
+    Swal.fire({
+      icon: "info",
+      title: "Please wait",
+      text: "Generating groups..."
+    });
+
+    $.ajax({
+      url: "/groups",
+      type: "post",
+      data: {"location": location},
+      dataType: "json",
+      success: function(result) {
+        window.swal.close();
+        var ctx = document.getElementById('group2d').getContext('2d');
+        $("#group2").css('background', 'white');
+
+        var color = 'rgb(255, 99, 132)';
+        var radius = 7;
+
+        var data = {
+          datasets: [{
+              label: 'T-SNE Embeddings',
+              backgroundColor: color,
+              pointBackgroundColor: color,
+              pointRadius: radius,
+              pointHoverRadius: radius,
+              data: JSON.parse(result.coord)
+          }]
+        };
+
+        var option = {
+            scales: {
+                xAxes: [{
+                    type: 'linear',
+                    position: 'bottom',
+                    scaleLabel: {
+                      display: true,
+                      labelString: 'T-SNE-1',
+                      fontStyle: 'bold',
+                      fontSize: 14
+                    }
+                }],
+                yAxes: [{
+                    scaleLabel: {
+                      display: true,
+                      labelString: 'T-SNE-2',
+                      fontStyle: 'bold',
+                      fontSize: 14
+                    }
+                }]
+            },
+            onClick: function(evt) {
+              var element = chart.getElementAtEvent(evt);
+              var coordinates = data.datasets[0].data[element[0]._index];
+              var list = "<ul>";
+              list += "<li><button type='button' class='ids-agents'>" + coordinates.agent + "</button></li>";
+              list += "</ul>";
+
+              $("#ids").html(list);
+            }
+        }
+
+        var chart = new Chart(ctx,{
+          type: 'scatter',
+          data: data,
+          options:option
+        });
+      }
+    })
+  }
+});
+
 $("#stats").click(function() {
   var location = $("#location").val();
 

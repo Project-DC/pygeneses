@@ -2,7 +2,7 @@ from flask import Flask, request, render_template, redirect, flash, jsonify
 import os
 import pkgutil
 
-from .graph_gen import get_life_stats
+from .graph_gen import get_life_stats, tsne
 
 app = Flask(__name__)
 
@@ -34,6 +34,18 @@ def index():
         os.remove('visualizer.py')
 
         return jsonify({"status": "Visualizer ran successfully!"})
+
+@app.route('/groups', methods=['POST'])
+def groups():
+
+    if request.method == 'POST':
+        location = request.form['location']
+
+        coord = tsne(location)
+
+        print(len(coord))
+
+        return jsonify({"coord": coord})
 
 @app.route('/stats', methods=['POST'])
 def stats():

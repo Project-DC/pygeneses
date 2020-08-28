@@ -5,6 +5,7 @@ import numpy as np
 import re
 from collections import OrderedDict
 import json
+from sklearn.manifold import TSNE
 
 def add_node(id, parent_id, fam_tree):
     """
@@ -119,13 +120,13 @@ def get_life_stats(address):
     Returns
     =======
     mean     (dict)
-        : Dictionary containting the mean of lifetimes of players born at a particular time. {time_of_birth: mean}
+        : Dictionary containting the mean of lifetimes of players born at a particular time {time_of_birth: mean}
 
     variance (dict)
-        : Dictionary containting the variance of lifetimes of players born at a particular time. {time_of_birth: variance}
+        : Dictionary containting the variance of lifetimes of players born at a particular time {time_of_birth: variance}
 
     qof      (dic)
-        : Dictionary containing the Quality of life index of players born at a particular time . {time: count_qof}
+        : Dictionary containing the Quality of life index of players born at a particular time {time_of_birth: count_qof}
     """
 
     # Get all npy files from address
@@ -177,6 +178,45 @@ def get_life_stats(address):
     variance = json.dumps(variance)
     qof = json.dumps(qof)
     return mean, variance, qof
+
+def tsne(address):
+    """
+    Return t-SNE coordinates of agent embeddings
+
+    Params
+    ======
+    address (str)
+        : Address of the folder containing the log Files
+
+    Returns
+    =======
+    coord  (dict)
+        : Dictionary containting the t-SNE embedding of players. {time_of_birth: mean}
+    """
+
+    embeddings = glob.glob(os.path.join(address, "Embeddings/*.npy"))
+
+    embedding_values = []
+    embedding_ids = []
+    for i, embedding in enumerate(embeddings):
+        data = np.load(embedding, allow_pickle=True)
+        if data[0].shape != ():
+            embedding_values.append(data[0])
+            embedding_ids.append(i)
+
+    embedding_values = np.array(embedding_values)
+
+    X_embedded = TSNE(n_components=2, random_state=42).fit_transform(embedding_values)
+
+    coord = []
+    for i, embedding in enumerate(X_embedded):
+        path = embeddings[embedding_ids[i]]
+        path = os.path.normpath(path)
+        path = "/".join(path.split(os.sep)[:-2] + [path.split(os.sep)[-1]])
+        coord.append({"x": int(embedding[0]), "y": int(embedding[1]), "agent": path})
+
+    coord = json.dumps(coord)
+    return coord
 
 
 # Uncomment to check if the functions are working properly
