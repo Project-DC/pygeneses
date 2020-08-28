@@ -17,6 +17,8 @@ function init() {
           tab.classList.remove('active');
       });
       dot.classList.add('active');
+
+      $("#ids").html("");
   }
 
   function nextTab(pageNumber) {
