@@ -196,6 +196,9 @@ def tsne(address):
 
     embeddings = glob.glob(os.path.join(address, "Embeddings/*.npy"))
 
+    if len(embeddings) == 0:
+        return -1
+
     embedding_values = []
     embedding_ids = []
     for i, embedding in enumerate(embeddings):

@@ -93,6 +93,12 @@ $("#groups").click(function() {
       dataType: "json",
       success: function(result) {
         window.swal.close();
+        Swal.fire({
+          icon: result.icon,
+          title: result.title,
+          text: result.text
+        });
+
         var ctx = document.getElementById('group2d').getContext('2d');
         $("#group2").css('background', 'white');
 
@@ -170,6 +176,7 @@ $("#stats").click(function() {
       dataType: "json",
       success: function(result) {
         window.swal.close();
+        
         var ctx_mean = document.getElementById('g1').getContext('2d');
         $("#g1").css('background', 'white');
 
@@ -395,7 +402,11 @@ $("#ids").on("click", "button.ids-agents", function() {
     data: {"file_location": $(this).text(), "speed": "0.5"},
     success: function(result) {
       window.swal.close();
-      alert(result.status);
+      Swal.fire({
+        icon: result.icon,
+        title: result.title,
+        text: result.text
+      });
     }
   });
 });

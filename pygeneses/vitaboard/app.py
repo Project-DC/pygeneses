@@ -50,11 +50,22 @@ def groups():
     if request.method == 'POST':
         location = request.form['location']
 
+        if not os.path.exists(location):
+            return jsonify({"title": "Error", "text": "The location " + location + " does not exist",
+                            "icon": "error"})
+
+        if not os.path.exists(os.path.join(location, 'Embeddings')):
+            return jsonify({"title": "Error", "text": "The location " + location + " does not have any embeddings",
+                            "icon": "error"})
+
         coord = tsne(location)
 
-        print(len(coord))
+        if(coord == -1):
+            return jsonify({"title": "Error", "text": "The location " + location + " does not have any embeddings",
+                            "icon": "error"})
 
-        return jsonify({"coord": coord})
+        return jsonify({"title": "Success", "text": "Groups generated successfully",
+                        "icon": "success", "coord": coord})
 
 @app.route('/stats', methods=['POST'])
 def stats():
