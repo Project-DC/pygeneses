@@ -34,4 +34,5 @@
 
 - Updated the VitaLineage UI
 - Updated VitaLineage backend
-- VitaBoard is now complete
+- Added version to VitaBoard
+- VitaBoard is now complete (release v0.1.0)
