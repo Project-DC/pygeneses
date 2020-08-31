@@ -33,3 +33,5 @@
 # 0.1.6   
 
 - Updated the VitaLineage UI
+- Updated VitaLineage backend
+- VitaBoard is now complete
