@@ -9,18 +9,21 @@ HERE = pathlib.Path(__file__).parent
 # The text of the README file
 README = (HERE / "README.md").read_text()
 
+
 def read(rel_path):
     here = os.path.abspath(os.path.dirname(__file__))
-    with codecs.open(os.path.join(here, rel_path), 'r') as fp:
+    with codecs.open(os.path.join(here, rel_path), "r") as fp:
         return fp.read()
+
 
 def get_version(rel_path):
     for line in read(rel_path).splitlines():
-        if line.startswith('__version__'):
+        if line.startswith("__version__"):
             delim = '"' if '"' in line else "'"
             return line.split(delim)[1]
     else:
         raise RuntimeError("Unable to find version string.")
+
 
 # This call to setup() does all the work
 setup(
@@ -45,10 +48,19 @@ setup(
         "Programming Language :: Python :: 3.6",
     ],
     packages=[package for package in find_packages()],
-    package_data={"pygeneses": ["envs/prima_vita/images/*.png", "vitaboard/static/css/font-awesome.min.css",
-                                "vitaboard/static/css/styles.css", "vitaboard/static/js/gsap.min.js",
-                                "vitaboard/static/js/jquery.min.js", "vitaboard/static/js/script.js",
-                                "vitaboard/static/js/sweetalert.min.js", "vitaboard/static/js/chart.js",
-                                "vitaboard/templates/index.html", "vitaboard/visualizer.py"]},
+    package_data={
+        "pygeneses": [
+            "envs/prima_vita/images/*.png",
+            "vitaboard/static/css/font-awesome.min.css",
+            "vitaboard/static/css/styles.css",
+            "vitaboard/static/js/gsap.min.js",
+            "vitaboard/static/js/jquery.min.js",
+            "vitaboard/static/js/script.js",
+            "vitaboard/static/js/sweetalert.min.js",
+            "vitaboard/static/js/chart.js",
+            "vitaboard/templates/index.html",
+            "vitaboard/visualizer.py",
+        ]
+    },
     install_requires=["pygame", "numpy", "torch==1.4.0", "Flask"],
 )

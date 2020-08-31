@@ -83,10 +83,7 @@ class PrimaVita:
     """
 
     def __init__(
-        self,
-        params_dic={},
-        mode="bot",
-        log_dir_info=None,
+        self, params_dic={}, mode="bot", log_dir_info=None,
     ):
         """
         Initializer for PrimaVita class
@@ -118,7 +115,11 @@ class PrimaVita:
         )
         self.time = -1
         self.regenerate_times = 0
-        self.allow_regenerate = True if 'max_regenerations' in params_dic and params_dic['max_regenerations'] > 0 else False
+        self.allow_regenerate = (
+            True
+            if "max_regenerations" in params_dic and params_dic["max_regenerations"] > 0
+            else False
+        )
         self.food_regen_condition_is_met = False
         self.players = np.array([])
         self.killed = np.array([])
@@ -128,19 +129,47 @@ class PrimaVita:
         self.number_of_particles = random.randint(70, 80)
 
         # Can take values from user
-        self.initial_population = params_dic['initial_population'] if 'initial_population' in params_dic.keys() else 10
-        self.state_size = params_dic['state_size'] if 'state_size' in params_dic.keys() else 21
-        self.action_size = params_dic['action_size'] if 'action_size' in params_dic.keys() else 13
+        self.initial_population = (
+            params_dic["initial_population"]
+            if "initial_population" in params_dic.keys()
+            else 10
+        )
+        self.state_size = (
+            params_dic["state_size"] if "state_size" in params_dic.keys() else 21
+        )
+        self.action_size = (
+            params_dic["action_size"] if "action_size" in params_dic.keys() else 13
+        )
         # self.max_regenerations = params_dic['max_regenerations'] if 'max_regenerations' in params_dic.keys() else 0
         # self.particles_to_regrow = (20, 40)
-        self.initial_energy = params_dic['initial_energy'] if 'initial_energy' in params_dic.keys() else 200
-        self.model = params_dic['model'] if 'model' in params_dic.keys() else 'reinforce'
-        self.model_updates = params_dic['model_updates'] if 'model_updates' in params_dic.keys() else 10
-        self.speed = params_dic['speed'] if 'speed' in params_dic.keys() else 3
-        self.max_age = params_dic['max_age'] if 'max_age' in params_dic.keys() else 90
-        self.max_allowed_population = params_dic['max_allowed_population'] if 'max_allowed_population' in params_dic.keys() else 100
-        self.kill_type = params_dic['kill_type'] if 'kill_type' in params_dic.keys() else 'difference'
-        self.sensory_radius = params_dic['sensory_radius'] if 'sensory_radius' in params_dic.keys() else 100
+        self.initial_energy = (
+            params_dic["initial_energy"]
+            if "initial_energy" in params_dic.keys()
+            else 200
+        )
+        self.model = (
+            params_dic["model"] if "model" in params_dic.keys() else "reinforce"
+        )
+        self.model_updates = (
+            params_dic["model_updates"] if "model_updates" in params_dic.keys() else 10
+        )
+        self.speed = params_dic["speed"] if "speed" in params_dic.keys() else 3
+        self.max_age = params_dic["max_age"] if "max_age" in params_dic.keys() else 90
+        self.max_allowed_population = (
+            params_dic["max_allowed_population"]
+            if "max_allowed_population" in params_dic.keys()
+            else 100
+        )
+        self.kill_type = (
+            params_dic["kill_type"]
+            if "kill_type" in params_dic.keys()
+            else "difference"
+        )
+        self.sensory_radius = (
+            params_dic["sensory_radius"]
+            if "sensory_radius" in params_dic.keys()
+            else 100
+        )
 
         # If mode is human then pygame environment is shown
         self.mode = mode

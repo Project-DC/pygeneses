@@ -7,7 +7,10 @@ import math
 import random
 
 # Import required environment class
-class_import = {"PrimaVita": importlib.import_module('pygeneses.envs.prima_vita').PrimaVita}
+class_import = {
+    "PrimaVita": importlib.import_module("pygeneses.envs.prima_vita").PrimaVita
+}
+
 
 class HyperTune:
     """
@@ -25,7 +28,9 @@ class HyperTune:
         : Approximate number of logs to be generated
     """
 
-    def __init__(self, model_class, hyperparameters, values, stop_at, randomize_percent=1):
+    def __init__(
+        self, model_class, hyperparameters, values, stop_at, randomize_percent=1
+    ):
         """
         Initializer for HyperTune class
 
@@ -53,7 +58,9 @@ class HyperTune:
         """
 
         cross_product = list(itertools.product(*self.values))
-        cross_product = random.sample(cross_product, k=math.ceil(self.randomize_percent * len(cross_product)))
+        cross_product = random.sample(
+            cross_product, k=math.ceil(self.randomize_percent * len(cross_product))
+        )
 
         print("Training on", len(cross_product), "combinations!")
 
@@ -62,11 +69,12 @@ class HyperTune:
             params_dic = {}
             for j in range(len(self.hyperparameters)):
                 params_dic[self.hyperparameters[j]] = cross_product[i][j]
-                log_dir_info += str(self.hyperparameters[j]) + "_" + str(cross_product[i][j]) + "_"
+                log_dir_info += (
+                    str(self.hyperparameters[j]) + "_" + str(cross_product[i][j]) + "_"
+                )
 
             object = class_import[self.model_class](
-                    params_dic=params_dic,
-                    log_dir_info=log_dir_info[:-1]
+                params_dic=params_dic, log_dir_info=log_dir_info[:-1]
             )
             print("-" * 100)
             print(params_dic)

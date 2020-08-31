@@ -9,6 +9,7 @@ from pygeneses.envs.prima_vita.global_constants import *
 from pygeneses.envs.prima_vita.player_class import Player
 from pygeneses.envs.prima_vita.particle_class import Particle
 
+
 def current_action_time(result, action, timestamp, myfont):
     action_number_to_action = {
         0: "Left",
@@ -35,6 +36,7 @@ def current_action_time(result, action, timestamp, myfont):
     timetext = myfont.render("Time: " + str(timestamp), 1, (255, 255, 255))
 
     return actiontext, timetext
+
 
 def visualize(file_location, speed):
     # parser = argparse.ArgumentParser()
@@ -163,7 +165,8 @@ def visualize(file_location, speed):
 
         time.sleep(speed)
 
+
 if __name__ == "__main__":
-    with open('pass_params.txt', 'r') as file:
-        params = file.read().split('\n')[:-1]
+    with open("pass_params.txt", "r") as file:
+        params = file.read().split("\n")[:-1]
     visualize(params[0], float(params[1]))
