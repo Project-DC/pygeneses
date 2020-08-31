@@ -278,8 +278,8 @@ header{
     margin: auto;
 }
 
-/* .vlform input {
-    width: 93%;
+.vlform input {
+    width: 90%;
     margin-top: -6%;
     font-size: medium;
     height: 30px;
@@ -287,7 +287,7 @@ header{
     border-left: none;
     border-right: none;
     border-bottom-color: rgb(100, 98, 98);
-} */
+}
 
 .vlform label {
     width: 7%;

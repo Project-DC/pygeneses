@@ -35,6 +35,37 @@ def add_node(id, parent_id, fam_tree):
         # If the key already exists, append the parent_id to the value
         fam_tree[id].append(parent_id)
 
+def add_life_exp(life, tob, life_data, id, address):
+    """
+    Function to add values to mean and variance
+
+    Params
+    ======
+    life      (int)
+        : The life time of the player
+    tob       (int)
+        : Time of birth of the player
+    life_data (dict)
+        : Dictionary containing the values {tob : life} for players
+    id        (str)
+        : String containing the name of the player
+    address   (str)
+        : Address of the folder containing the log Files
+
+    Returns
+    =======
+    life_data (dict)
+        : Dictionary Containing the values {tob : life} for players
+    """
+
+    # Check if tob already exists in life_data or not
+    if tob not in life_data.keys():
+        life_data[tob] = [[life],[os.path.join(address, str(tob) + "-" + str(id))]]
+    else:
+        life_data[tob][0].append(life)
+        life_data[tob][1].append(os.path.join(address, str(tob) + "-" + str(id)))
+
+    return life_data
 
 def gen_fam_graph(address):
     """
@@ -73,39 +104,6 @@ def gen_fam_graph(address):
             add_node(f_name, str(parents[0][1]) + "-" + str(parents[0][0]), fam_tree)
             add_node(f_name, str(parents[1][1]) + "-" + str(parents[1][0]), fam_tree)
     return fam_tree
-
-
-def add_life_exp(life, tob, life_data, id, address):
-    """
-    Function to add values to mean and variance
-
-    Params
-    ======
-    life      (int)
-        : The life time of the player
-    tob       (int)
-        : Time of birth of the player
-    life_data (dict)
-        : Dictionary containing the values {tob : life} for players
-    id        (str)
-        : String containing the name of the player
-    address   (str)
-        : Address of the folder containing the log Files
-
-    Returns
-    =======
-    life_data (dict)
-        : Dictionary Containing the values {tob : life} for players
-    """
-
-    # Check if tob already exists in life_data or not
-    if tob not in life_data.keys():
-        life_data[tob] = [[life],[os.path.join(address, str(tob) + "-" + str(id))]]
-    else:
-        life_data[tob][0].append(life)
-        life_data[tob][1].append(os.path.join(address, str(tob) + "-" + str(id)))
-
-    return life_data
 
 
 def get_life_stats(address):
@@ -189,7 +187,7 @@ def tsne(address):
     Params
     ======
     address (str)
-        : Address of the folder containing the log Files
+        : Address of the folder containing the log files
 
     Returns
     =======
@@ -224,6 +222,133 @@ def tsne(address):
     coord = json.dumps(coord)
     return coord
 
+def get_parents(path, filename, ancestor_list, level=0):
+    """
+    Generates list of parents recursively until the initial population
+
+    Params
+    ======
+    path          (str)
+        : Path of the folder containing the log files
+    filename      (str)
+        : Log file name containing log of agent whose parents are to be found
+    ancestor_list (list)
+        : A list of dictionaries containing information about parents and their level of depth
+    level         (int)
+        : Depth of ancestor tree denoting the generation (generation 1 denotes immediate parents)
+
+    """
+
+    # Read the log file
+    agent_data = np.load(os.path.join(path, filename), allow_pickle=True)
+
+    # If the agent is from initial population and died without performing any action then break from recursion
+    if(len(agent_data) < 2):
+        return
+    # If the agent is from initial population then he/she will not have any other parent
+    elif(len(agent_data[1]) != 2):
+        return
+    # Otherwise recursively find parent at each generation
+    else:
+        parents = agent_data[1]
+
+        # If there are two parents (sexual reproduction)
+        if type(parents[0]) == list:
+            level += 1
+
+            # Extract data of both parents from child log
+            id_1, tob_1 = parents[0]
+            id_2, tob_2 = parents[1]
+
+            # Append to ancestor_list the details of first parent and find parent(s) of parent recursively
+            ancestor_list.append({"parent_of": filename,
+                                  "filename": os.path.join(path, str(tob_1) + "-" + str(id_1) + ".npy"),
+                                  "level": int(level)})
+            get_parents(path, str(tob_1) + "-" + str(id_1) + ".npy", ancestor_list, level)
+
+            # Append to ancestor_list the details of second parent and find parent(s) of parent recursively
+            ancestor_list.append({"parent_of": filename,
+                                  "filename": os.path.join(path, str(tob_2) + "-" + str(id_2) + ".npy"),
+                                  "level": int(level)})
+            get_parents(path, str(tob_2) + "-" + str(id_2) + ".npy", ancestor_list, level)
+        # If there is only single parent (asexual reproduction)
+        else:
+            level += 1
+
+            # Extract data of parent from child log
+            id_1, tob_1 = parents
+
+            # Append to ancestor_list the details of parent and find parent(s) of parent recursively
+            ancestor_list.append({"parent_of": filename,
+                                  "filename": os.path.join(path, str(tob_1) + "-" + str(id_1) + ".npy"),
+                                  "level": int(level)})
+            get_parents(path, str(tob_1) + "-" + str(id_1) + ".npy", ancestor_list, level)
+
+def get_children(path, filename, successor_list, level=0):
+    """
+    Generates list of parents recursively until the initial population
+
+    Params
+    ======
+    path          (str)
+        : Path of the folder containing the log files
+    filename      (str)
+        : Log file name containing log of agent whose parents are to be found
+    ancestor_list (list)
+        : A list of dictionaries containing information about parents and their level of depth
+    level         (int)
+        : Depth of ancestor tree denoting the generation (generation 1 denotes immediate parents)
+
+    """
+
+    full_path = os.path.join(path, filename)
+
+    # If the agent was alive when training stopped then break from recursion
+    if not os.path.exists(full_path):
+        return
+
+    # Load agent logs
+    agent_data = np.load(full_path, allow_pickle=True)
+
+    # If agent died without performing any action then there won't be any children
+    if(len(agent_data) <= 2):
+        return
+    # Otherwise search for children
+    else:
+        # Boolean flag to check if the current agent had any children or not
+        has_child = False
+
+        level += 1
+
+        # Logs for action starts from index 2 for agents not in initial population otherwise they start
+        # at index 1
+        logdata = agent_data[2:] if not filename.startswith('0-') else agent_data[1:]
+
+        for data in logdata:
+            # Extract type of action and reward for current action
+            action = data[0]
+            reward = data[2]
+
+            # If action was sexual or asexual reproduction and it was successful then append children to tree
+            if(action in [10, 11] and reward > 0):
+                # The agent has atleast one child
+                has_child = True
+
+                # Extract action time, number of offsprings and their ids
+                time = data[1]
+                num_offsprings = data[4]
+                offspring_ids = data[5]
+
+                for offspring_id in offspring_ids:
+                    # Append the child details into successor_list and find its children recursively
+                    successor_list.append({"child_of": filename,
+                                           "filename": os.path.join(path, str(time) + "-" + str(offspring_id) + ".npy"),
+                                           "level": int(level)})
+                    get_children(path, str(time) + "-" + str(offspring_id) + ".npy", successor_list, level)
+
+        # If the current agent does not have any child then break out of recursion
+        if not has_child:
+            return
 
 # Uncomment to check if the functions are working properly
 if __name__ == "__main__":

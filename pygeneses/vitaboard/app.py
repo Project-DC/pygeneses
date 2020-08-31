@@ -1,8 +1,9 @@
 from flask import Flask, request, render_template, redirect, flash, jsonify
 import os
 import pkgutil
+import json
 
-from .graph_gen import get_life_stats, tsne
+from .graph_gen import get_life_stats, tsne, get_parents, get_children
 
 app = Flask(__name__)
 
@@ -85,6 +86,34 @@ def stats():
 
         return jsonify({"title": "Success", "text": "Stats generated successfully",
                         "icon": "success", "mean": mean, "variance": variance, "qof": qof})
+
+@app.route('/lineage', methods=['POST'])
+def lineage():
+
+    if request.method == 'POST':
+        filename = request.form['filename']
+
+        if not os.path.exists(filename):
+            return jsonify({"title": "Error", "text": "The location " + filename + " does not exist",
+                            "icon": "error"})
+
+        dir = os.path.dirname(filename)
+        filename = os.path.basename(filename)
+
+        print(dir, filename)
+
+        ancestor_list = []
+        get_parents(dir, filename, ancestor_list)
+        ancestor_list = sorted(ancestor_list, key=lambda k: int(k['level']), reverse=True)
+        ancestor_list = json.dumps(ancestor_list)
+
+        successor_list = []
+        get_children(dir, filename, successor_list)
+        successor_list = sorted(successor_list, key=lambda k: int(k['level']))
+        successor_list = json.dumps(successor_list)
+
+        return jsonify({"title": "Success", "text": "Stats generated successfully",
+                        "icon": "success", "ancestor_list": ancestor_list, "successor_list": successor_list})
 
 if __name__ == "__main__":
     app.run()

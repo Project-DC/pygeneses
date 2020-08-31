@@ -395,7 +395,62 @@ $("#stats").click(function() {
   }
 });
 
-$("#ids").on("click", "button.ids-agents", function() {
+$("#lineage").click(function() {
+  var filename = $("#filename").val();
+
+  if(!filename) {
+    alert("Filename is required!");
+  } else {
+    Swal.fire({
+      icon: "info",
+      title: "Please wait",
+      text: "Generating lineage..."
+    });
+
+    $.ajax({
+      url: "/lineage",
+      type: "post",
+      data: {"filename": filename},
+      success: function(result) {
+        window.swal.close();
+        Swal.fire({
+          icon: result.icon,
+          title: result.title,
+          text: result.text
+        });
+
+        if(result.icon == 'success') {
+          var ancestor_list = JSON.parse(result.ancestor_list);
+          var successor_list = JSON.parse(result.successor_list);
+
+          console.log(ancestor_list);
+          console.log(successor_list);
+
+          var list = "<ul>";
+          var generation_max = ancestor_list[0].level;
+          ancestor_list.forEach(agent_obj => {
+            list += "<li>Generation " + Math.abs(agent_obj.level - generation_max) + ": ";
+            list += "<button type='button' class='ids-agents'>" + agent_obj.filename + "</button></li>";
+          });
+
+          list += "<li>Generation " + Math.abs(generation_max) + " (current): ";
+          list += "<button type='button' class='ids-agents'>" + filename + "</button></li>";
+
+          successor_list.forEach(agent_obj => {
+            list += "<li>Generation " + Math.abs(agent_obj.level + generation_max) + ": ";
+            list += "<button type='button' class='ids-agents'>" + agent_obj.filename + "</button></li>";
+          });
+          list += "</ul>";
+
+          console.log(list);
+          $("#show-lineage").html(list);
+        }
+      }
+    });
+  }
+});
+
+function visualizer(obj) {
   Swal.fire({
     icon: "info",
     title: "Please wait",
@@ -404,7 +459,7 @@ $("#ids").on("click", "button.ids-agents", function() {
   $.ajax({
     url: "/",
     type: "post",
-    data: {"file_location": $(this).text(), "speed": "0.5"},
+    data: {"file_location": $(obj).text(), "speed": "0.5"},
     success: function(result) {
       window.swal.close();
       Swal.fire({
@@ -414,4 +469,12 @@ $("#ids").on("click", "button.ids-agents", function() {
       });
     }
   });
+}
+
+$("#ids").on("click", "button.ids-agents", function() {
+  visualizer($(this));
+});
+
+$("#show-lineage").on("click", "button.ids-agents", function() {
+  visualizer($(this));
 });
