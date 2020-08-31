@@ -28,4 +28,8 @@
 - Updated button names to make more sense
 - Add checks in vitaviz path
 - Add checks in vitagroups path
-- Add checks in vitastats path
+- Add checks in vitastats path   
+
+# 0.1.6   
+
+- Updated the VitaLineage UI
