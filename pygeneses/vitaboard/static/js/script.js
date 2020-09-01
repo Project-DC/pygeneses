@@ -1,10 +1,16 @@
+// Create the init function
 function init() {
 
+  // Select all the nav-links
   const tabs = document.querySelectorAll('.tab');
+
+  // Select all the pages
   const pages = document.querySelectorAll('.page');
 
+  // Assign a page counter
   let current = 0;
-
+  
+  // Loop through the tabs to call the acting functions on the indices of pages
   tabs.forEach((tab, index) => {
       tab.addEventListener("click", function () {
           changeTabs(this);
@@ -12,6 +18,7 @@ function init() {
       });
   });
 
+  // When the tab is changes in the nav bar
   function changeTabs(dot) {
       tabs.forEach(tab => {
           tab.classList.remove('active');
@@ -21,30 +28,28 @@ function init() {
       $("#ids").html("");
   }
 
+  // For the content in the pages
   function nextTab(pageNumber) {
       const nextPage = pages[pageNumber];
       const currentPage = pages[current];
-
-      // const nextText = nextPage.querySelector(".text");
-      // const currentText = currentPage.querySelector(".text");
       const container = document.querySelector(".container");
 
-      // const tl = new TimelineMax();
+      // Initialising the gsap object
       const tl = gsap.timeline();
 
+      // To animate the contents of the pages according the tabs
       tl.fromTo(currentPage, 0.3, { opacity: 1, pointerEvents: "all" }, {opacity: 0, pointerEvents: "none" })
       .fromTo(nextPage, 0.3, { opacity: 0, pointerEvents: "none" }, {opacity: 1, pointerEvents: "all" });
-      // .fromTo(currentText, 0.3, { opacity: 1 }, {opacity: 0 })
-      // .fromTo(nextPage, 0.3, { opacity: 0 }, {opacity: 1 });
-
       current = pageNumber;
 
   }
 
 }
 
+// Calling the function
 init();
 
+// For the VitaViz page
 $("#pygame").click(function() {
   var file_location = $("#file_location").val();
   var speed = $("#speed").val();
@@ -74,6 +79,8 @@ $("#pygame").click(function() {
   }
 });
 
+// For the VitaGroups page
+// Required validations and the graph generation using Chart.js
 $("#groups").click(function() {
   var location = $("#location-groups").val();
 
@@ -158,6 +165,8 @@ $("#groups").click(function() {
   }
 });
 
+// For the VitaStats page
+// Required validations and the graph generation using Chart.js
 $("#stats").click(function() {
   var location = $("#location").val();
 
@@ -395,6 +404,8 @@ $("#stats").click(function() {
   }
 });
 
+// For the VitaLineage page
+// Required validations and the graph generation using Chart.js
 $("#lineage").click(function() {
   var filename = $("#filename").val();
 
@@ -450,6 +461,7 @@ $("#lineage").click(function() {
   }
 });
 
+// For the pygame visualiser that gets activated when the graph point is clicked
 function visualizer(obj) {
   Swal.fire({
     icon: "info",
@@ -471,6 +483,7 @@ function visualizer(obj) {
   });
 }
 
+// Calling the visualiser on graph point click
 $("#ids").on("click", "button.ids-agents", function() {
   visualizer($(this));
 });
