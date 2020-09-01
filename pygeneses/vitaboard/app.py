@@ -256,7 +256,7 @@ def lineage():
             )
 
         # Check if the file is of npy type or not
-        if ".npy" not in file_location:
+        if ".npy" not in filename:
             return jsonify(
                 {
                     "title": "Error",

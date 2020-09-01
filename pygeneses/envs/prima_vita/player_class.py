@@ -305,16 +305,18 @@ class Player:
                 self.playerX = SCREEN_WIDTH - self.PLAYER_WIDTH
 
             # Reduce energy by 5 for movement
-            self.energy -= 5
+            self.energy -= 2
 
-    def change_player_yposition(self, y):
+    def change_player_yposition(self, y, no_energy_change=False):
         """
         Update player's y coordinate
 
         Params
         ======
-        y (int)
+        y                (int)
             : Add to player's current y coordinate the value x (either positive or negative)
+        no_energy_change (bool)
+            : Whether to change energy or not
         """
 
         # If agent can move
@@ -329,7 +331,8 @@ class Player:
                 self.playerY = SCREEN_HEIGHT - self.PLAYER_HEIGHT
 
             # Reduce energy by 5 for movement
-            self.energy -= 5
+            if(not no_energy_change):
+                self.energy -= 2
 
     def asexual_reproduction(self, lenPlayers, time_given, initial_energy):
         """
@@ -357,9 +360,6 @@ class Player:
 
         # Select random number of offsprings in range [2, 8]
         num_offspring = random.randint(2, 8)
-
-        # Reduce energy by 30 for asexual reproduction
-        self.energy -= 30
 
         # Loop through offspring count
         for i in range(num_offspring):
@@ -482,8 +482,8 @@ class Player:
         self.ingesting_begin_time = time_given
         self.ingesting_particle_index = idx
 
-        # Add energy of 25 points for ingestion action
-        self.energy += 25
+        # Add energy of 100 points for ingestion action
+        self.energy += 100
 
     def show_player(self, screen):
         """
