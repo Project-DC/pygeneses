@@ -453,29 +453,29 @@ class PrimaVita:
             reward = -2
         # Action: up left (move north-west)
         elif action == 4:
-            self.players[idx].change_player_yposition(-self.root_speed)
-            self.players[idx].change_player_xposition(-self.root_speed, no_energy_change=True)
+            self.players[idx].change_player_yposition(-self.root_speed, no_energy_change=True)
+            self.players[idx].change_player_xposition(-self.root_speed)
             reward = -2
         # Action: up right (move north-east)
         elif action == 5:
-            self.players[idx].change_player_yposition(-self.root_speed)
-            self.players[idx].change_player_xposition(self.root_speed, no_energy_change=True)
+            self.players[idx].change_player_yposition(-self.root_speed, no_energy_change=True)
+            self.players[idx].change_player_xposition(self.root_speed)
             reward = -2
         # Action: down left (move south-west)
         elif action == 6:
-            self.players[idx].change_player_yposition(self.root_speed)
-            self.players[idx].change_player_xposition(-self.root_speed, no_energy_change=True)
+            self.players[idx].change_player_yposition(self.root_speed, no_energy_change=True)
+            self.players[idx].change_player_xposition(-self.root_speed)
             reward = -2
         # Action: down right (move south-east)
         elif action == 7:
-            self.players[idx].change_player_yposition(self.root_speed)
-            self.players[idx].change_player_xposition(self.root_speed, no_energy_change=True)
+            self.players[idx].change_player_yposition(self.root_speed, no_energy_change=True)
+            self.players[idx].change_player_xposition(self.root_speed)
             reward = -2
         # Action: stay
         elif action == 8:
             self.players[idx].energy -= 2
             # Initially -4, then after age of decay_rate -3 and so on until -1
-            reward = min(-4 + ((self.time - self.players[idx].tob) // self.decay_rate), -1)
+            reward = min(-4 + ((self.time - self.players[idx].born_at) // self.decay_rate), -1)
             self.players[idx].update_history(action, self.time, reward)
         # Action: food ingestion
         elif action == 9:
