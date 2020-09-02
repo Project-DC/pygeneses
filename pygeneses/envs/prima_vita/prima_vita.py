@@ -160,6 +160,7 @@ class PrimaVita:
         self.speed = params_dic["speed"] if "speed" in params_dic.keys() else 3
         self.root_speed = self.speed / (2 ** (1/2))
         self.max_age = params_dic["max_age"] if "max_age" in params_dic.keys() else 90
+        # Value of -1 means no bound
         self.max_allowed_population = (
             params_dic["max_allowed_population"]
             if "max_allowed_population" in params_dic.keys()
@@ -804,6 +805,7 @@ class PrimaVita:
         # If current population exceeds a max threshold then kill people randomly
         if (
             self.kill_type != ""
+            and self.max_allowed_population != -1
             and self.current_population > self.max_allowed_population
         ):
             # Compute number of extra agents
