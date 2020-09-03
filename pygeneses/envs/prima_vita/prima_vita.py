@@ -158,7 +158,7 @@ class PrimaVita:
             params_dic["model_updates"] if "model_updates" in params_dic.keys() else 10
         )
         self.speed = params_dic["speed"] if "speed" in params_dic.keys() else 3
-        self.root_speed = self.speed / (2 ** (1/2))
+        self.root_speed = self.speed / (2 ** (1 / 2))
         self.max_age = params_dic["max_age"] if "max_age" in params_dic.keys() else 90
         # Value of -1 means no bound
         self.max_allowed_population = (
@@ -176,7 +176,9 @@ class PrimaVita:
             if "sensory_radius" in params_dic.keys()
             else 100
         )
-        self.decay_rate = params_dic['decay_rate'] if 'decay_rate' in params_dic.keys() else 23
+        self.decay_rate = (
+            params_dic["decay_rate"] if "decay_rate" in params_dic.keys() else 23
+        )
 
         # If mode is human then pygame environment is shown
         self.mode = mode
@@ -454,29 +456,39 @@ class PrimaVita:
             reward = -2
         # Action: up left (move north-west)
         elif action == 4:
-            self.players[idx].change_player_yposition(-self.root_speed, no_energy_change=True)
+            self.players[idx].change_player_yposition(
+                -self.root_speed, no_energy_change=True
+            )
             self.players[idx].change_player_xposition(-self.root_speed)
             reward = -2
         # Action: up right (move north-east)
         elif action == 5:
-            self.players[idx].change_player_yposition(-self.root_speed, no_energy_change=True)
+            self.players[idx].change_player_yposition(
+                -self.root_speed, no_energy_change=True
+            )
             self.players[idx].change_player_xposition(self.root_speed)
             reward = -2
         # Action: down left (move south-west)
         elif action == 6:
-            self.players[idx].change_player_yposition(self.root_speed, no_energy_change=True)
+            self.players[idx].change_player_yposition(
+                self.root_speed, no_energy_change=True
+            )
             self.players[idx].change_player_xposition(-self.root_speed)
             reward = -2
         # Action: down right (move south-east)
         elif action == 7:
-            self.players[idx].change_player_yposition(self.root_speed, no_energy_change=True)
+            self.players[idx].change_player_yposition(
+                self.root_speed, no_energy_change=True
+            )
             self.players[idx].change_player_xposition(self.root_speed)
             reward = -2
         # Action: stay
         elif action == 8:
             self.players[idx].energy -= 2
             # Initially -4, then after age of decay_rate -3 and so on until -1
-            reward = min(-4 + ((self.time - self.players[idx].born_at) // self.decay_rate), -1)
+            reward = min(
+                -4 + ((self.time - self.players[idx].born_at) // self.decay_rate), -1
+            )
             self.players[idx].update_history(action, self.time, reward)
         # Action: food ingestion
         elif action == 9:

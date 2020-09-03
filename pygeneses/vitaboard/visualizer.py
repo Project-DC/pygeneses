@@ -217,6 +217,7 @@ def visualize(file_location, speed):
         # So that humans can properly see what is going on in an agent's life
         time.sleep(speed)
 
+
 # If the namespace is __main__ then read from pass_params.txt and pass those params to visualize
 if __name__ == "__main__":
     with open("pass_params.txt", "r") as file:

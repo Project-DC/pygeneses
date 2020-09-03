@@ -154,7 +154,11 @@ class Player:
         file.close()
 
         # Average embeddings over entire life
-        self.embeddings = self.embeddings / (time - self.born_at) if time != self.born_at else self.embeddings
+        self.embeddings = (
+            self.embeddings / (time - self.born_at)
+            if time != self.born_at
+            else self.embeddings
+        )
 
         # Open file at location to dump embeddings
         file = open(
@@ -313,7 +317,7 @@ class Player:
                 self.playerY = SCREEN_HEIGHT - self.PLAYER_HEIGHT
 
             # Reduce energy by 2 for movement
-            if(not no_energy_change):
+            if not no_energy_change:
                 self.energy -= 2
 
     def asexual_reproduction(self, len_players, time_given, initial_energy):

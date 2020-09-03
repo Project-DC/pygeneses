@@ -41,10 +41,10 @@ def index():
 
     elif request.method == "POST":
         """
-            file_location (str)
-                : Full path of log file which is to be visualized
-            speed         (int)
-                : Speed (in seconds) with which the visualizer's frame should change
+        file_location (str)
+            : Full path of log file which is to be visualized
+        speed         (int)
+            : Speed (in seconds) with which the visualizer's frame should change
         """
 
         # Get file_location and speed from AJAX call
@@ -113,8 +113,8 @@ def groups():
 
     if request.method == "POST":
         """
-            location (str)
-                : Full path of log directory to compute t-SNE
+        location (str)
+            : Full path of log directory to compute t-SNE
         """
 
         # Get the location of log directory from AJAX call
@@ -181,8 +181,8 @@ def stats():
 
     if request.method == "POST":
         """
-            location (str)
-                : Full path of log directory to compute statistics
+        location (str)
+            : Full path of log directory to compute statistics
         """
 
         # Get the location of log directory from AJAX call
@@ -238,8 +238,8 @@ def lineage():
 
     if request.method == "POST":
         """
-            location (str)
-                : Full path of log file containing information about a particular agent whose family tree is to be generated
+        location (str)
+            : Full path of log file containing information about a particular agent whose family tree is to be generated
         """
 
         # Get the location of log directory from AJAX call
@@ -301,6 +301,7 @@ def lineage():
                 "successor_list": successor_list,
             }
         )
+
 
 # Run the app if in __main__ namespace
 if __name__ == "__main__":

@@ -6,8 +6,8 @@ import shutil
 from pygeneses.envs.prima_vita.player_class import Player
 from pygeneses.envs.prima_vita import PrimaVita
 
-class TestPlayerClass(unittest.TestCase):
 
+class TestPlayerClass(unittest.TestCase):
     def test_initial_x_y(self):
         player = Player(i=1, log_dir=".", tob=10, energy=200, x=100, y=300)
         self.assertEqual(player.action_history, [[100, 300]])
@@ -52,12 +52,14 @@ class TestPlayerClass(unittest.TestCase):
     def test_update_history_action_asexual_reproduction(self):
         player = Player(i=10, log_dir=".", tob=10, energy=200, x=0, y=0)
         player.states.append([-1, -1])
-        player.update_history(action=10, time=10, reward=-2, num_offspring=2, offspring_ids=[11, 12])
+        player.update_history(
+            action=10, time=10, reward=-2, num_offspring=2, offspring_ids=[11, 12]
+        )
 
         check_vals = [10, 10, -2, 200, 2, [11, 12], 0, 0, [-1, -1]]
 
         for i in range(len(check_vals)):
-            if(i != 5):
+            if i != 5:
                 with self.subTest("Check action history for failed action", i=i):
                     self.assertEqual(player.action_history[-1][i], check_vals[i])
             else:
@@ -68,12 +70,19 @@ class TestPlayerClass(unittest.TestCase):
     def test_update_history_action_sexual_reproduction(self):
         player = Player(i=10, log_dir=".", tob=10, energy=200, x=0, y=0)
         player.states.append([-1, -1])
-        player.update_history(action=11, time=10, reward=-2, num_offspring=2, offspring_ids=[11, 12], mate_id=5)
+        player.update_history(
+            action=11,
+            time=10,
+            reward=-2,
+            num_offspring=2,
+            offspring_ids=[11, 12],
+            mate_id=5,
+        )
 
         check_vals = [11, 10, -2, 200, 2, [11, 12], 5, 0, 0, [-1, -1]]
 
         for i in range(len(check_vals)):
-            if(i != 5):
+            if i != 5:
                 with self.subTest("Check action history for failed action", i=i):
                     self.assertEqual(player.action_history[-1][i], check_vals[i])
             else:
@@ -160,8 +169,9 @@ class TestPlayerClass(unittest.TestCase):
     def test_asexual_reproduction(self):
         player = Player(i=2, log_dir=".", tob=10, energy=200, x=0, y=0)
         len_players = 10
-        offspring_players, offspring_ids = player.asexual_reproduction(len_players=len_players, time_given=25,
-                                                                       initial_energy=200)
+        offspring_players, offspring_ids = player.asexual_reproduction(
+            len_players=len_players, time_given=25, initial_energy=200
+        )
 
         self.assertEqual(len(offspring_players), len(offspring_ids))
 
@@ -174,12 +184,14 @@ class TestPlayerClass(unittest.TestCase):
     def test_sexual_reproduction_gen_offspring(self):
         player = Player(i=2, log_dir=".", tob=10, energy=200, x=0, y=0)
         len_players = 10
-        offspring_players, offspring_ids = player.sexual_reproduction(mating_begin_time=30,
-                                                                      len_players=len_players,
-                                                                      initial_energy=200,
-                                                                      gen_offspring=True,
-                                                                      mate_id=3,
-                                                                      mate_tob=12)
+        offspring_players, offspring_ids = player.sexual_reproduction(
+            mating_begin_time=30,
+            len_players=len_players,
+            initial_energy=200,
+            gen_offspring=True,
+            mate_id=3,
+            mate_tob=12,
+        )
 
         self.assertEqual(len(offspring_players), len(offspring_ids))
 
@@ -198,8 +210,14 @@ class TestPlayerClass(unittest.TestCase):
     def test_sexual_reproduction_no_gen_offspring(self):
         player = Player(i=2, log_dir=".", tob=10, energy=200, x=0, y=0)
         len_players = 10
-        player.sexual_reproduction(mating_begin_time=30, len_players=len_players,
-                                   initial_energy=200, gen_offspring=False, mate_id=3, mate_tob=12)
+        player.sexual_reproduction(
+            mating_begin_time=30,
+            len_players=len_players,
+            initial_energy=200,
+            gen_offspring=False,
+            mate_id=3,
+            mate_tob=12,
+        )
 
         self.assertEqual(player.energy, 170)
         self.assertEqual(player.cannot_move, True)
