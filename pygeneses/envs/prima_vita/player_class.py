@@ -286,7 +286,7 @@ class Player:
             elif self.playerX >= (SCREEN_WIDTH - self.PLAYER_WIDTH):
                 self.playerX = SCREEN_WIDTH - self.PLAYER_WIDTH
 
-            # Reduce energy by 5 for movement
+            # Reduce energy by 2 for movement
             self.energy -= 2
 
     def change_player_yposition(self, y, no_energy_change=False):
@@ -312,7 +312,7 @@ class Player:
             elif self.playerY >= (SCREEN_HEIGHT - self.PLAYER_HEIGHT):
                 self.playerY = SCREEN_HEIGHT - self.PLAYER_HEIGHT
 
-            # Reduce energy by 5 for movement
+            # Reduce energy by 2 for movement
             if(not no_energy_change):
                 self.energy -= 2
 
