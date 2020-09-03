@@ -41,3 +41,4 @@
 # 0.1.7
 
 - Add tests for player class
+- Fix: single agent in a time of birth, #79 solved
