@@ -195,7 +195,7 @@ class Player:
         """
 
         # If action number is less than or equal to 9 (i.e. movement in 8 directions, stay or ingestion) then
-        elif action <= 9:
+        if action <= 9:
             self.action_history.append(
                 np.array(
                     [

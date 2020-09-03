@@ -38,6 +38,24 @@ class TestPlayerClass(unittest.TestCase):
 
         shutil.rmtree(model.log_dir)
 
-    # def test_update_history_failed_action(self):
-    #     player = Player(i=10, log_dir=".", tob=10, energy=200, x=0, y=0)
-    #     player.update_history()
+    def test_update_history_failed_action(self):
+        player = Player(i=10, log_dir=".", tob=10, energy=200, x=0, y=0)
+        player.states.append([-1, -1])
+        player.update_history(action=7, time=10, reward=-2)
+
+        check_vals = [7, 10, -2, 200, 0, 0, [-1, -1]]
+
+        for i in range(len(check_vals)):
+            with self.subTest("Check action history for an action <= 9", i=i):
+                self.assertEqual(player.action_history[-1][i], check_vals[i])
+
+    def test_update_history_(self):
+        player = Player(i=10, log_dir=".", tob=10, energy=200, x=0, y=0)
+        player.states.append([-1, -1])
+        player.update_history(action=7, time=10, reward=-2)
+
+        check_vals = [7, 10, -2, 200, 0, 0, [-1, -1]]
+
+        for i in range(len(check_vals)):
+            with self.subTest("Check action history for failed action", i=i):
+                self.assertEqual(player.action_history[-1][i], check_vals[i])
