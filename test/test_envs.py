@@ -9,16 +9,28 @@ from pygeneses.envs.prima_vita import PrimaVita
 
 class TestPlayerClass(unittest.TestCase):
     def test_initial_x_y(self):
+        """
+        Test initial x and y as passed in Player class' initializer
+        """
+
         player = Player(i=1, log_dir=".", tob=10, energy=200, x=100, y=300)
         self.assertEqual(player.action_history, [[100, 300]])
 
     def test_add_parent_single_parent(self):
+        """
+        Test add_parent method in case of asexual reproduction (one parent)
+        """
+
         player = Player(i=10, log_dir=".", tob=10, energy=200)
         player.add_parent(id=1, tob=0)
         self.assertEqual(player.action_history[1][0], 1)
         self.assertEqual(player.action_history[1][1], 0)
 
     def test_add_parent_two_parents(self):
+        """
+        Test add_parent method in case of sexual reproduction (two parents)
+        """
+
         player = Player(i=10, log_dir=".", tob=10, energy=200)
         player.add_parent(id=1, tob=0, mate_id=2, mate_tob=3)
         self.assertEqual(player.action_history[1][0][0], 1)
@@ -27,6 +39,10 @@ class TestPlayerClass(unittest.TestCase):
         self.assertEqual(player.action_history[1][1][1], 3)
 
     def test_write_data(self):
+        """
+        Test write_data method which is used to write to log file once agent dies
+        """
+
         model = PrimaVita(log_dir_info="test")
         if not os.path.exists(model.log_dir):
             os.mkdir(model.log_dir)
@@ -39,6 +55,11 @@ class TestPlayerClass(unittest.TestCase):
         shutil.rmtree(model.log_dir)
 
     def test_update_history_action_less_equal_9(self):
+        """
+        Test update_history method for an action <= 9 (i.e. movement in 8 directions, stay, and ingestion),
+        tested with action 7 here (moving south-east)
+        """
+
         player = Player(i=10, log_dir=".", tob=10, energy=200, x=0, y=0)
         player.states.append([-1, -1])
         player.update_history(action=7, time=10, reward=-2)
@@ -50,6 +71,10 @@ class TestPlayerClass(unittest.TestCase):
                 self.assertEqual(player.action_history[-1][i], check_vals[i])
 
     def test_update_history_action_asexual_reproduction(self):
+        """
+        Test update_history method for action 10 (i.e. asexual reproduction)
+        """
+
         player = Player(i=10, log_dir=".", tob=10, energy=200, x=0, y=0)
         player.states.append([-1, -1])
         player.update_history(
@@ -68,6 +93,10 @@ class TestPlayerClass(unittest.TestCase):
                     self.assertEqual(player.action_history[-1][i][1], check_vals[i][1])
 
     def test_update_history_action_sexual_reproduction(self):
+        """
+        Test update_history method for action 11 (i.e. sexual reproduction)
+        """
+
         player = Player(i=10, log_dir=".", tob=10, energy=200, x=0, y=0)
         player.states.append([-1, -1])
         player.update_history(
@@ -91,6 +120,10 @@ class TestPlayerClass(unittest.TestCase):
                     self.assertEqual(player.action_history[-1][i][1], check_vals[i][1])
 
     def test_update_history_action_fight(self):
+        """
+        Test update_history method for action 12 (i.e. fight)
+        """
+
         player = Player(i=10, log_dir=".", tob=10, energy=200, x=0, y=0)
         player.states.append([-1, -1])
         player.update_history(action=12, time=10, reward=-2, fight_with=6)
@@ -102,6 +135,10 @@ class TestPlayerClass(unittest.TestCase):
                 self.assertEqual(player.action_history[-1][i], check_vals[i])
 
     def test_change_x_position(self):
+        """
+        Test change_player_xposition (normal case)
+        """
+
         player = Player(i=10, log_dir=".", tob=10, energy=200, x=0, y=0)
         player.change_player_xposition(3)
 
@@ -109,6 +146,10 @@ class TestPlayerClass(unittest.TestCase):
         self.assertEqual(player.energy, 198)
 
     def test_change_x_position_cannot_move(self):
+        """
+        Test change_player_xposition (when agent is not allowed to move)
+        """
+
         player = Player(i=10, log_dir=".", tob=10, energy=200, x=0, y=0)
         player.cannot_move = True
         player.change_player_xposition(3)
@@ -117,6 +158,10 @@ class TestPlayerClass(unittest.TestCase):
         self.assertEqual(player.energy, 200)
 
     def test_change_x_position_negative_x(self):
+        """
+        Test change_player_xposition (edge case - when x becomes <= 0 i.e agent reaches left most side)
+        """
+
         player = Player(i=10, log_dir=".", tob=10, energy=200, x=0, y=0)
         player.change_player_xposition(-3)
 
@@ -124,6 +169,10 @@ class TestPlayerClass(unittest.TestCase):
         self.assertEqual(player.energy, 198)
 
     def test_change_x_position_out_of_screen(self):
+        """
+        Test change_player_xposition (edge case - when agent tries to go out of screen from right side)
+        """
+
         player = Player(i=10, log_dir=".", tob=10, energy=200, x=1164, y=0)
         player.change_player_xposition(5)
 
@@ -131,6 +180,10 @@ class TestPlayerClass(unittest.TestCase):
         self.assertEqual(player.energy, 198)
 
     def test_change_y_position(self):
+        """
+        Test change_player_yposition (normal case)
+        """
+
         player = Player(i=10, log_dir=".", tob=10, energy=200, x=0, y=0)
         player.change_player_yposition(3)
 
@@ -138,6 +191,10 @@ class TestPlayerClass(unittest.TestCase):
         self.assertEqual(player.energy, 198)
 
     def test_change_y_position_cannot_move(self):
+        """
+        Test change_player_yposition (when agent is not allowed to move)
+        """
+
         player = Player(i=10, log_dir=".", tob=10, energy=200, x=0, y=0)
         player.cannot_move = True
         player.change_player_yposition(3)
@@ -145,7 +202,11 @@ class TestPlayerClass(unittest.TestCase):
         self.assertEqual(player.playerY, 0)
         self.assertEqual(player.energy, 200)
 
-    def test_change_y_position_negative_x(self):
+    def test_change_y_position_negative_y(self):
+        """
+        Test change_player_yposition (edge case - when y becomes <= 0 i.e agent reaches top most side)
+        """
+
         player = Player(i=10, log_dir=".", tob=10, energy=200, x=0, y=0)
         player.change_player_yposition(-3)
 
@@ -153,6 +214,10 @@ class TestPlayerClass(unittest.TestCase):
         self.assertEqual(player.energy, 198)
 
     def test_change_y_position_out_of_screen(self):
+        """
+        Test change_player_yposition (edge case - when agent tries to go out of screen from bottom side)
+        """
+
         player = Player(i=10, log_dir=".", tob=10, energy=200, x=0, y=664)
         player.change_player_yposition(5)
 
@@ -160,6 +225,10 @@ class TestPlayerClass(unittest.TestCase):
         self.assertEqual(player.energy, 198)
 
     def test_change_y_position_no_energy_change(self):
+        """
+        Test change_player_xposition (when agent's energy is not supposed to decrease)
+        """
+
         player = Player(i=10, log_dir=".", tob=10, energy=200, x=0, y=0)
         player.change_player_yposition(3, no_energy_change=True)
 
@@ -167,6 +236,10 @@ class TestPlayerClass(unittest.TestCase):
         self.assertEqual(player.energy, 200)
 
     def test_asexual_reproduction(self):
+        """
+        Test asexual_reproduction
+        """
+
         player = Player(i=2, log_dir=".", tob=10, energy=200, x=0, y=0)
         len_players = 10
         offspring_players, offspring_ids = player.asexual_reproduction(
@@ -182,6 +255,10 @@ class TestPlayerClass(unittest.TestCase):
                 self.assertEqual(offspring_players[i].action_history[-1][1], 10)
 
     def test_sexual_reproduction_gen_offspring(self):
+        """
+        Test sexual_reproduction for mother (i.e. gen_offspring = True)
+        """
+
         player = Player(i=2, log_dir=".", tob=10, energy=200, x=0, y=0)
         len_players = 10
         offspring_players, offspring_ids = player.sexual_reproduction(
@@ -208,6 +285,10 @@ class TestPlayerClass(unittest.TestCase):
                 self.assertEqual(offspring_players[i].action_history[-1][1][1], 12)
 
     def test_sexual_reproduction_no_gen_offspring(self):
+        """
+        Test sexual_reproduction for father (i.e. gen_offspring = False)
+        """
+
         player = Player(i=2, log_dir=".", tob=10, energy=200, x=0, y=0)
         len_players = 10
         player.sexual_reproduction(
@@ -224,6 +305,10 @@ class TestPlayerClass(unittest.TestCase):
         self.assertEqual(player.mating_begin_time, 30)
 
     def test_ingesting_food(self):
+        """
+        Test ingesting_food
+        """
+
         player = Player(i=2, log_dir=".", tob=10, energy=200, x=0, y=0)
         player.ingesting_food(idx=50, time_given=45)
 
