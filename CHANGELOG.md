@@ -37,3 +37,7 @@
 - Added version to VitaBoard
 - Added the required comments
 - VitaBoard is now complete (release v0.1.0)
+
+# 0.1.7
+
+- Add tests for player class
