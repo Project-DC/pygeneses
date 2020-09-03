@@ -36,7 +36,7 @@ def index():
         Returns index.html (file which contains template for VitaBoard)
         """
 
-        # Retur index.html from templates
+        # Return index.html from templates
         return render_template("index.html")
 
     elif request.method == "POST":
