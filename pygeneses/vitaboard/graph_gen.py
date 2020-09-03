@@ -175,8 +175,8 @@ def get_life_stats(address):
             qof.append(
                 {
                     "tob": j,
-                    "value": int(1) if life >= 60 else int(0),
-                    "agents": [id] if life >= 60 else [],
+                    "value": int(1) if life[0] >= 60 else int(0),
+                    "agents": [id] if life[0] >= 60 else [],
                 }
             )
             continue
