@@ -120,7 +120,7 @@ def visualize(file_location, speed):
 
     for life_event in life_events:
         # Extract action result, action and time at which it was done
-        result = "" if life_event[2] != -10 else "Failed "
+        result = "" if life_event[2] != -20 else "Failed "
         action = life_event[0]
         timestamp = life_event[1]
 

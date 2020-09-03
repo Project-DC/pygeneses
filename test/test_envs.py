@@ -37,3 +37,7 @@ class TestPlayerClass(unittest.TestCase):
         self.assertTrue(os.path.exists(os.path.join(model.log_dir, "10-1.npy")))
 
         shutil.rmtree(model.log_dir)
+
+    # def test_update_history_failed_action(self):
+    #     player = Player(i=10, log_dir=".", tob=10, energy=200, x=0, y=0)
+    #     player.update_history()

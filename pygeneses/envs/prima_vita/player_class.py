@@ -194,24 +194,6 @@ class Player:
             : Id of player with which current agent fought (optional)
         """
 
-        # If action is failed then denote it in logs as negative action
-        # (eg: -10 for failed asexual reproduction)
-        if type(action) != int:
-            if "Failed" in action:
-                self.action_history.append(
-                    np.array(
-                        [
-                            -action,
-                            time,
-                            reward,
-                            self.energy,
-                            self.playerX,
-                            self.playerY,
-                            self.states[-1],
-                        ]
-                    )
-                )
-
         # If action number is less than or equal to 9 (i.e. movement in 8 directions, stay or ingestion) then
         elif action <= 9:
             self.action_history.append(
