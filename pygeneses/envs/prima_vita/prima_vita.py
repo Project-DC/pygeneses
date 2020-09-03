@@ -530,7 +530,7 @@ class PrimaVita:
                 self.players[idx].update_history(
                     action,
                     self.time,
-                    -1,
+                    reward,
                     num_offspring=len(offspring_ids),
                     offspring_ids=offspring_ids,
                 )
