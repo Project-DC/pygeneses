@@ -316,13 +316,13 @@ class Player:
             if(not no_energy_change):
                 self.energy -= 2
 
-    def asexual_reproduction(self, lenPlayers, time_given, initial_energy):
+    def asexual_reproduction(self, len_players, time_given, initial_energy):
         """
         Perform asexual reproduction action
 
         Params
         ======
-        lenPlayers     (int)
+        len_players     (int)
             : Number of players currently in environment
         time_given     (int)
             : Current time (taken from environment)
@@ -346,10 +346,10 @@ class Player:
         # Loop through offspring count
         for i in range(num_offspring):
             # Create offspring ids and append it to list
-            id_offspring = lenPlayers
+            id_offspring = len_players
             offspring_ids.append(id_offspring)
 
-            lenPlayers = lenPlayers + 1
+            len_players = len_players + 1
 
             # Create new Player objects and add as offsprings
             offspring_players.append(
@@ -370,7 +370,7 @@ class Player:
     def sexual_reproduction(
         self,
         mating_begin_time,
-        lenPlayers,
+        len_players,
         initial_energy=None,
         gen_offspring=False,
         mate_id=-1,
@@ -383,7 +383,7 @@ class Player:
         ======
         mating_begin_time (int)
             : The time at which mating process begins (takes 2 ticks of time to complete)
-        lenPlayers        (int)
+        len_players        (int)
             : Number of players currently in environment
         gen_offspring     (bool)
             : Whether to generate
@@ -423,9 +423,9 @@ class Player:
             # Loop through offspring count
             for i in range(INITIAL_POPULATION):
                 # Create offspring ids and append it to list
-                id_offspring = lenPlayers
+                id_offspring = len_players
                 offspring_ids.append(id_offspring)
-                lenPlayers = lenPlayers + 1
+                len_players = len_players + 1
 
                 # Create new Player objects and add as offsprings
                 offspring_players.append(
