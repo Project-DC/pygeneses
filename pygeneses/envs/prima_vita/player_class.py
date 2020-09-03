@@ -154,7 +154,7 @@ class Player:
         file.close()
 
         # Average embeddings over entire life
-        self.embeddings = self.embeddings / (time - self.born_at)
+        self.embeddings = self.embeddings / (time - self.born_at) if time != self.born_at else self.embeddings
 
         # Open file at location to dump embeddings
         file = open(

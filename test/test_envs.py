@@ -99,9 +99,53 @@ class TestPlayerClass(unittest.TestCase):
         self.assertEqual(player.playerX, 3)
         self.assertEqual(player.energy, 198)
 
+    def test_change_x_position_cannot_move(self):
+        player = Player(i=10, log_dir=".", tob=10, energy=200, x=0, y=0)
+        player.cannot_move = True
+        player.change_player_xposition(3)
+
+        self.assertEqual(player.playerX, 0)
+        self.assertEqual(player.energy, 200)
+
+    def test_change_x_position_negative_x(self):
+        player = Player(i=10, log_dir=".", tob=10, energy=200, x=0, y=0)
+        player.change_player_xposition(-3)
+
+        self.assertEqual(player.playerX, 0)
+        self.assertEqual(player.energy, 198)
+
+    def test_change_x_position_out_of_screen(self):
+        player = Player(i=10, log_dir=".", tob=10, energy=200, x=1164, y=0)
+        player.change_player_xposition(5)
+
+        self.assertEqual(player.playerX, 1168)
+        self.assertEqual(player.energy, 198)
+
     def test_change_y_position(self):
         player = Player(i=10, log_dir=".", tob=10, energy=200, x=0, y=0)
         player.change_player_yposition(3)
 
         self.assertEqual(player.playerY, 3)
+        self.assertEqual(player.energy, 198)
+
+    def test_change_y_position_cannot_move(self):
+        player = Player(i=10, log_dir=".", tob=10, energy=200, x=0, y=0)
+        player.cannot_move = True
+        player.change_player_yposition(3)
+
+        self.assertEqual(player.playerY, 0)
+        self.assertEqual(player.energy, 200)
+
+    def test_change_y_position_negative_x(self):
+        player = Player(i=10, log_dir=".", tob=10, energy=200, x=0, y=0)
+        player.change_player_yposition(-3)
+
+        self.assertEqual(player.playerX, 0)
+        self.assertEqual(player.energy, 198)
+
+    def test_change_y_position_out_of_screen(self):
+        player = Player(i=10, log_dir=".", tob=10, energy=200, x=0, y=764)
+        player.change_player_xposition(5)
+
+        self.assertEqual(player.playerY, 768)
         self.assertEqual(player.energy, 198)
