@@ -3,7 +3,12 @@
 
 [![GitHub](https://img.shields.io/github/license/Project-DC/pygeneses)](https://github.com/Project-DC/pygeneses/blob/master/LICENSE)  ![GitHub stars](https://img.shields.io/github/stars/Project-DC/pygeneses?style=plastic)  ![GitHub contributors](https://img.shields.io/github/contributors/Project-DC/pygeneses)  ![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)  ![GitHub last commit](https://img.shields.io/github/last-commit/Project-DC/pygeneses)
 
-<p align="justify">PyGeneses is a deep reinforcement learning framework for evolution simulation environments. PyGeneses provides a high level API for training agents using standard Deep Reinforcement Learning Algorithms in environments with in-built neural networks for performing policy evaluation. Users can thus focus on the main problem - to observe interesting patterns amongst these artificial species in various simulated environments.</p>
+<p align="justify">PyGeneses is a PyTorch based Deep Reinforcement Learning framework that helps users to simulate artificial agents in bio-inspired environments. The framework provides in-built Deep RL algorithms and visualization of results from training in an interactive dashboard. The environments are a simplified abstraction of our real world, agents are put into this world and are allowed to interact with each other and the environment.</p>
+
+The power of PyGeneses is its clean and simple API which:
+- Allows a user to run own simulation even if they have no knowledge about RL or DL.
+- Allows a user with experience in Deep RL to tweak the model and parameters extensively.
+<p align="justify">What’s exciting about PyGeneses you ask, well, PyGeneses lets you create a working simulation by writing as little as 2 lines without any prerequisite knowledge whatsoever!! PyGeneses also provides tools that will help you visualize the results with minimal effort. So what are you waiting for, install PyGeneses today and become the god of your creation</p>
 
 ## Prima vita
 
@@ -11,10 +16,19 @@
 
 ## Installation
 
-Pygeneses can be installed using pip:-
+PyGeneses can be installed using pip in either your local system or a cloud based platform. The steps for installation will be the same for both cloud and own systems.
 
 ```bash
 user@programmer~:$ pip install git+https://github.com/Project-DC/pygeneses
+```
+
+<p align="justify">Running VitaBoard (an interactive dashboard to visualize Training results) requires a small python script. We recommend keeping this in an accessible location and using it to start the VitaBoard server everytime you need to visualize your results.
+Open a text editor and type the following:-</p>
+
+```bash
+from pygeneses.vitaboard import run_board
+
+run_board()
 ```
 
 ## Contributing
@@ -22,8 +36,8 @@ user@programmer~:$ pip install git+https://github.com/Project-DC/pygeneses
 The following resources are a good place to get to know more about PyGeneses:-
 
 1.  Introduction to PyGeneses  [Dev.to](https://dev.to/projectdc/introduction-to-pygeneses-26oc),  [Medium](https://medium.com/oss-build/introduction-to-pygeneses-1ed08a1a076c).
-2.  Getting Started with sim-C  [Dev.to]https://dev.to/projectdc/getting-started-with-pygeneses-1co2),  [Medium](https://medium.com/oss-build/getting-started-with-pygeneses-839ff6b3023f).
-3. Studying logs using VitaBoard [Dev.to](), [Medium](https://medium.com/oss-build/studying-logs-using-vitaboard-41e13e3197d7)
+2.  Getting Started with PyGeneses [Dev.to]https://dev.to/projectdc/getting-started-with-pygeneses-1co2),  [Medium](https://medium.com/oss-build/getting-started-with-pygeneses-839ff6b3023f).
+3. Studying logs using VitaBoard [Dev.to](https://dev.to/projectdc/guidelines-about-vitaboard-2m36), [Medium](https://medium.com/oss-build/studying-logs-using-vitaboard-41e13e3197d7)
 
 Apart from these blog posts, you can also checkout the  [official docs](https://project-dc.github.io/docs).
 
