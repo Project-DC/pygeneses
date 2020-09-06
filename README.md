@@ -31,12 +31,27 @@ from pygeneses.vitaboard import run_board
 run_board()
 ```
 
+## About the packages   
+<p align="justify">As of version 0.1-beta, the architecture of PyGeneses is built around 4 major modules. Each of these modules provides a unique feature or functionality to the framework. So, let’s get started with a brief introduction to each of them.</p>      
+
+1. envs    
+<p align="justify">This module allows you to create, configure and tweak the in-built bio-inspired environments. As of now, this only provides a single environment called Prima Vita (First Life), but there’s more coming soon! This lets you set up the entire environment and the species in just a few lines of code and provides both high level API and low level control over the environment. Training using the API includes logging of every action of an agent so that it can be studied using VitaBoard.</p>   
+
+2. models   
+<p align="justify">The ‘models’ module is what allows us to import the neural networks which the species uses to learn what to do. As of now, only the default model's (REINFORCE) implementation is provided, but we will be adding support for custom pluggable networks from v0.2 onwards.</p>
+
+3. hypertune    
+<p align="justify">The ‘HyperTune’ package allows us to configure and test out various hyperparameters we can provide for an environment and species (a list of hyperparameters is provided in the Classes section of this documentation). This contains single hyperparameter testing, grid search and randomized search. This allows us to find the best set of hyperparameters to display a type of behavior. This also produces logs which we can study using Vitaboard.</p>
+
+4. vitaboard   
+<p align="justify">Vitaboard provides an advanced, interactive dashboard to study agents after the training phase. After each agent dies, his/her actions are written into a log file. And vitaboard allows us to visualize the agent's life. It provides us with a life visualizer, group statistics and a genetic history visualizer. It allows us to identify and understand behaviours exhibited by an agent while interacting with the environment or with other agents in the environment.</p>
+
 ## Contributing
 
 The following resources are a good place to get to know more about PyGeneses:-
 
 1.  Introduction to PyGeneses  [Dev.to](https://dev.to/projectdc/introduction-to-pygeneses-26oc),  [Medium](https://medium.com/oss-build/introduction-to-pygeneses-1ed08a1a076c).
-2.  Getting Started with PyGeneses [Dev.to]https://dev.to/projectdc/getting-started-with-pygeneses-1co2),  [Medium](https://medium.com/oss-build/getting-started-with-pygeneses-839ff6b3023f).
+2.  Getting Started with PyGeneses [Dev.to](https://dev.to/projectdc/getting-started-with-pygeneses-1co2),  [Medium](https://medium.com/oss-build/getting-started-with-pygeneses-839ff6b3023f).
 3. Studying logs using VitaBoard [Dev.to](https://dev.to/projectdc/guidelines-about-vitaboard-2m36), [Medium](https://medium.com/oss-build/studying-logs-using-vitaboard-41e13e3197d7)
 
 Apart from these blog posts, you can also checkout the  [official docs](https://project-dc.github.io/docs).
