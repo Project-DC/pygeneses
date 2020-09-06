@@ -9,7 +9,7 @@ function init() {
 
   // Assign a page counter
   let current = 0;
-  
+
   // Loop through the tabs to call the acting functions on the indices of pages
   tabs.forEach((tab, index) => {
       tab.addEventListener("click", function () {
@@ -200,9 +200,6 @@ $("#stats").click(function() {
         var ctx_qof = document.getElementById('g3').getContext('2d');
         $("#g3").css('background', 'white');
 
-        var ctx_mean_1 = document.getElementById('g4').getContext('2d');
-        $("#g4").css('background', 'white');
-
         var color = 'rgb(255, 99, 132)';
         var radius = 7;
 
@@ -342,40 +339,6 @@ $("#stats").click(function() {
             }
         }
 
-        var option_mean_1 = {
-            scales: {
-                xAxes: [{
-                    type: 'linear',
-                    position: 'bottom',
-                    scaleLabel: {
-                      display: true,
-                      labelString: 'Time of birth (in ticks)',
-                      fontStyle: 'bold',
-                      fontSize: 14
-                    }
-                }],
-                yAxes: [{
-                    scaleLabel: {
-                      display: true,
-                      labelString: 'Average death age',
-                      fontStyle: 'bold',
-                      fontSize: 14
-                    }
-                }]
-            },
-            onClick: function(evt) {
-              var element = chart_mean_1.getElementAtEvent(evt);
-              var coordinates = data_mean.datasets[0].data[element[0]._index];
-              var list = "<ul>";
-              coordinates.agents.forEach(ele => {
-                list += "<li><button type='button' class='ids-agents'>" + ele + "</button></li>";
-              });
-              list += "</ul>";
-
-              $("#ids").html(list);
-            }
-        }
-
         var chart_mean = new Chart(ctx_mean,{
           type: 'scatter',
           data: data_mean,
@@ -392,12 +355,6 @@ $("#stats").click(function() {
           type: 'scatter',
           data: data_qof,
           options:option_qof
-        });
-
-        var chart_mean_1 = new Chart(ctx_mean_1,{
-          type: 'scatter',
-          data: data_mean,
-          options:option_mean_1
         });
       }
     });
