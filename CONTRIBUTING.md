@@ -1,4 +1,6 @@
-# Contributing to PyGeneses
+# Contributing to PyGeneses   
+
+### Please star (⭐) the repository to show your support to the project.   
 
 ## Pull Requests (PRs)
 
