@@ -5,8 +5,7 @@ from test_hypertune import TestHyperTuneClass
 from test_models import TestReinforceModelClass
 
 if __name__ == "__main__":
-    test_classes_to_run = [TestPlayerClass, TestPrimaVitaClass, TestHyperTuneClass,
-                           TestReinforceModelClass]
+    test_classes_to_run = [TestPlayerClass, TestPrimaVitaClass]
 
     loader = unittest.TestLoader()
 
