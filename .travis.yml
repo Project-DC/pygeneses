@@ -4,6 +4,6 @@ python:
 install:
   python setup.py install
 script:
-  - wget https://raw.githubusercontent.com/Project-DC/pygeneses/master/test-script.py
-  - mv test-script.py test-script-master.py
-  - python test-script-master.py
+  - git clone https://github.com/Project-DC/tests
+  - cd tests/test/
+  - python main.py
