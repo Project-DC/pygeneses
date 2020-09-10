@@ -1039,7 +1039,7 @@ class PrimaVita:
                 if ed <= 30:
                     env.append(i)
 
-        # Return the closes agent, if there is one else return -1
+        # Return the closest agent, if there is one else return -1
         return env[np.array(env).argsort()[0]] if len(env) > 0 else -1
 
     def search_enemy(self, host):

@@ -1,8 +1,8 @@
 import unittest
-from test_envs import TestPlayerClass
+from test_envs import TestPlayerClass, TestPrimaVitaClass
 
 if __name__ == "__main__":
-    test_classes_to_run = [TestPlayerClass]
+    test_classes_to_run = [TestPlayerClass, TestPrimaVitaClass]
 
     loader = unittest.TestLoader()
 

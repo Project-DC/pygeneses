@@ -4,6 +4,7 @@ import os
 import shutil
 
 from pygeneses.envs.prima_vita.player_class import Player
+from pygeneses.envs.prima_vita.particle_class import Particle
 from pygeneses.envs.prima_vita import PrimaVita
 
 
@@ -316,3 +317,216 @@ class TestPlayerClass(unittest.TestCase):
         self.assertEqual(player.cannot_move, True)
         self.assertEqual(player.ingesting_begin_time, 45)
         self.assertEqual(player.ingesting_particle_index, 50)
+
+class TestPrimaVitaClass(unittest.TestCase):
+    def test_initializer(self):
+        model = PrimaVita(log_dir_info="test")
+
+        self.assertTrue(os.path.exists("Players_Data_test"))
+        self.assertTrue(os.path.exists("Players_Data_test/Embeddings"))
+
+        shutil.rmtree("Players_Data_test")
+
+        # Testing init method (called from initialiazer)
+
+        # Testing regenerate_species inside init method
+        self.assertEqual(len(model.players), model.initial_population)
+
+    def test_pad_state(self):
+        model = PrimaVita(log_dir_info="test")
+
+        # Greater than maxlen
+        padded_state = model.pad_state([4, 3, 2, 1], 2)
+        self.assertEqual(padded_state, [4, 3])
+
+        # Less than maxlen
+        padded_state = model.pad_state([4, 3], 4)
+        self.assertEqual(list(padded_state), [4, 3, 0, 0])
+
+        # Equal to maxlen
+        padded_state = model.pad_state([4, 3, 2, 1], 4)
+        self.assertEqual(padded_state, [4, 3, 2, 1])
+
+        shutil.rmtree("Players_Data_test")
+
+    def test_get_current_state(self):
+        model = PrimaVita(log_dir_info="test", params_dic={"initial_population": 2})
+
+        # Test state shape
+        state, _ = model.get_current_state()
+        self.assertEqual(state.shape, (2, 21))
+
+        # Test stopping condition
+        model.killed = [0, 1, 2]
+        model.players = [0, 1, 2]
+
+        _, running = model.get_current_state()
+
+        self.assertEqual(running, False)
+
+        shutil.rmtree("Players_Data_test")
+
+    def test_update_time(self):
+        model = PrimaVita(log_dir_info="test")
+
+        model.update_time()
+        self.assertEqual(model.time, 0)
+
+        shutil.rmtree("Players_Data_test")
+
+    def test_food_nearby(self):
+        model = PrimaVita(log_dir_info="test", params_dic={"initial_population": 1})
+
+        # Test dead player
+        model.players = [1]
+        food = model.food_nearby(model.players[0])
+
+        self.assertEqual(food, -1)
+
+        # Test food nearby
+        model.players = [Player(i=0, log_dir="Players_Data_test", tob=10, x=50, y=500, energy=200)]
+        model.food_particles = [Particle(x=64, y=514), Particle(x=45, y=502)]
+
+        food = model.food_nearby(model.players[0])
+        self.assertEqual(food, 0)
+
+        shutil.rmtree("Players_Data_test")
+
+    def test_food_in_env_no_get_idx(self):
+        model = PrimaVita(log_dir_info="test", params_dic={"initial_population": 1})
+
+        # Test dead player
+        model.players = [1]
+        food_env = model.food_in_env(model.players[0])
+
+        self.assertEqual(food_env, -1)
+
+        # Test food nearby
+        model.players = [Player(i=0, log_dir="Players_Data_test", tob=10, x=50, y=500, energy=200)]
+        model.food_particles = [Particle(x=64, y=514), Particle(x=45, y=502)]
+
+        vec, distances = model.food_in_env(model.players[0])
+        self.assertEqual(vec, [14, 14, -5, 2])
+        self.assertEqual(distances, [19.79898987322333, 5.385164807134504])
+
+        shutil.rmtree("Players_Data_test")
+
+    def test_food_in_env_get_idx(self):
+        model = PrimaVita(log_dir_info="test", params_dic={"initial_population": 1})
+
+        # Test food nearby
+        model.players = [Player(i=0, log_dir="Players_Data_test", tob=10, x=50, y=500, energy=200)]
+        model.food_particles = [Particle(x=64, y=514), Particle(x=45, y=502)]
+
+        vec, distances, env = model.food_in_env(model.players[0], get_idx=True)
+        self.assertEqual(vec, [14, 14, -5, 2])
+        self.assertEqual(distances, [19.79898987322333, 5.385164807134504])
+        self.assertEqual(env, [0, 1])
+
+        shutil.rmtree("Players_Data_test")
+
+    def test_players_in_env_no_get_idx(self):
+        model = PrimaVita(log_dir_info="test", params_dic={"initial_population": 1})
+
+        # Test dead player
+        model.players = [1]
+        food_env = model.players_in_env(model.players[0])
+
+        self.assertEqual(food_env, ([], []))
+
+        # Test players nearby
+        model.players = [Player(i=0, log_dir="Players_Data_test", tob=10, x=50, y=500, energy=200),
+                         Player(i=1, log_dir="Players_Data_test", tob=12, x=48, y=505, energy=200)]
+
+        vec, distances = model.players_in_env(model.players[0])
+        self.assertTrue(vec[:-1], [2, -5])
+        self.assertTrue(distances, [5.385164807134504])
+
+        shutil.rmtree("Players_Data_test")
+
+    def test_players_in_env_get_idx(self):
+        model = PrimaVita(log_dir_info="test", params_dic={"initial_population": 2})
+
+        # Test players nearby
+        model.players = [Player(i=0, log_dir="Players_Data_test", tob=10, x=50, y=500, energy=200),
+                         Player(i=1, log_dir="Players_Data_test", tob=12, x=48, y=505, energy=200)]
+
+        vec, distances, env = model.players_in_env(model.players[0], get_idx=True)
+        self.assertTrue(vec[:-1], [2, -5])
+        self.assertTrue(distances, [5.385164807134504])
+        self.assertTrue(env, [1])
+
+        shutil.rmtree("Players_Data_test")
+
+    def test_search_mate(self):
+        model = PrimaVita(log_dir_info="test", params_dic={"initial_population": 3})
+
+        # Test dead player
+        model.players[0] = 1
+
+        player = model.search_mate(model.players[0])
+        self.assertEqual(player, -1)
+
+        # Test find mate in radius
+        model.players = [Player(i=0, log_dir="Players_Data_test", tob=10, x=50, y=500, energy=200),
+                         Player(i=1, log_dir="Players_Data_test", tob=12, x=48, y=505, energy=200),
+                         Player(i=2, log_dir="Players_Data_test", tob=12, x=40, y=530, energy=200)]
+
+        model.players[0].is_impotent = False
+        model.players[0].gender = "Male"
+
+        model.players[1].is_impotent = False
+        model.players[1].gender = "Female"
+
+        model.time = 30
+
+        player = model.search_mate(model.players[0])
+        self.assertEqual(player, 1)
+
+        shutil.rmtree("Players_Data_test")
+
+    def test_search_enemy(self):
+        model = PrimaVita(log_dir_info="test", params_dic={"initial_population": 3})
+
+        # Test dead player
+        model.players[0] = 1
+
+        player = model.search_enemy(model.players[0])
+        self.assertEqual(player, -1)
+
+        # Test find opponent in radius
+        model.players = [Player(i=0, log_dir="Players_Data_test", tob=10, x=50, y=500, energy=200),
+                         Player(i=1, log_dir="Players_Data_test", tob=12, x=40, y=530, energy=200),
+                         Player(i=2, log_dir="Players_Data_test", tob=12, x=48, y=505, energy=200)]
+
+        player = model.search_enemy(model.players[0])
+        self.assertEqual(player, 2)
+
+        shutil.rmtree("Players_Data_test")
+
+    def test_check_particles(self):
+        model = PrimaVita(log_dir_info="test")
+
+        model.food_particles = [Particle(x=64, y=514), Particle(x=10, y=502),
+                                Particle(x=60, y=514), Particle(x=12, y=502)]
+        model.check_particles()
+
+        self.assertEqual(model.food_particles[2], 0)
+        self.assertEqual(model.food_particles[3], 0)
+
+        shutil.rmtree("Players_Data_test")
+
+    def test_regenerate_species(self):
+        model = PrimaVita(log_dir_info="test")
+
+        model.regenerate_species()
+        self.assertEqual(len(model.players), 20)
+
+        shutil.rmtree("Players_Data_test")
+
+    def test_take_action(self):
+        model = PrimaVita(log_dir_info="test")
+
+        
+
+        shutil.rmtree("Players_Data_test")
