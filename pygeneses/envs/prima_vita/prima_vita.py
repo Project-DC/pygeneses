@@ -256,16 +256,7 @@ class PrimaVita:
         """
 
         # If the length of state is greater than maxlen then cut the remaining values
-        if len(state) > maxlen:
-            return state[:maxlen]
-        # If the length of state is lesser than maxlen then pad it with zeros
-        elif len(state) < maxlen:
-            new_state = np.zeros((maxlen,))
-            new_state[: len(state)] = state
-            return new_state
-        # If the length of state is equal to maxlen then return it as it is
-        elif len(state) == maxlen:
-            return state
+        return state
 
     def get_current_state(self, idx=None):
         """
