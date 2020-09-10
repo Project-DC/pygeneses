@@ -128,7 +128,7 @@ class ReinforceModel:
         """
 
         # Append the current reward to rewards list for this agent
-        self.rewards[i].append(reward)
+        self.rewards[idx].append(reward)
 
     def add_agents(self, parent_idx, num_offsprings):
         """
@@ -216,11 +216,3 @@ class ReinforceModel:
         # Loop through all agents
         for idx in range(0, len(self.agents)):
             self.update_single_agent(idx)
-            # t1 = multiprocessing.Process(target=self.update_single_agent, args=(idx,))
-            # t2 = multiprocessing.Process(target=self.update_single_agent, args=(idx+1,))
-            #
-            # t1.start()
-            # t2.start()
-            #
-            # t1.join()
-            # t2.join()

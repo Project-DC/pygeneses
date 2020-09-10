@@ -1,9 +1,12 @@
 import unittest
+
 from test_envs import TestPlayerClass, TestPrimaVitaClass
 from test_hypertune import TestHyperTuneClass
+from test_models import TestReinforceModelClass
 
 if __name__ == "__main__":
-    test_classes_to_run = [TestPlayerClass, TestPrimaVitaClass, TestHyperTuneClass]
+    test_classes_to_run = [TestPlayerClass, TestPrimaVitaClass, TestHyperTuneClass,
+                           TestReinforceModelClass]
 
     loader = unittest.TestLoader()
 
