@@ -62,5 +62,5 @@ setup(
             "vitaboard/visualizer.py",
         ]
     },
-    install_requires=["pygame", "numpy", "torch==1.4.0", "Flask"],
+    install_requires=["pygame", "numpy", "torch==1.4.0", "Flask", "sklearn"],
 )
