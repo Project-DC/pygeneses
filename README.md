@@ -22,15 +22,6 @@ PyGeneses can be installed using pip in either your local system or a cloud base
 user@programmer~:$ pip install git+https://github.com/Project-DC/pygeneses
 ```
 
-<p align="justify">Running VitaBoard (an interactive dashboard to visualize Training results) requires a small python script. We recommend keeping this in an accessible location and using it to start the VitaBoard server everytime you need to visualize your results.
-Open a text editor and type the following:-</p>
-
-```bash
-from pygeneses.vitaboard import run_board
-
-run_board()
-```
-
 ## About the packages   
 <p align="justify">As of version 0.1-beta, the architecture of PyGeneses is built around 4 major modules. Each of these modules provides a unique feature or functionality to the framework. So, let’s get started with a brief introduction to each of them.</p>      
 
