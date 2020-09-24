@@ -16,25 +16,27 @@ The power of PyGeneses is its clean and simple API which:
 
 ## Installation
 
-PyGeneses can be installed using pip in either your local system or a cloud based platform. The steps for installation will be the same for both cloud and own systems.
+PyGeneses can be installed using pip in either your local system or a cloud based platform. The steps for installation will be the same for both cloud and local installation.
 
 ```bash
 user@programmer~:$ pip install git+https://github.com/Project-DC/pygeneses
 ```
 
+Since PyGeneses is not available in pypi yet, so you will have to use the github repo link with pip to install it for now.
+
 ## About the packages   
 <p align="justify">As of version 0.1-beta, the architecture of PyGeneses is built around 4 major modules. Each of these modules provides a unique feature or functionality to the framework. So, let’s get started with a brief introduction to each of them.</p>      
 
-1. **envs**    
+1. **pygeneses.envs**    
 <p align="justify">This module allows you to create, configure and tweak the in-built bio-inspired environments. As of now, this only provides a single environment called Prima Vita (First Life), but there’s more coming soon! This lets you set up the entire environment and the species in just a few lines of code and provides both high level API and low level control over the environment. Training using the API includes logging of every action of an agent so that it can be studied using VitaBoard.</p>   
 
-2. **models**   
+2. **pygeneses.models** 
 <p align="justify">The ‘models’ module is what allows us to import the neural networks which the species uses to learn what to do. As of now, only the default model's (REINFORCE) implementation is provided, but we will be adding support for custom pluggable networks from v0.2 onwards.</p>
 
-3. **hypertune**    
+3. **pygeneses.hypertune**    
 <p align="justify">The ‘HyperTune’ package allows us to configure and test out various hyperparameters we can provide for an environment and species (a list of hyperparameters is provided in the Classes section of this documentation). This contains single hyperparameter testing, grid search and randomized search. This allows us to find the best set of hyperparameters to display a type of behavior. This also produces logs which we can study using Vitaboard.</p>
 
-4. **vitaboard**   
+4. **pygeneses.vitaboard**   
 <p align="justify">Vitaboard provides an advanced, interactive dashboard to study agents after the training phase. After each agent dies, his/her actions are written into a log file. And vitaboard allows us to visualize the agent's life. It provides us with a life visualizer, group statistics and a genetic history visualizer. It allows us to identify and understand behaviours exhibited by an agent while interacting with the environment or with other agents in the environment.</p>
 
 ## Contributing
