@@ -53,7 +53,7 @@ Before moving further please go through the rules in  [CONTRIBUTING.md](../CONTR
 
 ## License
 
-PyGeneses is licensed under GNU GPL v3 [LICENSE](./LICENSE)
+PyGeneses is licensed under GNU GPL v3 [LICENSE](../LICENSE)
 
 ## The Team
 
