@@ -49,7 +49,7 @@ The following resources are a good place to get to know more about PyGeneses:-
 
 Apart from these blog posts, you can also checkout the  [official docs](https://project-dc.github.io/docs).
 
-Before moving further please go through the rules in  [CONTRIBUTING.md](./CONTRIBUTING.md)
+Before moving further please go through the rules in  [CONTRIBUTING.md](../CONTRIBUTING.md)
 
 ## License
 
