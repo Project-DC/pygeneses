@@ -33,6 +33,7 @@ setup(
         "PyTorch based framework for training artificial agents in bio-inspired"
         " environments"
     ),
+    scripts=['scripts/vitaboard'],
     long_description=README,
     long_description_content_type="text/markdown",
     url="https://github.com/Project-DC/pyevolve",
