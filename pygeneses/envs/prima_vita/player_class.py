@@ -143,11 +143,8 @@ class Player:
             : Number of agents alive
         """
 
-        # Compute logs till now
-        log_count = len(glob.glob(os.path.join(self.log_dir, "*.npy")))
-
         # Show in front end API
-        print(f"RIP {self.born_at}-{self.index}, alive count = {alive_count}, total logs collected = {log_count}")
+        print(f"RIP {self.born_at}-{self.index}, alive count = {alive_count}")
 
         # Form filename to save logs into
         file_name = str(self.born_at) + "-" + str(self.index)
