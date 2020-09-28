@@ -34,6 +34,34 @@
 	user@programmer~:$ python main.py
 	```
   4) If any test fails make sure to fix your code so that the error goes away. PR will be deleted if it does not pass the tests. 
+  
+## Instructions for first time contributors/beginner level contributors for question related issues during HACKTOBERFEST
+
+- Start working on the issues once you are assigned to them. Head over to the issue and comment that you want it to be assigned to you. Once the maintainer assigns the issue to you, start working on it. Issues will be assigned on a First Come First Serve (FCFS) basis.
+- Once the issue is assigned, you have one week (7 Days) to submit the PR. Failing to do so will get the issue reassigned to someone else. As each issue related to questions are being assigned to single contributor at a time, we sincerely hope that you cooperate with us.
+- If you create a PR without the issue being assigned to you, the PR will be marked spam as you are not adhering to the rules.   
+- The google drive link to logs that you generate have to placed in the location logs/ directory. If not found in the right place, our maintainers would write a comment to the PR as a warning and if the correct location is still not provided on the resubmission, the PR would be marked spam for not adhering to the rules.
+
+## How to work on the generate logs issues?
+
+1) Check which hyperparameter you have to tune, the values that you have to tune it for, and the stop_at number in the issue.
+
+2) Write code in pygeneses for that (3 line code). Let's take an example where hyperparameter to be tuned is **initial_population**, the values for that are **[10, 20, 50, 90, 100]**, and stop_at number is **2000**, then the code will look something like this:-
+
+```python
+from pygeneses.hypertune import HyperTune
+
+tuner = HyperTune(model_class='PrimaVita',
+                  hyperparameters=['initial_population'],
+                  values=[[10, 20, 50, 90, 100]],
+                  stop_at=2000)
+
+tuner.hypertuner()
+```
+
+3) After training there will be a folder generated in the same location where you trained the Prima vita agents, this folder's name will start with Players_Data, this is the logs that we require. You can either zip this or directly upload the entire folder to google drive.
+
+4) Once you have uploaded the logs into google drive share the link of that folder (or zip file) containing logs in a file named with the issue number in txt format (e.g. if you are doing issue 11 then file name should be 11.txt). This file is to be put in the logs directory before creating the Pull Request. Once you create PR wait for a maintainer to merge it or ask for some changes.
 
 ## General Hacktoberfest Rules
 
