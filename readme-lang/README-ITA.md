@@ -1,14 +1,13 @@
-
 # PyGeneses
 
 [![GitHub](https://img.shields.io/github/license/Project-DC/pygeneses)](https://github.com/Project-DC/pygeneses/blob/master/LICENSE)  ![GitHub stars](https://img.shields.io/github/stars/Project-DC/pygeneses?style=plastic)  ![GitHub contributors](https://img.shields.io/github/contributors/Project-DC/pygeneses)  ![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)  ![GitHub last commit](https://img.shields.io/github/last-commit/Project-DC/pygeneses)
 
-<p align="justify">PyGeneseses è un framework di Deep Reinforcement Learning basato su PyTorch che aiuta gli utenti a simulare agenti artificiali in ambienti bio-ispirati. Il framework fornisce algoritmi di Deep RL integrati e la visualizzazione dei risultati dell'addestramento in una dashboard interattiva. Gli ambienti sono un'astrazione semplificata del nostro mondo reale, gli agenti sono inseriti in questo mondo e possono interagire tra loro e con l'ambiente.</p>
+<p align="justify">PyGeneses è un framework di Deep Reinforcement Learning basato su PyTorch che aiuta gli utenti a simulare agenti artificiali in ambienti bio-ispirati. Il framework fornisce algoritmi di Deep RL integrati e la visualizzazione dei risultati dell'addestramento in una dashboard interattiva. Gli ambienti sono un'astrazione semplificata del nostro mondo reale, gli agenti sono inseriti in questo mondo e possono interagire tra loro e con l'ambiente.</p>
 
-La potenza di PyGeneseses è la sua API pulita e semplice che:
+La potenza di PyGeneses è la sua API pulita e semplice che:
 - Permette all'utente di eseguire la propria simulazione anche se non ha alcuna conoscenza di RL o DL.
 - Permette ad un utente con esperienza in Deep RL di modificare il modello ed i parametri in modo estensivo.
-<p align="justify">Cosa c'è di eccitante in PyGeneseses che chiedete, beh, PyGeneseses vi permette di creare una simulazione di lavoro scrivendo solo 2 righe senza alcuna conoscenza preliminare! PyGeneseses fornisce anche strumenti che vi aiuteranno a visualizzare i risultati con il minimo sforzo. Quindi cosa aspettate, installate PyGeneseses oggi stesso e diventate il dio della vostra creazione</p>
+<p align="justify">Cosa c'è di eccitante in PyGeneses che chiedete, beh, PyGeneses vi permette di creare una simulazione di lavoro scrivendo solo 2 righe senza alcuna conoscenza preliminare! PyGeneses fornisce anche strumenti che vi aiuteranno a visualizzare i risultati con il minimo sforzo. Quindi cosa aspettate, installate PyGeneses oggi stesso e diventate il dio della vostra creazione</p>
 
 # Hacktoberfest 2020
 
@@ -20,16 +19,16 @@ L'Hacktoberfest 2020 è arrivato. I contributi sono ora benvenuti. Si prega di p
 
 ## Installazione
 
-PyGeneseses può essere installato utilizzando pip nel vostro sistema locale o in una piattaforma basata su cloud. I passi per l'installazione saranno gli stessi sia per il cloud che per l'installazione locale.
+PyGeneses può essere installato utilizzando pip nel vostro sistema locale o in una piattaforma basata su cloud. I passi per l'installazione saranno gli stessi sia per il cloud che per l'installazione locale.
 
 ```bash
 user@programmer~:$ pip install git+https://github.com/Project-DC/pygeneses
 ```
 
-Poiché PyGeneseses non è ancora disponibile in pypi, per ora dovrete usare il link github repo link con pip per installarlo.
+Poiché PyGeneses non è ancora disponibile in pypi, per ora dovrete usare il link github repo link con pip per installarlo.
 
 ## Informazioni sui pacchetti   
-<p align="justify">A partire dalla versione 0.1-beta, l'architettura di PyGeneseses è costruita intorno a 4 moduli principali. Ognuno di questi moduli fornisce una caratteristica o funzionalità unica al framework. Quindi, iniziamo con una breve introduzione a ciascuno di essi.</p>      
+<p align="justify">A partire dalla versione 0.1-beta, l'architettura di PyGeneses è costruita intorno a 4 moduli principali. Ognuno di questi moduli fornisce una caratteristica o funzionalità unica al framework. Quindi, iniziamo con una breve introduzione a ciascuno di essi.</p>      
 
 1. **pygeneses.envs**    
 <p align="justify">Questo modulo permette di creare, configurare e modificare gli ambienti bio-ispirati all'interno. Per ora, questo fornisce solo un unico ambiente chiamato Prima Vita (First Life), ma presto ne arriveranno altri! Questo permette di impostare l'intero ambiente e la specie in poche righe di codice e fornisce sia API di alto livello che controllo di basso livello sull'ambiente. L'addestramento usando l'API include la registrazione di ogni azione di un agente in modo che possa essere studiata usando VitaBoard.</p>   
@@ -45,10 +44,10 @@ Poiché PyGeneseses non è ancora disponibile in pypi, per ora dovrete usare il 
 
 ## Contribuire
 
-Le seguenti risorse sono un buon posto per conoscere meglio PyGeneseses:-
+Le seguenti risorse sono un buon posto per conoscere meglio PyGeneses:-
 
-1.  Introduzione a PyGeneseses  [Dev.to](https://dev.to/projectdc/introduction-to-pygeneses-26oc),  [Medium](https://medium.com/oss-build/introduction-to-pygeneses-1ed08a1a076c).
-2.  Iniziare con PyGeneseses [Dev.to](https://dev.to/projectdc/getting-started-with-pygeneses-1co2),  [Medium](https://medium.com/oss-build/getting-started-with-pygeneses-839ff6b3023f).
+1.  Introduzione a PyGeneses  [Dev.to](https://dev.to/projectdc/introduction-to-pygeneses-26oc),  [Medium](https://medium.com/oss-build/introduction-to-pygeneses-1ed08a1a076c).
+2.  Iniziare con PyGeneses [Dev.to](https://dev.to/projectdc/getting-started-with-pygeneses-1co2),  [Medium](https://medium.com/oss-build/getting-started-with-pygeneses-839ff6b3023f).
 3. Studiare i registri utilizzando VitaBoard [Dev.to](https://dev.to/projectdc/guidelines-about-vitaboard-2m36), [Medium](https://medium.com/oss-build/studying-logs-using-vitaboard-41e13e3197d7)
 
 Oltre a questi post del blog, è anche possibile controllare il  [documenti ufficiali](https://project-dc.github.io/docs).
@@ -64,7 +63,7 @@ Oltre a questi post del blog, è anche possibile controllare il  [documenti uffi
 
 1) Controllare quale iperparametro si deve sintonizzare, i valori per i quali si deve sintonizzare e il numero di stop_at nell'emissione.
 
-2) Scrivete il codice in pygeneseses per questo (codice a 3 righe). Prendiamo un esempio in cui l'iperparametro da sintonizzare è **initial_population**, i valori per quello sono **[10, 20, 50, 90, 100]**, e il numero stop_at è **2000**, allora il codice avrà un aspetto simile a questo:-
+2) Scrivete il codice in PyGeneses per questo (codice a 3 righe). Prendiamo un esempio in cui l'iperparametro da sintonizzare è **initial_population**, i valori per quello sono **[10, 20, 50, 90, 100]**, e il numero stop_at è **2000**, allora il codice avrà un aspetto simile a questo:-
 
 ```python
 from pygeneses.hypertune import HyperTune
