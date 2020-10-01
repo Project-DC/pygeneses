@@ -49,11 +49,11 @@ Die folgenden Ressourcen sind ein guter Ort, um mehr über PyGeneses zu erfahren
 
 Abgesehen von diesen Blog-Einträgen können Sie auch die  [offizielle Dokumente](https://project-dc.github.io/docs).
 
-Bevor Sie weitergehen, gehen Sie bitte die Regeln in  [CONTRIBUTING.md](./CONTRIBUTING.md)
+Bevor Sie weitergehen, gehen Sie bitte die Regeln in  [CONTRIBUTING.md](../CONTRIBUTING.md)
 
 ## Lizenz
 
-PyGeneses ist unter der GNU GPL v3 lizenziert [LIZENZ](./LICENSE)
+PyGeneses ist unter der GNU GPL v3 lizenziert [LIZENZ](../LICENSE)
 
 ## Das Team
 
