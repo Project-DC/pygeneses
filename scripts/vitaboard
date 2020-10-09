@@ -1,3 +1,0 @@
-from pygeneses.vitaboard import run_board
-
-run_board()

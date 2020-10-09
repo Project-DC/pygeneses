@@ -33,7 +33,6 @@ setup(
         "PyTorch based framework for training artificial agents in bio-inspired"
         " environments"
     ),
-    scripts=['scripts/vitaboard'],
     long_description=README,
     long_description_content_type="text/markdown",
     url="https://github.com/Project-DC/pyevolve",
@@ -61,6 +60,11 @@ setup(
             "vitaboard/static/js/chart.js",
             "vitaboard/templates/index.html",
             "vitaboard/visualizer.py",
+        ]
+    },
+    entry_points={
+        'console_scripts': [
+            'vitaboard = pygeneses.vitaboard.vitaboard:run_board'
         ]
     },
     install_requires=["pygame", "numpy", "torch==1.4.0", "Flask", "sklearn"],
