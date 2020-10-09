@@ -287,6 +287,7 @@ def get_parents(path, filename, ancestor_list, level=0):
                         path, str(tob_1) + "-" + str(id_1) + ".npy"
                     ),
                     "level": int(level),
+                    "reward_sum": reward
                 }
             )
             get_parents(
@@ -300,7 +301,7 @@ def get_parents(path, filename, ancestor_list, level=0):
                     "filename": os.path.join(
                         path, str(tob_2) + "-" + str(id_2) + ".npy"
                     ),
-                    "level": int(level),
+                    "level": int(level)
                 }
             )
             get_parents(
@@ -320,7 +321,7 @@ def get_parents(path, filename, ancestor_list, level=0):
                     "filename": os.path.join(
                         path, str(tob_1) + "-" + str(id_1) + ".npy"
                     ),
-                    "level": int(level),
+                    "level": int(level)
                 }
             )
             get_parents(
@@ -405,6 +406,14 @@ def get_children(path, filename, successor_list, level=0):
         if not has_child:
             return
 
+def get_sum_rewards(filename):
+    # Load agent logs
+    agent_data = np.load(filename, allow_pickle=True)
+
+    if len(agent_data) <= 2:
+        return -1000
+
+    return sum([ad[2] for ad in agent_data[2:]])
 
 # Uncomment to check if the functions are working properly
 if __name__ == "__main__":

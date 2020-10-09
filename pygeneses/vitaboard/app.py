@@ -7,7 +7,7 @@ import pkgutil
 import json
 
 # Import functions to compute values used in VitaBoard
-from .graph_gen import get_life_stats, tsne, get_parents, get_children
+from .graph_gen import get_life_stats, tsne, get_parents, get_children, get_sum_rewards
 
 # Instantiate flask app
 app = Flask(__name__)
@@ -278,6 +278,9 @@ def lineage():
             ancestor_list, key=lambda k: int(k["level"]), reverse=True
         )
 
+        for i in range(len(ancestor_list)):
+            ancestor_list[i]["reward_sum"] = get_sum_rewards(ancestor_list[i]["filename"])
+
         # Dump ancestor_list into JSON object
         ancestor_list = json.dumps(ancestor_list)
 
@@ -287,6 +290,13 @@ def lineage():
 
         # Sort successor_list according to level of depth in tree
         successor_list = sorted(successor_list, key=lambda k: int(k["level"]))
+
+        for i in range(len(successor_list)):
+            succ_filename = successor_list[i]["filename"]
+            if os.path.exists(succ_filename):
+                successor_list[i]["reward_sum"] = get_sum_rewards(successor_list[i]["filename"])
+            else:
+                successor_list[i]["reward_sum"] = -1000
 
         # Dump successor_list into JSON object
         successor_list = json.dumps(successor_list)
@@ -299,6 +309,7 @@ def lineage():
                 "icon": "success",
                 "ancestor_list": ancestor_list,
                 "successor_list": successor_list,
+                "self_reward_sum": get_sum_rewards(os.path.join(dir, filename))
             }
         )
 

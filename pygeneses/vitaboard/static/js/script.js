@@ -398,19 +398,21 @@ $("#lineage").click(function() {
           var generation_max = ancestor_list[0].level;
           ancestor_list.forEach(agent_obj => {
             list += "<li>Generation " + Math.abs(agent_obj.level - generation_max) + ": ";
-            list += "<button type='button' class='ids-agents'>" + agent_obj.filename + "</button></li>";
+            list += "<button type='button' class='ids-agents'>" + agent_obj.filename + "</button>";
+            list += "&nbsp;&nbsp;" + agent_obj.reward_sum + "</li>";
           });
 
           list += "<li>Generation " + Math.abs(generation_max) + " (current): ";
-          list += "<button type='button' class='ids-agents'>" + filename + "</button></li>";
+          list += "<button type='button' class='ids-agents'>" + filename + "</button>";
+          list += "&nbsp;&nbsp;" + result.self_reward_sum + "</li>";
 
           successor_list.forEach(agent_obj => {
             list += "<li>Generation " + Math.abs(agent_obj.level + generation_max) + ": ";
-            list += "<button type='button' class='ids-agents'>" + agent_obj.filename + "</button></li>";
+            list += "<button type='button' class='ids-agents'>" + agent_obj.filename + "</button>";
+            list += "&nbsp;&nbsp;" + agent_obj.reward_sum + "</li>";
           });
           list += "</ul>";
 
-          console.log(list);
           $("#show-lineage").html(list);
         }
       }
