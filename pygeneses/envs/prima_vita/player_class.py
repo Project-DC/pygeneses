@@ -287,9 +287,11 @@ class Player:
 
             # If x coordinate goes out of bounds of the pygame screen then adjust it
             if self.playerX <= 0:
-                self.playerX = 0
+                self.playerX = random.randint(32, SCREEN_WIDTH - 32)
+                self.playerY = random.randint(32, SCREEN_HEIGHT - 32)
             elif self.playerX >= (SCREEN_WIDTH - self.PLAYER_WIDTH):
-                self.playerX = SCREEN_WIDTH - self.PLAYER_WIDTH
+                self.playerX = random.randint(32, SCREEN_WIDTH - 32)
+                self.playerY = random.randint(32, SCREEN_HEIGHT - 32)
 
             # Reduce energy by 2 for movement
             self.energy -= 2
@@ -313,9 +315,11 @@ class Player:
 
             # If y coordinate goes out of bounds of the pygame screen then adjust it
             if self.playerY <= 0:
-                self.playerY = 0
+                self.playerY = random.randint(32, SCREEN_HEIGHT - 32)
+                self.playerX = random.randint(32, SCREEN_WIDTH - 32)
             elif self.playerY >= (SCREEN_HEIGHT - self.PLAYER_HEIGHT):
-                self.playerY = SCREEN_HEIGHT - self.PLAYER_HEIGHT
+                self.playerY = random.randint(32, SCREEN_HEIGHT - 32)
+                self.playerX = random.randint(32, SCREEN_WIDTH - 32)
 
             # Reduce energy by 2 for movement
             if not no_energy_change:

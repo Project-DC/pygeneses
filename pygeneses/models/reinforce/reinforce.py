@@ -4,6 +4,7 @@
 import torch
 import torch.optim as optim
 import multiprocessing
+import numpy as np
 
 # Import the NN
 from .reinforce_nn import Agent
@@ -171,6 +172,8 @@ class ReinforceModel:
             : Id of the agent to be killed
         """
 
+        np.savetxt("Players_Data_inf/rewards.txt", self.rewards[idx])
+
         # Setting everything to 0 allows python's garbage collector to free memory of those objects/values
         self.agents[idx] = 0
         self.optimizers[idx] = 0
@@ -199,6 +202,9 @@ class ReinforceModel:
                 self.policy_loss[idx].append(
                     -(self.saved_log_probs[idx][j] * self.rewards[idx][j])
                 )
+
+            self.saved_log_probs[idx] = []
+            self.rewards[idx] = []
 
             # Sum all the products
             self.policy_loss[idx] = torch.cat(self.policy_loss[idx]).sum()
