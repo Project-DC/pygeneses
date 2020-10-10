@@ -116,7 +116,7 @@ class Player:
         self.fighting_with = -1
         self.energy = energy
         self.embeddings = np.array([0])
-        self.states = []
+        self.states = np.array([0])
         self.mode = mode
 
         # Add the initial x, y coordinates as first entry in logs
@@ -198,7 +198,6 @@ class Player:
         fight_with    (int)
             : Id of player with which current agent fought (optional)
         """
-
         # If action number is less than or equal to 9 (i.e. movement in 8 directions, stay or ingestion) then
         if action <= 9:
             self.action_history.append(
@@ -210,7 +209,7 @@ class Player:
                         self.energy,
                         self.playerX,
                         self.playerY,
-                        self.states[-1],
+                        self.states,
                     ],
                     dtype=object,
                 )
@@ -228,7 +227,7 @@ class Player:
                         np.array(offspring_ids),
                         self.playerX,
                         self.playerY,
-                        self.states[-1],
+                        self.states,
                     ],
                     dtype=object,
                 )
@@ -247,7 +246,7 @@ class Player:
                         mate_id,
                         self.playerX,
                         self.playerY,
-                        self.states[-1],
+                        self.states,
                     ],
                     dtype=object,
                 )
@@ -264,7 +263,7 @@ class Player:
                         fight_with,
                         self.playerX,
                         self.playerY,
-                        self.states[-1],
+                        self.states,
                     ],
                     dtype=object,
                 )
