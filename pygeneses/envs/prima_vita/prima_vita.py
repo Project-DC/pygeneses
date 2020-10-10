@@ -132,7 +132,7 @@ class PrimaVita:
         self.current_population = 0
         self.screen = None
         self.number_of_particles = random.randint(70, 80)
-
+        self.leading_zeros = 0
         # Can take values from user
         self.initial_population = (
             params_dic["initial_population"]
@@ -439,7 +439,15 @@ class PrimaVita:
                 break
 
             # Loop through all the players
-            for i in range(len(self.players)):
+            i = 0
+            j = self.leading_zeros
+            while True:
+                j += 1
+                if type(self.players[j]) == int:
+                    self.leading_zeros += 1
+                else:
+                    break
+            for i in range(self.leading_zeros, len(self.players)):
                 if type(self.players[i]) != int:
                     # Take an action for current index
                     self.take_action(i, states[i])
