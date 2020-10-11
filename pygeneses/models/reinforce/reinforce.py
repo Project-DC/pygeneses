@@ -200,6 +200,9 @@ class ReinforceModel:
                     -(self.saved_log_probs[idx][j] * self.rewards[idx][j])
                 )
 
+            self.saved_log_probs[idx] = []
+            self.rewards[idx] = []
+
             # Sum all the products
             self.policy_loss[idx] = torch.cat(self.policy_loss[idx]).sum()
 

@@ -9,6 +9,7 @@ import random
 import numpy as np
 import time
 import importlib
+from itertools import cycle
 
 # Import other classes
 from .player_class import Player
@@ -131,7 +132,7 @@ class PrimaVita:
         self.current_population = 0
         self.screen = None
         self.number_of_particles = random.randint(70, 80)
-
+        self.leading_zeros = 0
         # Can take values from user
         self.initial_population = (
             params_dic["initial_population"]
@@ -313,26 +314,44 @@ class PrimaVita:
                         env_player_index,
                     ) = self.players_in_env(self.players[i], get_idx=True)
 
-                    # Stack together the food and player vectors
-                    temp_state = [env_food_vector, env_player_vector]
+                    # Find count of particles and players
+                    num_food_particles = len(env_food_vector) // 2
+                    num_players = len(env_player_vector) // 3
+
+                    # Compute the max out of two,  this will be the max value for loop counter
+                    max_count = max(num_food_particles, num_players)
+
+                    # Iterate and stack food and player in alternate positions
+                    temp_state = []
+                    j = 0
+
+                    while(j < max_count):
+                        if j < num_food_particles:
+                            temp_state.append(env_food_vector[(j*2):(i*2+2)])
+                        else:
+                            temp_state.append([0, 0])
+
+                        if j < num_players:
+                            temp_state.append(env_player_vector[(j*3):(i*3+3)])
+                        else:
+                            temp_state.append([0, 0, 0])
+                        j += 1
+
+                    # Update food_near and players_near for current player
+                    self.players[i].food_near = env_particle_index
+                    self.players[i].players_near = env_player_index
+
+                    # Flatten the list
+                    temp_state = sum(temp_state, [])
 
                     # Save this as state in current agent's object
-                    self.players[i].states.append(
-                        np.array(
+                    self.players[i].states = np.array(
                             [
                                 np.array(env_food_vector, dtype=object),
                                 np.array(env_player_vector, dtype=object),
                             ],
                             dtype=object,
                         )
-                    )
-
-                    # Update food_near and players_near for current player
-                    self.players[i].food_near = env_particle_index
-                    self.players[i].players_near = env_player_index
-
-                    # Convert the food and player vectors stacked together into a single vector
-                    temp_state = sum(temp_state, [])
 
                     # Pad to state_size - 1
                     temp_state = self.pad_state(
@@ -342,14 +361,41 @@ class PrimaVita:
                     # Append energy to state
                     temp_state = np.append(temp_state, [self.players[i].energy])
 
+
                     # Append to initial_state
                     initial_state.append(temp_state)
                 # Otherwise copy old state
                 else:
-                    # Convert state to 1D array
-                    temp_state = np.hstack(self.players[i].states[-1])
+                    env_food_vector = self.players[i].states[0]
+                    env_player_vector = self.players[i].states[1]
 
-                    # Pad state to state_size - 1
+                    # Find count of particles and players
+                    num_food_particles = len(env_food_vector) // 2
+                    num_players = len(env_player_vector) // 3
+
+                    # Compute the max out of two,  this will be the max value for loop counter
+                    max_count = max(num_food_particles, num_players)
+
+                    # Iterate and stack food and player in alternate positions
+                    temp_state = []
+                    j = 0
+
+                    while(j < max_count):
+                        if j < num_food_particles:
+                            temp_state.append(list(env_food_vector[(j*2):(i*2+2)]))
+                        else:
+                            temp_state.append([0, 0])
+
+                        if j < num_players:
+                            temp_state.append(list(env_player_vector[(j*3):(i*3+3)]))
+                        else:
+                            temp_state.append([0, 0, 0])
+                        j += 1
+
+                    # Flatten the list
+                    temp_state = sum(temp_state, [])
+
+                    # Pad to state_size - 1
                     temp_state = self.pad_state(
                         np.array(temp_state), self.state_size - 1
                     )
@@ -393,10 +439,18 @@ class PrimaVita:
                 break
 
             # Loop through all the players
-            for i in range(len(self.players)):
+            i = 0
+            j = self.leading_zeros
+            while True:
+                j += 1
+                if type(self.players[j]) == int:
+                    self.leading_zeros += 1
+                else:
+                    break
+            for i in range(self.leading_zeros, len(self.players)):
                 if type(self.players[i]) != int:
                     # Take an action for current index
-                    self.take_action(i, states[i].astype(np.uint8))
+                    self.take_action(i, states[i])
                     idx = i if type(self.players[i]) != int else None
 
                     # Get updated state
