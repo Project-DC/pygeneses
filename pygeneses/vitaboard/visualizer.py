@@ -14,7 +14,7 @@ from pygeneses.envs.prima_vita.player_class import Player
 from pygeneses.envs.prima_vita.particle_class import Particle
 
 
-def current_action_time(result, action, timestamp, myfont):
+def current_action_time(result, action, timestamp, age, myfont):
     """
     Convert action from number to text and display in pygame screen along with the time at which the action was performed
 
@@ -64,7 +64,10 @@ def current_action_time(result, action, timestamp, myfont):
     # Render time stamp text using myfont
     timetext = myfont.render("Time: " + str(timestamp), 1, (255, 255, 255))
 
-    return actiontext, timetext
+    # Render age
+    agetext = myfont.render("Age: " + str(age), 1, (255, 255, 255))
+
+    return actiontext, timetext, agetext
 
 
 def visualize(file_location, speed):
@@ -97,6 +100,9 @@ def visualize(file_location, speed):
     # Extract all events in the agent's life
     life_events = np.load(file_location, allow_pickle=True)
 
+    # Time of birth
+    tob = int(os.path.basename(file_location).split("-")[0])
+
     # Get initial position (stored at index 0 of log file)
     x, y = life_events[0][0], life_events[0][1]
     i = 0
@@ -123,9 +129,10 @@ def visualize(file_location, speed):
         result = "" if life_event[2] != -20 else "Failed "
         action = life_event[0]
         timestamp = life_event[1]
+        age = timestamp - tob
 
         # Get the text for action and timestamp
-        actiontext, timetext = current_action_time(result, action, timestamp, myfont)
+        actiontext, timetext, agetext = current_action_time(result, action, timestamp, age, myfont)
 
         # Fill the screen with green color
         screen.fill((0, 178, 0))
@@ -208,7 +215,8 @@ def visualize(file_location, speed):
 
         # Blit the action text and timestamp text to screen
         screen.blit(actiontext, (5, 10))
-        screen.blit(timetext, (5, 30))
+        screen.blit(timetext, (5, 40))
+        screen.blit(agetext, (5, 70))
 
         # Update the pygame display
         pygame.display.update()
