@@ -100,9 +100,6 @@ def visualize(file_location, speed):
     # Extract all events in the agent's life
     life_events = np.load(file_location, allow_pickle=True)
 
-    # Time of birth
-    tob = int(os.path.basename(file_location).split("-")[0])
-
     # Get initial position (stored at index 0 of log file)
     x, y = life_events[0][0], life_events[0][1]
     i = 0
@@ -110,6 +107,9 @@ def visualize(file_location, speed):
         # Get time of birth (though it is present in the filename itself), this line helps to identify
         # if the agent died without doing anything or not
         tob = life_events[2][1] if len(life_events[1]) == 2 else life_events[1][1]
+
+        # Actual time of birth
+        tob = int(os.path.basename(file_location).split("-")[0])
     except:
         # Agent died without doing anything, exit the visualizer
         print(
@@ -130,6 +130,7 @@ def visualize(file_location, speed):
         action = life_event[0]
         timestamp = life_event[1]
         age = timestamp - tob
+        print(age, timestamp, tob)
 
         # Get the text for action and timestamp
         actiontext, timetext, agetext = current_action_time(result, action, timestamp, age, myfont)

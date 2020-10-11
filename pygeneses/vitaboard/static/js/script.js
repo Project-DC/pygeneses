@@ -395,7 +395,11 @@ $("#lineage").click(function() {
           console.log(successor_list);
 
           var list = "<ul>";
-          var generation_max = ancestor_list[0].level;
+          try {
+            var generation_max = ancestor_list[0].level;
+          } catch(err) {
+            var generation_max = 0;
+          }
           ancestor_list.forEach(agent_obj => {
             list += "<li>Generation " + Math.abs(agent_obj.level - generation_max) + ": ";
             list += "<button type='button' class='ids-agents'>" + agent_obj.filename + "</button>";
