@@ -126,11 +126,10 @@ def visualize(file_location, speed):
 
     for life_event in life_events:
         # Extract action result, action and time at which it was done
-        result = "" if life_event[2] != -20 else "Failed "
+        result = "" if life_event[2] != 0 else "Failed "
         action = life_event[0]
         timestamp = life_event[1]
         age = timestamp - tob
-        print(age, timestamp, tob)
 
         # Get the text for action and timestamp
         actiontext, timetext, agetext = current_action_time(result, action, timestamp, age, myfont)
