@@ -438,10 +438,6 @@ class PrimaVita:
             ):
                 break
 
-            # Update NN for each agent every self.model_updates time steps
-            if self.time % self.model_updates == 0:
-                self.model.update_all_agents()
-
             # Loop through all the players
             i = 0
             j = self.leading_zeros
@@ -451,6 +447,12 @@ class PrimaVita:
                     self.leading_zeros += 1
                 else:
                     break
+
+            # Update NN for each agent every self.model_updates time steps
+            if self.time % self.model_updates == 0:
+                self.model.update_all_agents(self.leading_zeros)
+
+            # Training loop
             for i in range(self.leading_zeros, len(self.players)):
                 if type(self.players[i]) != int:
                     # Take an action for current index
@@ -785,7 +787,7 @@ class PrimaVita:
         now_time = self.time
 
         # Loop through all the players
-        for i in range(len(self.players)):
+        for i in range(self.leading_zeros, len(self.players)):
             # If agent is still alive
             if i not in self.killed:
                 # Put rewards and scores into players object
@@ -1030,21 +1032,21 @@ class PrimaVita:
             return [], []
 
         # Otherwise loop through all players
-        for i, player in enumerate(self.players):
+        for i in range(self.leading_zeros, len(self.players)):
             # If the player is not dead and is not the host itself then
-            if (type(player) != int) and (player != host):
+            if (type(self.players[i]) != int) and (self.players[i] != host):
                 # Compute euclidean distance between two agents
                 ed = (
-                    (host.playerX - (player.playerX)) ** 2
-                    + (host.playerY - (player.playerY)) ** 2
+                    (host.playerX - (self.players[i].playerX)) ** 2
+                    + (host.playerY - (self.players[i].playerY)) ** 2
                 ) ** (1 / 2)
 
                 # If distance is less than equal to 100 then push to list
                 if ed <= self.sensory_radius:
                     env.append(i)
-                    vec.append(host.playerX - player.playerX)
-                    vec.append(host.playerY - player.playerY)
-                    vec.append(gender_to_number[player.gender])
+                    vec.append(host.playerX - self.players[i].playerX)
+                    vec.append(host.playerY - self.players[i].playerY)
+                    vec.append(gender_to_number[self.players[i].gender])
                     distances.append(ed)
 
         if not get_idx:
@@ -1074,20 +1076,20 @@ class PrimaVita:
             return -1
 
         # Otherwise loop through all players
-        for i, player in enumerate(self.players):
+        for i in range(self.leading_zeros, len(self.players)):
             # If player isn't dead and isn't the host itself and is not impotent
             # and is of appropriate age of reproduction and gender is not opposite of host then
             if (
-                (type(player) != int)
-                and (player != host)
-                and (not player.is_impotent)
-                and ((self.time - player.born_at) in range(10, 61))
-                and (player.gender != host.gender)
+                (type(self.players[i]) != int)
+                and (self.players[i] != host)
+                and (not self.players[i].is_impotent)
+                and ((self.time - self.players[i].born_at) in range(10, 61))
+                and (self.players[i].gender != host.gender)
             ):
                 # Compute euclidean distance between player and host
                 ed = (
-                    ((host.playerX + 16) - (player.playerX + 16)) ** 2
-                    + ((host.playerY + 16) - (player.playerY + 16)) ** 2
+                    ((host.playerX + 16) - (self.players[i].playerX + 16)) ** 2
+                    + ((host.playerY + 16) - (self.players[i].playerY + 16)) ** 2
                 ) ** (1 / 2)
 
                 # If distance is less than or equal to 30 then append it to env list
@@ -1119,17 +1121,17 @@ class PrimaVita:
             return -1
 
         # Otherwise loop through all players
-        for i, player in enumerate(self.players):
+        for i in range(self.leading_zeros, len(self.players)):
             # If player isn't dead and isn't the host itself and isn't fighting with anyone else
             if (
-                (type(player) != int)
-                and (player != host)
-                and (player.fighting_with == -1)
+                (type(self.players[i]) != int)
+                and (self.players[i] != host)
+                and (self.players[i].fighting_with == -1)
             ):
                 # Compute euclidean distance between player and host
                 ed = (
-                    ((host.playerX + 16) - (player.playerX + 16)) ** 2
-                    + ((host.playerY + 16) - (player.playerY + 16)) ** 2
+                    ((host.playerX + 16) - (self.players[i].playerX + 16)) ** 2
+                    + ((host.playerY + 16) - (self.players[i].playerY + 16)) ** 2
                 ) ** (1 / 2)
 
                 # If distance is less than or equal to 30 then append it to env list
