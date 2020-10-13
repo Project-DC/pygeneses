@@ -295,7 +295,7 @@ class PrimaVita:
         initial_state = []
 
         # Loop through all of the players
-        for i in range(self.leading_zeros, len(self.players)):
+        for i in range(len(self.players)):
             # If a player is not dead then
             if type(self.players[i]) != int:
                 # Update only current actor and surrounding player's state
@@ -1089,7 +1089,7 @@ class PrimaVita:
                 # Compute euclidean distance between player and host
                 ed = (
                     ((host.playerX + 16) - (self.players[i].playerX + 16)) ** 2
-                    + ((host.playerY + 16) - (self.player[i].playerY + 16)) ** 2
+                    + ((host.playerY + 16) - (self.players[i].playerY + 16)) ** 2
                 ) ** (1 / 2)
 
                 # If distance is less than or equal to 30 then append it to env list
@@ -1124,7 +1124,7 @@ class PrimaVita:
         for i in range(self.leading_zeros, len(self.players)):
             # If player isn't dead and isn't the host itself and isn't fighting with anyone else
             if (
-                (type(player) != int)
+                (type(self.players[i]) != int)
                 and (self.players[i] != host)
                 and (self.players[i].fighting_with == -1)
             ):
