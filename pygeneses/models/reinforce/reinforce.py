@@ -110,6 +110,7 @@ class ReinforceModel:
         """
 
         # Compute action, lob probability of action and embedding from NN
+        self.agents[idx] = self.agents[idx].to(self.device)
         action, log_prob, embed = self.agents[idx].act(state)
         self.saved_log_probs[idx].append(log_prob)
 
