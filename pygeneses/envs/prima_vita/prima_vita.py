@@ -298,8 +298,8 @@ class PrimaVita:
         for i in range(len(self.players)):
             # If a player is not dead then
             if type(self.players[i]) != int:
-                # Update only current actor and surrounding player's state
-                if (idx == None) or (i in self.players[idx].players_near or i == idx):
+                # Update only current actor and surrounding player's state or if player is just born
+                if (idx == None) or (i in self.players[idx].players_near or i == idx) or (self.time - self.players[i].born_at <= 1):
                     # Get the food particles in environment
                     (
                         env_food_vector,
@@ -355,11 +355,11 @@ class PrimaVita:
 
                     # Pad to state_size - 1
                     temp_state = self.pad_state(
-                        np.array(temp_state), self.state_size - 1
+                        np.array(temp_state), self.state_size - 2
                     )
 
                     # Append energy to state
-                    temp_state = np.append(temp_state, [self.players[i].energy])
+                    temp_state = np.append(temp_state, [self.players[i].energy, (self.time - self.players[i].born_at)])
 
 
                     # Append to initial_state
@@ -397,11 +397,11 @@ class PrimaVita:
 
                     # Pad to state_size - 1
                     temp_state = self.pad_state(
-                        np.array(temp_state), self.state_size - 1
+                        np.array(temp_state), self.state_size - 2
                     )
 
                     # Append energy to state
-                    temp_state = np.append(temp_state, [self.players[i].energy])
+                    temp_state = np.append(temp_state, [self.players[i].energy, (self.time - self.players[i].born_at)])
 
                     # Append to initial_state
                     initial_state.append(temp_state)
@@ -443,7 +443,7 @@ class PrimaVita:
             j = self.leading_zeros
             while True:
                 j += 1
-                if type(self.players[j]) == int:
+                if j < len(self.players) and type(self.players[j]) == int:
                     self.leading_zeros += 1
                 else:
                     break
@@ -498,58 +498,62 @@ class PrimaVita:
             for event in pygame.event.get():
                 pass
 
-        # Reward for living at every 5 time steps
-        extra = 0
+        # Movement and stay reward
+        m_s_reward = -10
+
+        # Not required actions
+        n_r_reward = -50
+        m_s_reward = n_r_reward
 
         # Action left
         if action == 0:
             self.players[idx].change_player_xposition(-self.speed)
-            reward = 1 + extra
+            reward = m_s_reward
         # Action right
         elif action == 1:
             self.players[idx].change_player_xposition(self.speed)
-            reward = 1 + extra
+            reward = m_s_reward
         # Action: up
         elif action == 2:
             self.players[idx].change_player_yposition(-self.speed)
-            reward = 1 + extra
+            reward = m_s_reward
         # Action: down
         elif action == 3:
             self.players[idx].change_player_yposition(self.speed)
-            reward = 1 + extra
+            reward = m_s_reward
         # Action: up left (move north-west)
         elif action == 4:
             self.players[idx].change_player_yposition(
                 -self.root_speed, no_energy_change=True
             )
             self.players[idx].change_player_xposition(-self.root_speed)
-            reward = 1 + extra
+            reward = m_s_reward
         # Action: up right (move north-east)
         elif action == 5:
             self.players[idx].change_player_yposition(
                 -self.root_speed, no_energy_change=True
             )
             self.players[idx].change_player_xposition(self.root_speed)
-            reward = 1 + extra
+            reward = m_s_reward
         # Action: down left (move south-west)
         elif action == 6:
             self.players[idx].change_player_yposition(
                 self.root_speed, no_energy_change=True
             )
             self.players[idx].change_player_xposition(-self.root_speed)
-            reward = 1 + extra
+            reward = m_s_reward
         # Action: down right (move south-east)
         elif action == 7:
             self.players[idx].change_player_yposition(
                 self.root_speed, no_energy_change=True
             )
             self.players[idx].change_player_xposition(self.root_speed)
-            reward = 1 + extra
+            reward = m_s_reward
         # Action: stay
         elif action == 8:
             self.players[idx].energy -= 2
             # Initially -4, then after age of decay_rate -3 and so on until -1
-            reward = 0 + extra
+            reward = m_s_reward
             self.players[idx].update_history(action, self.time, reward)
         # Action: food ingestion
         elif action == 9:
@@ -563,13 +567,13 @@ class PrimaVita:
                 self.food_particles[food_particle] = 0
 
                 # Reward proportional to initial energy
-                reward = 10 + extra
+                reward = 100
 
                 # Log the ingestion action
                 self.players[idx].update_history(action, self.time, reward)
             # Otherwise punish the agent
             else:
-                reward = 0 + extra
+                reward = 0
                 self.players[idx].energy -= 1
 
                 # Log the failed ingestion action
@@ -583,7 +587,7 @@ class PrimaVita:
                 and (self.time - self.players[idx].born_at) in range(10, 61)
             ):
                 # Reward proportional to initial energy
-                reward = 10 + extra
+                reward = n_r_reward
 
                 # Perform asexual reproduction and get offsprings
                 offspring_players, offspring_ids = self.players[
@@ -609,16 +613,16 @@ class PrimaVita:
                 )
 
                 # Kill the agent after asexual reproduction :)
-                self.players[idx].write_data(self.time, self.current_population)
-                self.players[idx] = 0
-                self.killed = np.append(self.killed, idx)
+                # self.players[idx].write_data(self.time, self.current_population)
+                # self.players[idx] = 0
+                # self.killed = np.append(self.killed, idx)
+                # self.model.kill_agent(idx)
 
                 # Add agents to RL model
                 self.model.add_agents(idx, len(offspring_players))
-                self.model.kill_agent(idx)
             # If the above conditions don't meet then asexul reproduction fails
             else:
-                reward = 0 + extra
+                reward = n_r_reward
                 self.players[idx].energy -= 1
 
                 # Add to logs the failed action asexual reproduction
@@ -638,7 +642,7 @@ class PrimaVita:
                     mating_begin_time = self.time
 
                     # Reward proportional to initial energy
-                    reward = 10 + extra
+                    reward = n_r_reward
 
                     # Get offsprings after sexual reproduction
                     offspring_players, offspring_ids = self.players[
@@ -704,14 +708,14 @@ class PrimaVita:
                     self.model.add_agents(recessive_idx, num_recessive)
                 # Otherwise punish the agent trying to perform sexual reproduction
                 else:
-                    reward = 0 + extra
+                    reward = n_r_reward
                     self.players[idx].energy -= 1
 
                     # Update logs for failed sexual reproduction action
                     self.players[idx].update_history(action, self.time, reward)
             # If agent is already mating then also punish the agent (bad manners)
             else:
-                reward = 0 + extra
+                reward = n_r_reward
                 self.players[idx].energy -= 1
 
                 # Update logs for failed sexual reproduction action
@@ -729,7 +733,7 @@ class PrimaVita:
                 if enemy != -1:
 
                     # Fighting isn't promoted, so a negative reward is given
-                    reward = 10 + extra
+                    reward = n_r_reward
 
                     # Fighting action
                     self.players[idx].fighting_with = enemy
@@ -750,14 +754,14 @@ class PrimaVita:
                     )
                 # If there is no agent in agent
                 else:
-                    reward = 0 + extra
+                    reward = n_r_reward
                     self.players[idx].energy -= 1
 
                     # Log failed fight action
                     self.players[idx].update_history(action, self.time, reward)
             # If the agent is already fighting with another agent (we do not promote mob fighting)
             else:
-                reward = 0 + extra
+                reward = n_r_reward
                 self.players[idx].energy -= 1
 
                 # Log failed fight action
@@ -865,6 +869,10 @@ class PrimaVita:
                     self.model.kill_agent(i)
 
         if self.mode == "human":
+            myfont = pygame.font.SysFont("monospace", 32)
+            foodtext = myfont.render("FP: " + str(len([food_particle for food_particle in self.food_particles if type(food_particle) != int])), 1, (255, 255, 255))
+            self.screen.blit(foodtext, (5, 10))
+
             # Update the pygame window
             pygame.display.update()
 
@@ -880,7 +888,7 @@ class PrimaVita:
             # Compute number of extra agents
             extra_agent_count = (
                 self.current_population - self.max_allowed_population
-                if self.kill_type == "difference"
+                if self.kill_type == "difference" or self.kill_type == "fittest"
                 else random.randint(
                     self.current_population - self.max_allowed_population,
                     self.current_population - 1,
@@ -891,17 +899,28 @@ class PrimaVita:
                 "Max population exceeded! Number of people to be killed: %d"
                 % (extra_agent_count)
             )
-            for _ in range(extra_agent_count):
-                # Alive agents index
-                alive_agents_index = list(
-                    set(np.arange(len(self.players))) - set(self.killed)
-                )
-                idx = random.choice(alive_agents_index)
-                self.current_population -= 1
-                self.players[idx].write_data(self.time, self.current_population)
-                self.players[idx] = 0
-                self.killed = np.append(self.killed, idx)
-                self.model.kill_agent(idx)
+            if(self.kill_type in ["difference", "random"]):
+                for _ in range(extra_agent_count):
+                    # Alive agents index
+                    alive_agents_index = list(
+                        set(np.arange(len(self.players))) - set(self.killed)
+                    )
+                    idx = random.choice(alive_agents_index)
+                    self.current_population -= 1
+                    self.players[idx].write_data(self.time, self.current_population)
+                    self.players[idx] = 0
+                    self.killed = np.append(self.killed, idx)
+                    self.model.kill_agent(idx)
+            elif(self.kill_type == "fittest"):
+                rewards_idx = {self.players[i].index:(self.model.scores[i] / (self.time - self.players[i].born_at + 10e-7))
+                               for i in range(len(self.players)) if type(self.players[i]) != int}
+                rewards_idx = {k:v for k, v in sorted(rewards_idx.items(), key=lambda item: item[1])[:extra_agent_count]}
+                for idx in rewards_idx.keys():
+                    self.current_population -= 1
+                    self.players[idx].write_data(self.time, self.current_population)
+                    self.players[idx] = 0
+                    self.killed = np.append(self.killed, idx)
+                    self.model.kill_agent(idx)
 
     def update_time(self):
         """
