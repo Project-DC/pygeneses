@@ -126,7 +126,11 @@ def visualize(file_location, speed):
 
     for life_event in life_events:
         # Extract action result, action and time at which it was done
-        result = "" if life_event[2] != 0 else "Failed "
+        result = ""
+        if(life_event[0] == 9 and life_event[2] == 0):
+            result = "Failed "
+        elif(life_event[0] in [10, 11, 12] and life_event[4] == -1):
+            result = "Failed "
         action = life_event[0]
         timestamp = life_event[1]
         age = timestamp - tob

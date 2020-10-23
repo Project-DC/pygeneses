@@ -372,16 +372,15 @@ def get_children(path, filename, successor_list, level=0):
         for data in logdata:
             # Extract type of action and reward for current action
             action = data[0]
-            reward = data[2]
+            num_offsprings = data[4]
 
             # If action was sexual or asexual reproduction and it was successful then append children to tree
-            if action in [10, 11] and reward > 0:
+            if action in [10, 11] and num_offsprings != -1:
                 # The agent has atleast one child
                 has_child = True
 
                 # Extract action time, number of offsprings and their ids
                 time = data[1]
-                num_offsprings = data[4]
                 offspring_ids = data[5]
 
                 for offspring_id in offspring_ids:

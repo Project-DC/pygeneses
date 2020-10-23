@@ -131,7 +131,7 @@ class PrimaVita:
         self.food_particles = np.array([])
         self.current_population = 0
         self.screen = None
-        self.number_of_particles = random.randint(70, 80)
+        self.number_of_particles = random.randint(180, 200)
         self.leading_zeros = 0
         # Can take values from user
         self.initial_population = (
@@ -450,7 +450,7 @@ class PrimaVita:
 
             # Update NN for each agent every self.model_updates time steps
             if self.time % self.model_updates == 0:
-                self.model.update_all_agents(self.leading_zeros)
+                self.model.update_all_agents(self.leading_zeros, self.model_updates)
 
             # Training loop
             for i in range(self.leading_zeros, len(self.players)):
@@ -498,62 +498,58 @@ class PrimaVita:
             for event in pygame.event.get():
                 pass
 
-        # Movement and stay reward
-        m_s_reward = -10
-
-        # Not required actions
-        n_r_reward = -50
-        m_s_reward = n_r_reward
+        success_reward = -50
+        failure_reward = -50
 
         # Action left
         if action == 0:
             self.players[idx].change_player_xposition(-self.speed)
-            reward = m_s_reward
+            reward = success_reward
         # Action right
         elif action == 1:
             self.players[idx].change_player_xposition(self.speed)
-            reward = m_s_reward
+            reward = success_reward
         # Action: up
         elif action == 2:
             self.players[idx].change_player_yposition(-self.speed)
-            reward = m_s_reward
+            reward = success_reward
         # Action: down
         elif action == 3:
             self.players[idx].change_player_yposition(self.speed)
-            reward = m_s_reward
+            reward = success_reward
         # Action: up left (move north-west)
         elif action == 4:
             self.players[idx].change_player_yposition(
                 -self.root_speed, no_energy_change=True
             )
             self.players[idx].change_player_xposition(-self.root_speed)
-            reward = m_s_reward
+            reward = success_reward
         # Action: up right (move north-east)
         elif action == 5:
             self.players[idx].change_player_yposition(
                 -self.root_speed, no_energy_change=True
             )
             self.players[idx].change_player_xposition(self.root_speed)
-            reward = m_s_reward
+            reward = success_reward
         # Action: down left (move south-west)
         elif action == 6:
             self.players[idx].change_player_yposition(
                 self.root_speed, no_energy_change=True
             )
             self.players[idx].change_player_xposition(-self.root_speed)
-            reward = m_s_reward
+            reward = success_reward
         # Action: down right (move south-east)
         elif action == 7:
             self.players[idx].change_player_yposition(
                 self.root_speed, no_energy_change=True
             )
             self.players[idx].change_player_xposition(self.root_speed)
-            reward = m_s_reward
+            reward = success_reward
         # Action: stay
         elif action == 8:
             self.players[idx].energy -= 2
             # Initially -4, then after age of decay_rate -3 and so on until -1
-            reward = m_s_reward
+            reward = success_reward
             self.players[idx].update_history(action, self.time, reward)
         # Action: food ingestion
         elif action == 9:
@@ -587,7 +583,7 @@ class PrimaVita:
                 and (self.time - self.players[idx].born_at) in range(10, 61)
             ):
                 # Reward proportional to initial energy
-                reward = n_r_reward
+                reward = success_reward
 
                 # Perform asexual reproduction and get offsprings
                 offspring_players, offspring_ids = self.players[
@@ -622,7 +618,7 @@ class PrimaVita:
                 self.model.add_agents(idx, len(offspring_players))
             # If the above conditions don't meet then asexul reproduction fails
             else:
-                reward = n_r_reward
+                reward = failure_reward
                 self.players[idx].energy -= 1
 
                 # Add to logs the failed action asexual reproduction
@@ -642,7 +638,7 @@ class PrimaVita:
                     mating_begin_time = self.time
 
                     # Reward proportional to initial energy
-                    reward = n_r_reward
+                    reward = success_reward
 
                     # Get offsprings after sexual reproduction
                     offspring_players, offspring_ids = self.players[
@@ -708,14 +704,14 @@ class PrimaVita:
                     self.model.add_agents(recessive_idx, num_recessive)
                 # Otherwise punish the agent trying to perform sexual reproduction
                 else:
-                    reward = n_r_reward
+                    reward = failure_reward
                     self.players[idx].energy -= 1
 
                     # Update logs for failed sexual reproduction action
                     self.players[idx].update_history(action, self.time, reward)
             # If agent is already mating then also punish the agent (bad manners)
             else:
-                reward = n_r_reward
+                reward = failure_reward
                 self.players[idx].energy -= 1
 
                 # Update logs for failed sexual reproduction action
@@ -733,7 +729,7 @@ class PrimaVita:
                 if enemy != -1:
 
                     # Fighting isn't promoted, so a negative reward is given
-                    reward = n_r_reward
+                    reward = success_reward
 
                     # Fighting action
                     self.players[idx].fighting_with = enemy
@@ -754,14 +750,14 @@ class PrimaVita:
                     )
                 # If there is no agent in agent
                 else:
-                    reward = n_r_reward
+                    reward = failure_reward
                     self.players[idx].energy -= 1
 
                     # Log failed fight action
                     self.players[idx].update_history(action, self.time, reward)
             # If the agent is already fighting with another agent (we do not promote mob fighting)
             else:
-                reward = n_r_reward
+                reward = failure_reward
                 self.players[idx].energy -= 1
 
                 # Log failed fight action
@@ -870,7 +866,7 @@ class PrimaVita:
 
         if self.mode == "human":
             myfont = pygame.font.SysFont("monospace", 32)
-            foodtext = myfont.render("FP: " + str(len([food_particle for food_particle in self.food_particles if type(food_particle) != int])), 1, (255, 255, 255))
+            foodtext = myfont.render("FC: " + str(len([food_particle for food_particle in self.food_particles if type(food_particle) == int])) + "/" + str(len(self.food_particles)), 1, (255, 255, 255))
             self.screen.blit(foodtext, (5, 10))
 
             # Update the pygame window
@@ -958,7 +954,7 @@ class PrimaVita:
                 ) ** (1 / 2)
 
                 # If distance is less than or equal to 20 then return index of that food particle
-                if ed <= 20:
+                if ed <= 30:
                     return i
 
         # If there isn't any food particle in range of the agent then return -1
@@ -1165,6 +1161,9 @@ class PrimaVita:
         Remove particles that are too close to others
         """
 
+        # List that holds indexes of food particles to be deleted
+        del_idx = []
+
         # Loop through all food particles
         for my_particle in self.food_particles:
             # Again loop through all food particles
@@ -1182,8 +1181,13 @@ class PrimaVita:
                     ) ** (1 / 2)
 
                     # If distance is less than 20 then delete the food particle
-                    if ed < 20:
-                        self.food_particles[j] = 0
+                    if ed <= 20:
+                        del_idx.append(j)
+
+        # Delete the particles with index in del_idx
+        self.food_particles = list(self.food_particles)
+        self.food_particles = [self.food_particles[i] for i in range(len(self.food_particles)) if i not in del_idx]
+        self.food_particles = np.array(self.food_particles)
 
     def regenerate_species(self):
         """

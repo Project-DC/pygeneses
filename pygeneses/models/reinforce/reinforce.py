@@ -211,11 +211,12 @@ class ReinforceModel:
             self.policy_loss[idx].backward(retain_graph=True)
             self.optimizers[idx].step()
 
-    def update_all_agents(self, start_pos):
+    def update_all_agents(self, start_pos, model_updates):
         """
         Update all agent (i.e. backward propagation)
         """
 
         # Loop through all agents
         for idx in range(start_pos, len(self.agents)):
-            self.update_single_agent(idx)
+            if len(self.rewards) >= model_updates:
+                self.update_single_agent(idx)
