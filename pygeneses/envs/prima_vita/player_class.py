@@ -95,10 +95,6 @@ class Player:
             []
         )  # [Action, Time, Reward, Energy, num_offspring, [offspring ids]]
 
-        if mode == "human":
-            self.playerImg = pygame.image.load(
-                os.path.join(os.path.dirname(__file__), "images/player.png")
-            )
         self.playerX = x if x is not None else random.randint(32, SCREEN_WIDTH - 32)
         self.playerY = y if y is not None else random.randint(32, SCREEN_HEIGHT - 32)
         self.PLAYER_WIDTH = 32
@@ -106,6 +102,15 @@ class Player:
         self.born_at = tob
         self.food_ate = 0
         self.gender = np.random.choice(["Male", "Female"], p=[0.5, 0.5])
+        if mode == "human":
+            if self.gender == "Male":
+                self.playerImg = pygame.image.load(
+                    os.path.join(os.path.dirname(__file__), "images/player.png")
+                )
+            else:
+                self.playerImg = pygame.image.load(
+                    os.path.join(os.path.dirname(__file__), "images/player-female.png")
+                )
         self.cannot_move = False
         self.ingesting_begin_time = 0
         self.ingesting_particle_index = 0
@@ -501,9 +506,17 @@ class Player:
                 (self.playerX, self.playerY),
             )
         else:
-            screen.blit(
-                pygame.image.load(
-                    os.path.join(os.path.dirname(__file__), "images/player_near.png")
-                ),
-                (self.playerX, self.playerY),
-            )
+            if self.gender == "Male":
+                screen.blit(
+                    pygame.image.load(
+                        os.path.join(os.path.dirname(__file__), "images/player_near.png")
+                    ),
+                    (self.playerX, self.playerY),
+                )
+            elif self.gender == "Female":
+                screen.blit(
+                    pygame.image.load(
+                        os.path.join(os.path.dirname(__file__), "images/player_near-female.png")
+                    ),
+                    (self.playerX, self.playerY),
+                )
