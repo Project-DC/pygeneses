@@ -355,11 +355,11 @@ class PrimaVita:
 
                     # Pad to state_size - 1
                     temp_state = self.pad_state(
-                        np.array(temp_state), self.state_size - 1
+                        np.array(temp_state), self.state_size - 2
                     )
 
                     # Append energy to state
-                    temp_state = np.append(temp_state, [self.players[i].energy])
+                    temp_state = np.append(temp_state, [self.players[i].energy, (self.time - self.players[i].born_at)])
 
 
                     # Append to initial_state
@@ -397,11 +397,11 @@ class PrimaVita:
 
                     # Pad to state_size - 1
                     temp_state = self.pad_state(
-                        np.array(temp_state), self.state_size - 1
+                        np.array(temp_state), self.state_size - 2
                     )
 
                     # Append energy to state
-                    temp_state = np.append(temp_state, [self.players[i].energy])
+                    temp_state = np.append(temp_state, [self.players[i].energy, (self.time - self.players[i].born_at)])
 
                     # Append to initial_state
                     initial_state.append(temp_state)
@@ -498,58 +498,55 @@ class PrimaVita:
             for event in pygame.event.get():
                 pass
 
-        # Reward for living at every 5 time steps
-        extra = 0
-
         # Action left
         if action == 0:
             self.players[idx].change_player_xposition(-self.speed)
-            reward = 1 + extra
+            reward = 1 
         # Action right
         elif action == 1:
             self.players[idx].change_player_xposition(self.speed)
-            reward = 1 + extra
+            reward = 1 
         # Action: up
         elif action == 2:
             self.players[idx].change_player_yposition(-self.speed)
-            reward = 1 + extra
+            reward = 1 
         # Action: down
         elif action == 3:
             self.players[idx].change_player_yposition(self.speed)
-            reward = 1 + extra
+            reward = 1 
         # Action: up left (move north-west)
         elif action == 4:
             self.players[idx].change_player_yposition(
                 -self.root_speed, no_energy_change=True
             )
             self.players[idx].change_player_xposition(-self.root_speed)
-            reward = 1 + extra
+            reward = 1 
         # Action: up right (move north-east)
         elif action == 5:
             self.players[idx].change_player_yposition(
                 -self.root_speed, no_energy_change=True
             )
             self.players[idx].change_player_xposition(self.root_speed)
-            reward = 1 + extra
+            reward = 1 
         # Action: down left (move south-west)
         elif action == 6:
             self.players[idx].change_player_yposition(
                 self.root_speed, no_energy_change=True
             )
             self.players[idx].change_player_xposition(-self.root_speed)
-            reward = 1 + extra
+            reward = 1 
         # Action: down right (move south-east)
         elif action == 7:
             self.players[idx].change_player_yposition(
                 self.root_speed, no_energy_change=True
             )
             self.players[idx].change_player_xposition(self.root_speed)
-            reward = 1 + extra
+            reward = 1 
         # Action: stay
         elif action == 8:
             self.players[idx].energy -= 2
             # Initially -4, then after age of decay_rate -3 and so on until -1
-            reward = 0 + extra
+            reward = 0 
             self.players[idx].update_history(action, self.time, reward)
         # Action: food ingestion
         elif action == 9:
@@ -563,13 +560,13 @@ class PrimaVita:
                 self.food_particles[food_particle] = 0
 
                 # Reward proportional to initial energy
-                reward = 10 + extra
+                reward = 10 
 
                 # Log the ingestion action
                 self.players[idx].update_history(action, self.time, reward)
             # Otherwise punish the agent
             else:
-                reward = 0 + extra
+                reward = 0 
                 self.players[idx].energy -= 1
 
                 # Log the failed ingestion action
@@ -583,7 +580,7 @@ class PrimaVita:
                 and (self.time - self.players[idx].born_at) in range(10, 61)
             ):
                 # Reward proportional to initial energy
-                reward = 10 + extra
+                reward = 10 
 
                 # Perform asexual reproduction and get offsprings
                 offspring_players, offspring_ids = self.players[
@@ -618,7 +615,7 @@ class PrimaVita:
                 self.model.kill_agent(idx)
             # If the above conditions don't meet then asexul reproduction fails
             else:
-                reward = 0 + extra
+                reward = 0 
                 self.players[idx].energy -= 1
 
                 # Add to logs the failed action asexual reproduction
@@ -638,7 +635,7 @@ class PrimaVita:
                     mating_begin_time = self.time
 
                     # Reward proportional to initial energy
-                    reward = 10 + extra
+                    reward = 10 
 
                     # Get offsprings after sexual reproduction
                     offspring_players, offspring_ids = self.players[
@@ -704,14 +701,14 @@ class PrimaVita:
                     self.model.add_agents(recessive_idx, num_recessive)
                 # Otherwise punish the agent trying to perform sexual reproduction
                 else:
-                    reward = 0 + extra
+                    reward = 0 
                     self.players[idx].energy -= 1
 
                     # Update logs for failed sexual reproduction action
                     self.players[idx].update_history(action, self.time, reward)
             # If agent is already mating then also punish the agent (bad manners)
             else:
-                reward = 0 + extra
+                reward = 0
                 self.players[idx].energy -= 1
 
                 # Update logs for failed sexual reproduction action
@@ -729,7 +726,7 @@ class PrimaVita:
                 if enemy != -1:
 
                     # Fighting isn't promoted, so a negative reward is given
-                    reward = 10 + extra
+                    reward = 10 
 
                     # Fighting action
                     self.players[idx].fighting_with = enemy
@@ -750,14 +747,14 @@ class PrimaVita:
                     )
                 # If there is no agent in agent
                 else:
-                    reward = 0 + extra
+                    reward = 0 
                     self.players[idx].energy -= 1
 
                     # Log failed fight action
                     self.players[idx].update_history(action, self.time, reward)
             # If the agent is already fighting with another agent (we do not promote mob fighting)
             else:
-                reward = 0 + extra
+                reward = 0 
                 self.players[idx].energy -= 1
 
                 # Log failed fight action
@@ -939,7 +936,7 @@ class PrimaVita:
                 ) ** (1 / 2)
 
                 # If distance is less than or equal to 20 then return index of that food particle
-                if ed <= 20:
+                if ed <= 30:
                     return i
 
         # If there isn't any food particle in range of the agent then return -1
