@@ -131,7 +131,7 @@ class PrimaVita:
         self.food_particles = np.array([])
         self.current_population = 0
         self.screen = None
-        self.number_of_particles = random.randint(180, 200)
+        self.number_of_particles = random.randint(800, 850)
         self.leading_zeros = 0
         # Can take values from user
         self.initial_population = (
@@ -216,7 +216,7 @@ class PrimaVita:
             )
 
         # Remove food particles which either overlap or are very close to another food particle
-        self.check_particles()
+        # self.check_particles()
 
         # Initialize the model, convert string to name of model and evaluate that to convert to class name
         self.model = model_to_class[self.model](
@@ -498,58 +498,60 @@ class PrimaVita:
             for event in pygame.event.get():
                 pass
 
-        success_reward = -50
-        failure_reward = -50
+        success_reward = -20
+        failure_reward = -20
+
+        movement_reward = -1
 
         # Action left
         if action == 0:
             self.players[idx].change_player_xposition(-self.speed)
-            reward = success_reward
+            reward = movement_reward
         # Action right
         elif action == 1:
             self.players[idx].change_player_xposition(self.speed)
-            reward = success_reward
+            reward = movement_reward
         # Action: up
         elif action == 2:
             self.players[idx].change_player_yposition(-self.speed)
-            reward = success_reward
+            reward = movement_reward
         # Action: down
         elif action == 3:
             self.players[idx].change_player_yposition(self.speed)
-            reward = success_reward
+            reward = movement_reward
         # Action: up left (move north-west)
         elif action == 4:
             self.players[idx].change_player_yposition(
                 -self.root_speed, no_energy_change=True
             )
             self.players[idx].change_player_xposition(-self.root_speed)
-            reward = success_reward
+            reward = movement_reward
         # Action: up right (move north-east)
         elif action == 5:
             self.players[idx].change_player_yposition(
                 -self.root_speed, no_energy_change=True
             )
             self.players[idx].change_player_xposition(self.root_speed)
-            reward = success_reward
+            reward = movement_reward
         # Action: down left (move south-west)
         elif action == 6:
             self.players[idx].change_player_yposition(
                 self.root_speed, no_energy_change=True
             )
             self.players[idx].change_player_xposition(-self.root_speed)
-            reward = success_reward
+            reward = movement_reward
         # Action: down right (move south-east)
         elif action == 7:
             self.players[idx].change_player_yposition(
                 self.root_speed, no_energy_change=True
             )
             self.players[idx].change_player_xposition(self.root_speed)
-            reward = success_reward
+            reward = movement_reward
         # Action: stay
         elif action == 8:
             self.players[idx].energy -= 2
             # Initially -4, then after age of decay_rate -3 and so on until -1
-            reward = success_reward
+            reward = movement_reward
             self.players[idx].update_history(action, self.time, reward)
         # Action: food ingestion
         elif action == 9:
@@ -563,13 +565,22 @@ class PrimaVita:
                 self.food_particles[food_particle] = 0
 
                 # Reward proportional to initial energy
-                reward = 100
+                dynamic_reward_mapping = {(0, 20): 20, (20, 40): 18, (40, 60): 16, (60, 80): 14, (80, 100): 12,
+                                          (100, 120): 10, (120, 140): 8, (140, 160): 4, (160, 180): 2, (180, 201): 1}
+                reward = 0
+                for range_, reward_ in dynamic_reward_mapping.items():
+                    if self.players[idx].energy in range(range_[0], range_[1]):
+                        reward = reward_
+                        break
+
+                if reward == 0:
+                    reward = 1
 
                 # Log the ingestion action
                 self.players[idx].update_history(action, self.time, reward)
             # Otherwise punish the agent
             else:
-                reward = 0
+                reward = failure_reward
                 self.players[idx].energy -= 1
 
                 # Log the failed ingestion action
@@ -867,7 +878,9 @@ class PrimaVita:
         if self.mode == "human":
             myfont = pygame.font.SysFont("monospace", 32)
             foodtext = myfont.render("FC: " + str(len([food_particle for food_particle in self.food_particles if type(food_particle) == int])) + "/" + str(len(self.food_particles)), 1, (255, 255, 255))
+            timetext = myfont.render("Time: " + str(self.time), 1, (255, 255, 255))
             self.screen.blit(foodtext, (5, 10))
+            self.screen.blit(timetext, (5, 40))
 
             # Update the pygame window
             pygame.display.update()

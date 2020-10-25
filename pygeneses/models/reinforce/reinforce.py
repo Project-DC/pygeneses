@@ -200,10 +200,11 @@ class ReinforceModel:
                     -(self.saved_log_probs[idx][j] * self.rewards[idx][j])
                 )
 
+            # Empty experiences after computing loss
             self.saved_log_probs[idx] = []
             self.rewards[idx] = []
 
-            # Sum all the products
+            # Normalize all products and then batch them
             self.policy_loss[idx] = torch.cat(self.policy_loss[idx]).sum()
 
             # Backpropagate through the network
