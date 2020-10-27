@@ -103,14 +103,9 @@ class Player:
         self.food_ate = 0
         self.gender = np.random.choice(["Male", "Female"], p=[0.5, 0.5])
         if mode == "human":
-            if self.gender == "Male":
-                self.playerImg = pygame.image.load(
-                    os.path.join(os.path.dirname(__file__), "images/player.png")
-                )
-            else:
-                self.playerImg = pygame.image.load(
-                    os.path.join(os.path.dirname(__file__), "images/player-female.png")
-                )
+            self.playerImg = pygame.image.load(
+                os.path.join(os.path.dirname(__file__), "images/player.png")
+            )
         self.cannot_move = False
         self.ingesting_begin_time = 0
         self.ingesting_particle_index = 0
