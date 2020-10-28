@@ -8,7 +8,7 @@ import pygame
 # Import other classes
 from .global_constants import *
 
-def save(model, filename="latest_run.pickle"):
+def save(model, filename="latest_run.vita"):
     """
     Saves the Prima vita object's snapshot in pickle format
 
@@ -17,8 +17,11 @@ def save(model, filename="latest_run.pickle"):
     model    (pygeneses.envs.prima_vita.prima_vita.PrimaVita)
             : Current model object (this will be saved as pickle file)
     filename (str)
-            : File where environment snapshot will be saved 
+            : File where environment snapshot will be saved, this will be without an extension
     """
+
+    # Add extension .vita to filename
+    filename = filename + ".vita"
 
     # Screen need not be saved as it can be rebuilt when loading
     model.screen = None
@@ -40,7 +43,7 @@ def save(model, filename="latest_run.pickle"):
 
     print(f"Prima vita environment snapshot created successfully at {filename}!")
 
-def load(filename="latest_run.pickle"):
+def load(filename="latest_run.vita"):
     """
     Loads the Prima vita object's snapshot from pickle file
 
@@ -52,8 +55,16 @@ def load(filename="latest_run.pickle"):
     Returns
     =======
     model    (pygeneses.envs.prima_vita.prima_vita.PrimaVita)
-            : Prima vita object with snapshot loaded from pickle file
+            : Prima vita object with snapshot loaded from pickle file, this will be without an extension
     """
+
+    # Add extension .vita to filename
+    filename = filename + ".vita"
+
+    # Check if file exists or not
+    if not os.path.exists(filename):
+        print(f"File {filename} does not exist!")
+        return -1
 
     # Load environment from pickle dump
     with open(filename, "rb") as file:
