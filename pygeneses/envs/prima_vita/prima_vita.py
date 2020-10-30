@@ -2,6 +2,7 @@
 
 # Import required libraries
 import os
+import sys
 import glob
 import shutil
 import pygame
@@ -184,6 +185,12 @@ class PrimaVita:
         # If mode is human then pygame environment is shown
         self.mode = mode
 
+        # Human feedback for setting rewards
+        self.human_feedback = (
+            params_dic["human_feedback"] if "human_feedback" in params_dic.keys() else 23
+        )
+        self.current_feedbacked_player = -1
+
         # Delete log_dir by same name if it exists already
         if os.path.exists(self.log_dir):
             shutil.rmtree(self.log_dir)
@@ -327,12 +334,12 @@ class PrimaVita:
 
                     while(j < max_count):
                         if j < num_food_particles:
-                            temp_state.append(env_food_vector[(j*2):(i*2+2)])
+                            temp_state.append(env_food_vector[(j*2):(j*2+2)])
                         else:
                             temp_state.append([0, 0])
 
                         if j < num_players:
-                            temp_state.append(env_player_vector[(j*3):(i*3+3)])
+                            temp_state.append(env_player_vector[(j*3):(j*3+3)])
                         else:
                             temp_state.append([0, 0, 0])
                         j += 1
@@ -361,7 +368,6 @@ class PrimaVita:
                     # Append energy to state
                     temp_state = np.append(temp_state, [self.players[i].energy, (self.time - self.players[i].born_at)])
 
-
                     # Append to initial_state
                     initial_state.append(temp_state)
                 # Otherwise copy old state
@@ -382,12 +388,12 @@ class PrimaVita:
 
                     while(j < max_count):
                         if j < num_food_particles:
-                            temp_state.append(list(env_food_vector[(j*2):(i*2+2)]))
+                            temp_state.append(list(env_food_vector[(j*2):(j*2+2)]))
                         else:
                             temp_state.append([0, 0])
 
                         if j < num_players:
-                            temp_state.append(list(env_player_vector[(j*3):(i*3+3)]))
+                            temp_state.append(list(env_player_vector[(j*3):(j*3+3)]))
                         else:
                             temp_state.append([0, 0, 0])
                         j += 1
@@ -423,8 +429,14 @@ class PrimaVita:
             : Stop after generating approximately these many logs
         """
 
+        # Initial time update for setting age to 0 for initial population
+        self.update_time()
+
         # Get initial states and running condition
         states, running = self.get_current_state()
+
+        # Reset time to 0 since it will be updated in the while loop
+        self.time -= 1
 
         # While agents are alive
         while running:
@@ -451,6 +463,11 @@ class PrimaVita:
             # Update NN for each agent every self.model_updates time steps
             if self.time % self.model_updates == 0:
                 self.model.update_all_agents(self.leading_zeros)
+
+            # Set an agent's index which will recieve human feedback
+            if self.human_feedback and self.current_feedbacked_player == -1:
+                all_players_idx = np.array([i for i in range(len(self.players)) if type(self.players[i]) != int])
+                self.current_feedbacked_player = np.random.choice(all_players_idx)
 
             # Training loop
             for i in range(self.leading_zeros, len(self.players)):
@@ -501,52 +518,52 @@ class PrimaVita:
         # Action left
         if action == 0:
             self.players[idx].change_player_xposition(-self.speed)
-            reward = 1 
+            reward = 1
         # Action right
         elif action == 1:
             self.players[idx].change_player_xposition(self.speed)
-            reward = 1 
+            reward = 1
         # Action: up
         elif action == 2:
             self.players[idx].change_player_yposition(-self.speed)
-            reward = 1 
+            reward = 1
         # Action: down
         elif action == 3:
             self.players[idx].change_player_yposition(self.speed)
-            reward = 1 
+            reward = 1
         # Action: up left (move north-west)
         elif action == 4:
             self.players[idx].change_player_yposition(
                 -self.root_speed, no_energy_change=True
             )
             self.players[idx].change_player_xposition(-self.root_speed)
-            reward = 1 
+            reward = 1
         # Action: up right (move north-east)
         elif action == 5:
             self.players[idx].change_player_yposition(
                 -self.root_speed, no_energy_change=True
             )
             self.players[idx].change_player_xposition(self.root_speed)
-            reward = 1 
+            reward = 1
         # Action: down left (move south-west)
         elif action == 6:
             self.players[idx].change_player_yposition(
                 self.root_speed, no_energy_change=True
             )
             self.players[idx].change_player_xposition(-self.root_speed)
-            reward = 1 
+            reward = 1
         # Action: down right (move south-east)
         elif action == 7:
             self.players[idx].change_player_yposition(
                 self.root_speed, no_energy_change=True
             )
             self.players[idx].change_player_xposition(self.root_speed)
-            reward = 1 
+            reward = 1
         # Action: stay
         elif action == 8:
             self.players[idx].energy -= 2
             # Initially -4, then after age of decay_rate -3 and so on until -1
-            reward = 0 
+            reward = 0.1
             self.players[idx].update_history(action, self.time, reward)
         # Action: food ingestion
         elif action == 9:
@@ -560,13 +577,13 @@ class PrimaVita:
                 self.food_particles[food_particle] = 0
 
                 # Reward proportional to initial energy
-                reward = 10 
+                reward = 10
 
                 # Log the ingestion action
                 self.players[idx].update_history(action, self.time, reward)
             # Otherwise punish the agent
             else:
-                reward = 0 
+                reward = -0.1
                 self.players[idx].energy -= 1
 
                 # Log the failed ingestion action
@@ -580,7 +597,7 @@ class PrimaVita:
                 and (self.time - self.players[idx].born_at) in range(10, 61)
             ):
                 # Reward proportional to initial energy
-                reward = 10 
+                reward = 10
 
                 # Perform asexual reproduction and get offsprings
                 offspring_players, offspring_ids = self.players[
@@ -613,9 +630,11 @@ class PrimaVita:
                 # Add agents to RL model
                 self.model.add_agents(idx, len(offspring_players))
                 self.model.kill_agent(idx)
+                if self.current_feedbacked_player == idx:
+                    self.current_feedbacked_player = -1
             # If the above conditions don't meet then asexul reproduction fails
             else:
-                reward = 0 
+                reward = -0.1
                 self.players[idx].energy -= 1
 
                 # Add to logs the failed action asexual reproduction
@@ -635,7 +654,7 @@ class PrimaVita:
                     mating_begin_time = self.time
 
                     # Reward proportional to initial energy
-                    reward = 10 
+                    reward = 10
 
                     # Get offsprings after sexual reproduction
                     offspring_players, offspring_ids = self.players[
@@ -701,14 +720,14 @@ class PrimaVita:
                     self.model.add_agents(recessive_idx, num_recessive)
                 # Otherwise punish the agent trying to perform sexual reproduction
                 else:
-                    reward = 0 
+                    reward = -0.1
                     self.players[idx].energy -= 1
 
                     # Update logs for failed sexual reproduction action
                     self.players[idx].update_history(action, self.time, reward)
             # If agent is already mating then also punish the agent (bad manners)
             else:
-                reward = 0
+                reward = -0.1
                 self.players[idx].energy -= 1
 
                 # Update logs for failed sexual reproduction action
@@ -726,7 +745,7 @@ class PrimaVita:
                 if enemy != -1:
 
                     # Fighting isn't promoted, so a negative reward is given
-                    reward = 10 
+                    reward = 10
 
                     # Fighting action
                     self.players[idx].fighting_with = enemy
@@ -747,18 +766,78 @@ class PrimaVita:
                     )
                 # If there is no agent in agent
                 else:
-                    reward = 0 
+                    reward = -0.1
                     self.players[idx].energy -= 1
 
                     # Log failed fight action
                     self.players[idx].update_history(action, self.time, reward)
             # If the agent is already fighting with another agent (we do not promote mob fighting)
             else:
-                reward = 0 
+                reward = -0.1
                 self.players[idx].energy -= 1
 
                 # Log failed fight action
                 self.players[idx].update_history(action, self.time, reward)
+
+        # Take human feedback if it applies
+        if self.human_feedback and self.current_feedbacked_player == idx:
+            print('-' * 100)
+            print("Index:", idx)
+            print("Player at ({:.2f}, {:.2f})".format(self.players[idx].playerX, self.players[idx].playerY))
+            print(f"Player age: {int(state[-1])}, energy: {int(state[-2])}")
+            print(f"Player gender: {self.players[idx].gender}")
+
+            i = 0
+            food_vectors = []
+            player_vectors = []
+            diff_to_direction = {
+                (-1, -1): "Down Left", (-1, 0): "Left", (-1, 1): "Up Left",
+                (0, -1): "Down", (0, 0): "Same", (0, 1): "Up",
+                (1, -1): "Down Right", (1, 0): "Right", (1, 1): "Up Right"
+            }
+            sex_num_to_words = {1: "Female", 2: "Male"}
+
+            while i < self.state_size - 2:
+                x, y = state[i:i+2]
+                if x != 0 or y != 0:
+                    distance = (x**2 + y**2)**(1/2)
+                    direction = diff_to_direction[(np.clip(x - self.players[idx].playerX, -1, 1), np.clip(y - self.players[idx].playerY, -1, 1))]
+                    food_vectors.append([self.players[idx].playerX + x, self.players[idx].playerY + y, distance, direction])
+                i += 2
+
+                x, y, sex = state[i:i+3]
+                if x != 0 or y != 0:
+                    distance = (x**2 + y**2)**(1/2)
+                    direction = diff_to_direction[(np.clip(x - self.players[idx].playerX, -1, 1), np.clip(y - self.players[idx].playerY, -1, 1))]
+                    player_vectors.append([self.players[idx].playerX + x, self.players[idx].playerY + y, sex_num_to_words[sex], distance, direction])
+                i += 3
+
+            for i, food in enumerate(food_vectors):
+                print("Food #{} at ({:.2f}, {:.2f}), distance = {:.2f}, direction = {}".format(i, food[0], food[1], food[2], food[3]))
+
+            for i, player in enumerate(player_vectors):
+                print("Player #{} at ({:.2f}, {:.2f}), distance = {:.2f}, gender = {}, direction = {}".format(i, player[0], player[1], player[3], player[2], player[4]))
+
+            # Dictionary to map actions from integer to descriptive string
+            action_number_to_action = {
+                0: "Left",
+                1: "Right",
+                2: "Up",
+                3: "Down",
+                4: "Up Left",
+                5: "Up Right",
+                6: "Down Left",
+                7: "Down Right",
+                8: "Stay",
+                9: "Ingestion",
+                10: "Asexual Reproduction",
+                11: "Sexual Reproduction",
+                12: "Fight",
+            }
+
+            failed = "Failed " if reward == -0.1 else ""
+            print("Action taken:", failed + action_number_to_action[action])
+            reward = int(input("Positive or negative (1 or -1): "))
 
         # Log all the movement actions
         if action <= 7:
@@ -851,6 +930,9 @@ class PrimaVita:
                     self.killed = np.append(self.killed, i)
                     self.model.kill_agent(i)
 
+                    if self.current_feedbacked_player == idx:
+                        self.current_feedbacked_player = -1
+
                 # If the agent has reached maximum age then kill the agent
                 if (
                     type(self.players[i]) != int
@@ -860,6 +942,9 @@ class PrimaVita:
                     self.players[i] = 0
                     self.killed = np.append(self.killed, i)
                     self.model.kill_agent(i)
+
+                    if self.current_feedbacked_player == idx:
+                        self.current_feedbacked_player = -1
 
         if self.mode == "human":
             # Update the pygame window
