@@ -5,6 +5,7 @@ import torch
 import torch.nn as nn
 from torch.distributions import Categorical
 import torch.nn.functional as F
+import numpy as np
 
 
 class Agent(nn.Module):
@@ -70,7 +71,7 @@ class Agent(nn.Module):
         # also return the embedding for the agent
         return F.softmax(x, dim=1), embed.detach()
 
-    def act(self, state):
+    def act(self, state, topk):
         """
         Take an action
 
@@ -93,6 +94,11 @@ class Agent(nn.Module):
         probs, embed = self.forward(state)
         probs = probs.cpu()
         embed = embed.cpu()
+
+        if topk > 1:
+            values, indices = torch.topk(probs, k=topk)
+            return indices.detach().numpy()[0], indices.detach().numpy()[0][0], torch.log(values), embed
+
         m = Categorical(probs)
         action = m.sample()
-        return action.item(), m.log_prob(action), embed
+        return np.array([action.item()]), action.item(), np.array([m.log_prob(action)]), embed

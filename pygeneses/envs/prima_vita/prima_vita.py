@@ -132,7 +132,7 @@ class PrimaVita:
         self.food_particles = np.array([])
         self.current_population = 0
         self.screen = None
-        self.number_of_particles = random.randint(70, 80)
+        self.number_of_particles = random.randint(180, 200)
         self.leading_zeros = 0
         # Can take values from user
         self.initial_population = (
@@ -187,7 +187,7 @@ class PrimaVita:
 
         # Human feedback for setting rewards
         self.human_feedback = (
-            params_dic["human_feedback"] if "human_feedback" in params_dic.keys() else 23
+            params_dic["human_feedback"] if "human_feedback" in params_dic.keys() else False
         )
         self.current_feedbacked_player = -1
 
@@ -496,7 +496,8 @@ class PrimaVita:
             return
 
         # Predict action and return embedding using RL model used
-        action, embed = self.model.predict_action(idx, state)
+        topk = max(self.action_size - self.players[idx].generation, 1)
+        actions, main_action, embed = self.model.predict_action(idx, state, topk)
 
         # Convert embedding from tensor to numpy
         temp = embed.cpu().numpy()
@@ -515,475 +516,504 @@ class PrimaVita:
             for event in pygame.event.get():
                 pass
 
-        # Action left
-        if action == 0:
-            self.players[idx].change_player_xposition(-self.speed)
-            reward = 1
-        # Action right
-        elif action == 1:
-            self.players[idx].change_player_xposition(self.speed)
-            reward = 1
-        # Action: up
-        elif action == 2:
-            self.players[idx].change_player_yposition(-self.speed)
-            reward = 1
-        # Action: down
-        elif action == 3:
-            self.players[idx].change_player_yposition(self.speed)
-            reward = 1
-        # Action: up left (move north-west)
-        elif action == 4:
-            self.players[idx].change_player_yposition(
-                -self.root_speed, no_energy_change=True
-            )
-            self.players[idx].change_player_xposition(-self.root_speed)
-            reward = 1
-        # Action: up right (move north-east)
-        elif action == 5:
-            self.players[idx].change_player_yposition(
-                -self.root_speed, no_energy_change=True
-            )
-            self.players[idx].change_player_xposition(self.root_speed)
-            reward = 1
-        # Action: down left (move south-west)
-        elif action == 6:
-            self.players[idx].change_player_yposition(
-                self.root_speed, no_energy_change=True
-            )
-            self.players[idx].change_player_xposition(-self.root_speed)
-            reward = 1
-        # Action: down right (move south-east)
-        elif action == 7:
-            self.players[idx].change_player_yposition(
-                self.root_speed, no_energy_change=True
-            )
-            self.players[idx].change_player_xposition(self.root_speed)
-            reward = 1
-        # Action: stay
-        elif action == 8:
-            self.players[idx].energy -= 2
-            # Initially -4, then after age of decay_rate -3 and so on until -1
-            reward = 0.1
-            self.players[idx].update_history(action, self.time, reward)
-        # Action: food ingestion
-        elif action == 9:
-            # Find food particles nearby
-            food_particle = self.food_nearby(self.players[idx])
+        for action in actions:
+            if type(self.players[idx]) == int:
+                break
 
-            # If food is in radius of current agent then
-            if food_particle != -1:
-                # Begin food ingestion
-                self.players[idx].ingesting_food(food_particle, self.time)
-                self.food_particles[food_particle] = 0
-
-                # Reward proportional to initial energy
-                reward = 10
-
-                # Log the ingestion action
-                self.players[idx].update_history(action, self.time, reward)
-            # Otherwise punish the agent
+            if action == main_action:
+                no_energy_change = False
             else:
-                reward = -0.1
-                self.players[idx].energy -= 1
+                no_energy_change = True
 
-                # Log the failed ingestion action
-                self.players[idx].update_history(action, self.time, reward)
-        # Action: asexual reproduction
-        elif action == 10:
-            # If agent is not dead and potent and is of age to reproduce [10, 60]
-            if (
-                type(self.players[idx]) != int
-                and not self.players[idx].is_impotent
-                and (self.time - self.players[idx].born_at) in range(10, 61)
-            ):
-                # Reward proportional to initial energy
-                reward = 10
+            # Action left
+            if action == 0:
+                if not no_energy_change:
+                    self.players[idx].change_player_xposition(-self.speed, no_energy_change)
+                reward = 1
+            # Action right
+            elif action == 1:
+                if not no_energy_change:
+                    self.players[idx].change_player_xposition(self.speed, no_energy_change)
+                reward = 1
+            # Action: up
+            elif action == 2:
+                if not no_energy_change:
+                    self.players[idx].change_player_yposition(-self.speed, no_energy_change)
+                reward = 1
+            # Action: down
+            elif action == 3:
+                if not no_energy_change:
+                    self.players[idx].change_player_yposition(self.speed, no_energy_change)
+                reward = 1
+            # Action: up left (move north-west)
+            elif action == 4:
+                if not no_energy_change:
+                    self.players[idx].change_player_yposition(
+                        -self.root_speed, no_energy_change=True
+                    )
+                    self.players[idx].change_player_xposition(-self.root_speed, no_energy_change)
+                reward = 1
+            # Action: up right (move north-east)
+            elif action == 5:
+                if not no_energy_change:
+                    self.players[idx].change_player_yposition(
+                        -self.root_speed, no_energy_change=True
+                    )
+                    self.players[idx].change_player_xposition(self.root_speed, no_energy_change)
+                reward = 1
+            # Action: down left (move south-west)
+            elif action == 6:
+                if not no_energy_change:
+                    self.players[idx].change_player_yposition(
+                        self.root_speed, no_energy_change=True
+                    )
+                    self.players[idx].change_player_xposition(-self.root_speed, no_energy_change)
+                reward = 1
+            # Action: down right (move south-east)
+            elif action == 7:
+                if not no_energy_change:
+                    self.players[idx].change_player_yposition(
+                        self.root_speed, no_energy_change=True
+                    )
+                    self.players[idx].change_player_xposition(self.root_speed, no_energy_change)
+                reward = 1
+            # Action: stay
+            elif action == 8:
+                reward = 0.1
+                if not no_energy_change:
+                    self.players[idx].energy -= 2
 
-                # Perform asexual reproduction and get offsprings
-                offspring_players, offspring_ids = self.players[
-                    idx
-                ].asexual_reproduction(
-                    len(self.players), self.time, self.initial_energy
-                )
+                    self.players[idx].update_history(action, self.time, reward)
+            # Action: food ingestion
+            elif action == 9:
+                # Find food particles nearby
+                food_particle = self.food_nearby(self.players[idx])
 
-                # Put the offsprings to player array
-                for offspring_player in offspring_players:
-                    self.players = np.append(self.players, offspring_player)
-
-                # Add the number of agents in initial_population
-                self.initial_population += len(offspring_players)
-
-                # Add to logs the action asexual reproduction
-                self.players[idx].update_history(
-                    action,
-                    self.time,
-                    reward,
-                    num_offspring=len(offspring_ids),
-                    offspring_ids=offspring_ids,
-                )
-
-                # Kill the agent after asexual reproduction :)
-                self.players[idx].write_data(self.time, self.current_population)
-                self.players[idx] = 0
-                self.killed = np.append(self.killed, idx)
-
-                # Add agents to RL model
-                self.model.add_agents(idx, len(offspring_players))
-                self.model.kill_agent(idx)
-                if self.current_feedbacked_player == idx:
-                    self.current_feedbacked_player = -1
-            # If the above conditions don't meet then asexul reproduction fails
-            else:
-                reward = -0.1
-                self.players[idx].energy -= 1
-
-                # Add to logs the failed action asexual reproduction
-                self.players[idx].update_history(action, self.time, reward)
-        # Action: sexual reproduction
-        elif action == 11:
-            # If agent is not mating right now
-            if self.players[idx].mating_begin_time == 0:
-
-                # Find appropriate mate
-                mate_idx = self.search_mate(self.players[idx])
-
-                # If mate is found then perform sexual reproduction
-                if mate_idx != -1:
-
-                    # Time at which mating begins
-                    mating_begin_time = self.time
-
+                # If food is in radius of current agent then
+                if food_particle != -1:
                     # Reward proportional to initial energy
                     reward = 10
 
-                    # Get offsprings after sexual reproduction
-                    offspring_players, offspring_ids = self.players[
-                        idx
-                    ].sexual_reproduction(
-                        mating_begin_time,
-                        len(self.players),
-                        self.initial_energy,
-                        True,
-                        mate_id=mate_idx,
-                        mate_tob=self.players[mate_idx].born_at,
-                    )
+                    if not no_energy_change:
+                        # Begin food ingestion
+                        self.players[idx].ingesting_food(food_particle, self.time, no_energy_change)
+                        self.food_particles[food_particle] = 0
 
-                    # Perform mating for other parent too but don't generate offsprings
-                    self.players[mate_idx].sexual_reproduction(
-                        mating_begin_time, len(self.players)
-                    )
-
-                    # Add the offsprings to player array
-                    for offspring_player in offspring_players:
-                        np.append(self.players, offspring_player)
-
-                    # Increase the total population
-                    self.initial_population += len(offspring_players)
-
-                    # Update logs for sexual reproduction action
-                    self.players[idx].update_history(
-                        action,
-                        mating_begin_time,
-                        reward,
-                        num_offspring=len(offspring_ids),
-                        offspring_ids=offspring_ids,
-                        mate_id=mate_idx,
-                    )
-
-                    # Update logs for sexual reproduction action
-                    self.players[mate_idx].update_history(
-                        action,
-                        mating_begin_time,
-                        reward,
-                        num_offspring=len(offspring_ids),
-                        offspring_ids=offspring_ids,
-                        mate_id=idx,
-                    )
-
-                    # Find out percentage of offsprings that will inherit dominant and recessive genes
-                    dominant_percent = random.randint(0, 10) * 10
-                    recessive_percent = 100 - dominant_percent
-                    offsprings = len(self.players) - len(self.model.agents)
-                    num_dominant = round(offsprings * (dominant_percent / 100))
-                    num_recessive = offsprings - num_dominant
-
-                    # Find dominant and recessive parent
-                    dominant_idx = (
-                        idx
-                        if self.players[idx].energy > self.players[mate_idx].energy
-                        else mate_idx
-                    )
-                    recessive_idx = idx if dominant_idx == mate_idx else mate_idx
-
-                    # Add offsprings to RL model
-                    self.model.add_agents(dominant_idx, num_dominant)
-                    self.model.add_agents(recessive_idx, num_recessive)
-                # Otherwise punish the agent trying to perform sexual reproduction
+                        # Log the ingestion action
+                        self.players[idx].update_history(action, self.time, reward)
+                # Otherwise punish the agent
                 else:
                     reward = -0.1
-                    self.players[idx].energy -= 1
+                    if not no_energy_change:
+                        self.players[idx].energy -= 1
 
-                    # Update logs for failed sexual reproduction action
-                    self.players[idx].update_history(action, self.time, reward)
-            # If agent is already mating then also punish the agent (bad manners)
-            else:
-                reward = -0.1
-                self.players[idx].energy -= 1
-
-                # Update logs for failed sexual reproduction action
-                self.players[idx].update_history(action, self.time, reward)
-        # Action: fight
-        elif action == 12:
-
-            # If current agent is not fighting with anyone else
-            if self.players[idx].fighting_with == -1:
-
-                # Search enemy (closest agent, no personal grudges :) )
-                enemy = self.search_enemy(self.players[idx])
-
-                # If an agent is found in some fixed radius then
-                if enemy != -1:
-
-                    # Fighting isn't promoted, so a negative reward is given
+                        # Log the failed ingestion action
+                        self.players[idx].update_history(action, self.time, reward)
+            # Action: asexual reproduction
+            elif action == 10:
+                # If agent is not dead and potent and is of age to reproduce [10, 60]
+                if (
+                    type(self.players[idx]) != int
+                    and not self.players[idx].is_impotent
+                    and (self.time - self.players[idx].born_at) in range(10, 61)
+                ):
+                    # Reward proportional to initial energy
                     reward = 10
 
-                    # Fighting action
-                    self.players[idx].fighting_with = enemy
-                    self.players[enemy].fighting_with = idx
-                    self.players[idx].energy -= 10
-                    self.players[enemy].energy -= 10
-                    self.players[idx].fighting_with = -1
-                    self.players[enemy].fighting_with = -1
+                    if not no_energy_change:
+                        # Perform asexual reproduction and get offsprings
+                        offspring_players, offspring_ids = self.players[
+                            idx
+                        ].asexual_reproduction(
+                            len(self.players), self.time, self.initial_energy
+                        )
 
-                    # Log fight action
-                    self.players[idx].update_history(
-                        action, self.time, reward, fight_with=enemy
-                    )
+                        # Put the offsprings to player array
+                        for offspring_player in offspring_players:
+                            self.players = np.append(self.players, offspring_player)
 
-                    # Log fight action
-                    self.players[enemy].update_history(
-                        action, self.time, reward, fight_with=idx
-                    )
-                # If there is no agent in agent
+                        # Add the number of agents in initial_population
+                        self.initial_population += len(offspring_players)
+
+                        # Add to logs the action asexual reproduction
+                        self.players[idx].update_history(
+                            action,
+                            self.time,
+                            reward,
+                            num_offspring=len(offspring_ids),
+                            offspring_ids=offspring_ids,
+                        )
+
+                        # Kill the agent after asexual reproduction :)
+                        self.players[idx].write_data(self.time, self.current_population)
+                        self.players[idx] = 0
+                        self.killed = np.append(self.killed, idx)
+
+                        # Add agents to RL model
+                        self.model.add_agents(idx, len(offspring_players))
+                        self.model.kill_agent(idx)
+                        if self.current_feedbacked_player == idx:
+                            self.current_feedbacked_player = -1
+                # If the above conditions don't meet then asexul reproduction fails
                 else:
                     reward = -0.1
-                    self.players[idx].energy -= 1
+                    if not no_energy_change:
+                        self.players[idx].energy -= 1
 
-                    # Log failed fight action
-                    self.players[idx].update_history(action, self.time, reward)
-            # If the agent is already fighting with another agent (we do not promote mob fighting)
-            else:
-                reward = -0.1
-                self.players[idx].energy -= 1
+                        # Add to logs the failed action asexual reproduction
+                        self.players[idx].update_history(action, self.time, reward)
+            # Action: sexual reproduction
+            elif action == 11:
+                # If agent is not mating right now
+                if self.players[idx].mating_begin_time == 0:
 
-                # Log failed fight action
-                self.players[idx].update_history(action, self.time, reward)
+                    # Find appropriate mate
+                    mate_idx = self.search_mate(self.players[idx])
 
-        # Take human feedback if it applies
-        if self.human_feedback and self.current_feedbacked_player == idx:
-            print('-' * 100)
-            print("Index:", idx)
-            print("Player at ({:.2f}, {:.2f})".format(self.players[idx].playerX, self.players[idx].playerY))
-            print(f"Player age: {int(state[-1])}, energy: {int(state[-2])}")
-            print(f"Player gender: {self.players[idx].gender}")
+                    # If mate is found then perform sexual reproduction
+                    if mate_idx != -1:
 
-            i = 0
-            food_vectors = []
-            player_vectors = []
-            diff_to_direction = {
-                (-1, -1): "Down Left", (-1, 0): "Left", (-1, 1): "Up Left",
-                (0, -1): "Down", (0, 0): "Same", (0, 1): "Up",
-                (1, -1): "Down Right", (1, 0): "Right", (1, 1): "Up Right"
-            }
-            sex_num_to_words = {1: "Female", 2: "Male"}
+                        # Time at which mating begins
+                        mating_begin_time = self.time
 
-            while i < self.state_size - 2:
-                x, y = state[i:i+2]
-                if x != 0 or y != 0:
-                    distance = (x**2 + y**2)**(1/2)
-                    direction = diff_to_direction[(np.clip(x - self.players[idx].playerX, -1, 1), np.clip(y - self.players[idx].playerY, -1, 1))]
-                    food_vectors.append([self.players[idx].playerX + x, self.players[idx].playerY + y, distance, direction])
-                i += 2
+                        # Reward proportional to initial energy
+                        reward = 10
 
-                x, y, sex = state[i:i+3]
-                if x != 0 or y != 0:
-                    distance = (x**2 + y**2)**(1/2)
-                    direction = diff_to_direction[(np.clip(x - self.players[idx].playerX, -1, 1), np.clip(y - self.players[idx].playerY, -1, 1))]
-                    player_vectors.append([self.players[idx].playerX + x, self.players[idx].playerY + y, sex_num_to_words[sex], distance, direction])
-                i += 3
+                        if not no_energy_change:
+                            # Get offsprings after sexual reproduction
+                            offspring_players, offspring_ids = self.players[
+                                idx
+                            ].sexual_reproduction(
+                                mating_begin_time,
+                                len(self.players),
+                                no_energy_change,
+                                self.initial_energy,
+                                True,
+                                mate_id=mate_idx,
+                                mate_tob=self.players[mate_idx].born_at,
+                            )
 
-            for i, food in enumerate(food_vectors):
-                print("Food #{} at ({:.2f}, {:.2f}), distance = {:.2f}, direction = {}".format(i, food[0], food[1], food[2], food[3]))
+                            # Perform mating for other parent too but don't generate offsprings
+                            self.players[mate_idx].sexual_reproduction(
+                                mating_begin_time, len(self.players), no_energy_change
+                            )
 
-            for i, player in enumerate(player_vectors):
-                print("Player #{} at ({:.2f}, {:.2f}), distance = {:.2f}, gender = {}, direction = {}".format(i, player[0], player[1], player[3], player[2], player[4]))
+                            # Add the offsprings to player array
+                            for offspring_player in offspring_players:
+                                np.append(self.players, offspring_player)
 
-            # Dictionary to map actions from integer to descriptive string
-            action_number_to_action = {
-                0: "Left",
-                1: "Right",
-                2: "Up",
-                3: "Down",
-                4: "Up Left",
-                5: "Up Right",
-                6: "Down Left",
-                7: "Down Right",
-                8: "Stay",
-                9: "Ingestion",
-                10: "Asexual Reproduction",
-                11: "Sexual Reproduction",
-                12: "Fight",
-            }
+                            # Increase the total population
+                            self.initial_population += len(offspring_players)
 
-            failed = "Failed " if reward == -0.1 else ""
-            print("Action taken:", failed + action_number_to_action[action])
-            reward = int(input("Positive or negative (1 or -1): "))
+                            # Update logs for sexual reproduction action
+                            self.players[idx].update_history(
+                                action,
+                                mating_begin_time,
+                                reward,
+                                num_offspring=len(offspring_ids),
+                                offspring_ids=offspring_ids,
+                                mate_id=mate_idx,
+                            )
 
-        # Log all the movement actions
-        if action <= 7:
-            # Failed movement action
-            if self.players[idx].cannot_move == False:
-                self.players[idx].update_history(action, self.time, reward)
-            # Successful movement action
-            else:
-                self.players[idx].update_history(action, self.time, reward)
+                            # Update logs for sexual reproduction action
+                            self.players[mate_idx].update_history(
+                                action,
+                                mating_begin_time,
+                                reward,
+                                num_offspring=len(offspring_ids),
+                                offspring_ids=offspring_ids,
+                                mate_id=idx,
+                            )
 
-        # If food regeneration condition is met then regenerate food particles
-        if self.food_regen_condition_is_met:
-            print("Food regenerated!")
-            self.food_particles, _ = self.refresh_particles()
-            self.food_regen_condition_is_met = False
+                            # Find out percentage of offsprings that will inherit dominant and recessive genes
+                            dominant_percent = random.randint(0, 10) * 10
+                            recessive_percent = 100 - dominant_percent
+                            offsprings = len(self.players) - len(self.model.agents)
+                            num_dominant = round(offsprings * (dominant_percent / 100))
+                            num_recessive = offsprings - num_dominant
 
-        if self.mode == "human":
-            # Show all particles
-            for j in range(len(self.food_particles)):
-                if type(self.food_particles[j]) != int:
-                    self.food_particles[j].show_particle(self.screen)
+                            # Find dominant and recessive parent
+                            dominant_idx = (
+                                idx
+                                if self.players[idx].energy > self.players[mate_idx].energy
+                                else mate_idx
+                            )
+                            recessive_idx = idx if dominant_idx == mate_idx else mate_idx
 
-        now_time = self.time
-
-        # Loop through all the players
-        for i in range(self.leading_zeros, len(self.players)):
-            # If agent is still alive
-            if i not in self.killed:
-                # Put rewards and scores into players object
-                if i == idx:
-                    self.model.rewards[idx].append(reward)
-                    self.model.scores[idx] += reward
-
-                if self.mode == "human":
-                    # Find food particles in fixed radius
-                    (
-                        env_food_vector,
-                        env_particle_distance,
-                        env_particles,
-                    ) = self.food_in_env(self.players[i], get_idx=True)
-
-                    # Push the food particles near an agent to its object
-                    self.players[i].food_near = env_particle_distance
-
-                    # Find players in proximity
-                    (
-                        env_player_vector,
-                        env_player_distance,
-                        env_players,
-                    ) = self.players_in_env(self.players[i], get_idx=True)
-
-                    # Push the players in proximity to this agent to current agent's object
-                    self.players[i].players_near = env_player_distance
-
-                    # Change colors of food particles in proximity
-                    for index in range(0, len(env_particles)):
-                        local = env_particles[index]
-                        if type(self.food_particles[local]) != int:
-                            self.food_particles[local].show_close(self.screen)
-
-                    # Change color of players in proximity
-                    if not env_players:
-                        self.players[i].show_player(self.screen)
+                            # Add offsprings to RL model
+                            self.model.add_agents(dominant_idx, num_dominant)
+                            self.model.add_agents(recessive_idx, num_recessive)
+                    # Otherwise punish the agent trying to perform sexual reproduction
                     else:
-                        self.players[i].show_close(self.screen)
+                        reward = -0.1
+                        if not no_energy_change:
+                            self.players[idx].energy -= 1
 
-                # Check if ingestion action is complete or not (if ingesting)
-                if (
-                    type(self.players[i]) != int
-                    and self.players[i].ingesting_begin_time != 0
-                    and self.time - self.players[i].ingesting_begin_time >= 1
-                ):
-                    self.players[i].food_ate += 1
-                    self.players[i].ingesting_begin_time = 0
-                    self.players[i].cannot_move = False
+                            # Update logs for failed sexual reproduction action
+                            self.players[idx].update_history(action, self.time, reward)
+                # If agent is already mating then also punish the agent (bad manners)
+                else:
+                    reward = -0.1
+                    if not no_energy_change:
+                        self.players[idx].energy -= 1
 
-                # Check if mating action is complete or not (if mating)
-                if (
-                    type(self.players[i]) != int
-                    and self.players[i].mating_begin_time != 0
-                    and self.time - self.players[i].mating_begin_time >= 2
-                ):
-                    self.players[i].mating_begin_time = 0
-                    self.players[i].cannot_move = False
+                        # Update logs for failed sexual reproduction action
+                        self.players[idx].update_history(action, self.time, reward)
+            # Action: fight
+            elif action == 12:
 
-                # If the agent's energy is less than or equal to zero (0) kill the agent
-                if type(self.players[i]) != int and self.players[i].energy <= 0:
-                    self.players[i].write_data(self.time, self.current_population)
-                    self.players[i] = 0
-                    self.killed = np.append(self.killed, i)
-                    self.model.kill_agent(i)
+                # If current agent is not fighting with anyone else
+                if self.players[idx].fighting_with == -1:
 
-                    if self.current_feedbacked_player == idx:
-                        self.current_feedbacked_player = -1
+                    # Search enemy (closest agent, no personal grudges :) )
+                    enemy = self.search_enemy(self.players[idx])
 
-                # If the agent has reached maximum age then kill the agent
-                if (
-                    type(self.players[i]) != int
-                    and now_time - self.players[i].born_at >= self.max_age
-                ):
-                    self.players[i].write_data(self.time, self.current_population)
-                    self.players[i] = 0
-                    self.killed = np.append(self.killed, i)
-                    self.model.kill_agent(i)
+                    # If an agent is found in some fixed radius then
+                    if enemy != -1:
 
-                    if self.current_feedbacked_player == idx:
-                        self.current_feedbacked_player = -1
+                        # Fighting isn't promoted, so a negative reward is given
+                        reward = 10
 
-        if self.mode == "human":
-            # Update the pygame window
-            pygame.display.update()
+                        if not no_energy_change:
+                            # Fighting action
+                            self.players[idx].fighting_with = enemy
+                            self.players[enemy].fighting_with = idx
+                            self.players[idx].energy -= 10
+                            self.players[enemy].energy -= 10
+                            self.players[idx].fighting_with = -1
+                            self.players[enemy].fighting_with = -1
 
-        # Compute number of alive agents
-        self.current_population = len(self.players) - len(self.killed)
+                            # Log fight action
+                            self.players[idx].update_history(
+                                action, self.time, reward, fight_with=enemy
+                            )
 
-        # If current population exceeds a max threshold then kill people randomly
-        if (
-            self.kill_type != ""
-            and self.max_allowed_population != -1
-            and self.current_population > self.max_allowed_population
-        ):
-            # Compute number of extra agents
-            extra_agent_count = (
-                self.current_population - self.max_allowed_population
-                if self.kill_type == "difference"
-                else random.randint(
-                    self.current_population - self.max_allowed_population,
-                    self.current_population - 1,
+                            # Log fight action
+                            self.players[enemy].update_history(
+                                action, self.time, reward, fight_with=idx
+                            )
+                    # If there is no agent in agent
+                    else:
+                        reward = -0.1
+                        if not no_energy_change:
+                            self.players[idx].energy -= 1
+
+                            # Log failed fight action
+                            self.players[idx].update_history(action, self.time, reward)
+                # If the agent is already fighting with another agent (we do not promote mob fighting)
+                else:
+                    reward = -0.1
+                    if not no_energy_change:
+                        self.players[idx].energy -= 1
+
+                        # Log failed fight action
+                        self.players[idx].update_history(action, self.time, reward)
+
+            # Log all the movement actions
+            if action <= 7:
+                if not no_energy_change:
+                    self.players[idx].update_history(action, self.time, reward)
+
+            # Take human feedback if it applies
+            if self.human_feedback and self.current_feedbacked_player == idx:
+                print('-' * 100)
+                print("Index:", idx)
+                print("Player at ({:.2f}, {:.2f})".format(self.players[idx].playerX, self.players[idx].playerY))
+                print(f"Player age: {int(state[-1])}, energy: {int(state[-2])}")
+                print(f"Player gender: {self.players[idx].gender}")
+
+                i = 0
+                food_vectors = []
+                player_vectors = []
+                diff_to_direction = {
+                    (-1, -1): "Down Left", (-1, 0): "Left", (-1, 1): "Up Left",
+                    (0, -1): "Down", (0, 0): "Same", (0, 1): "Up",
+                    (1, -1): "Down Right", (1, 0): "Right", (1, 1): "Up Right"
+                }
+                sex_num_to_words = {1: "Female", 2: "Male"}
+
+                while i < self.state_size - 2:
+                    x, y = state[i:i+2]
+                    if x != 0 or y != 0:
+                        distance = (x**2 + y**2)**(1/2)
+                        direction = diff_to_direction[(np.clip(x - self.players[idx].playerX, -1, 1), np.clip(y - self.players[idx].playerY, -1, 1))]
+                        food_vectors.append([self.players[idx].playerX + x, self.players[idx].playerY + y, distance, direction])
+                    i += 2
+
+                    x, y, sex = state[i:i+3]
+                    if x != 0 or y != 0:
+                        distance = (x**2 + y**2)**(1/2)
+                        direction = diff_to_direction[(np.clip(x - self.players[idx].playerX, -1, 1), np.clip(y - self.players[idx].playerY, -1, 1))]
+                        player_vectors.append([self.players[idx].playerX + x, self.players[idx].playerY + y, sex_num_to_words[sex], distance, direction])
+                    i += 3
+
+                for i, food in enumerate(food_vectors):
+                    print("Food #{} at ({:.2f}, {:.2f}), distance = {:.2f}, direction = {}".format(i, food[0], food[1], food[2], food[3]))
+
+                for i, player in enumerate(player_vectors):
+                    print("Player #{} at ({:.2f}, {:.2f}), distance = {:.2f}, gender = {}, direction = {}".format(i, player[0], player[1], player[3], player[2], player[4]))
+
+                # Dictionary to map actions from integer to descriptive string
+                action_number_to_action = {
+                    0: "Left",
+                    1: "Right",
+                    2: "Up",
+                    3: "Down",
+                    4: "Up Left",
+                    5: "Up Right",
+                    6: "Down Left",
+                    7: "Down Right",
+                    8: "Stay",
+                    9: "Ingestion",
+                    10: "Asexual Reproduction",
+                    11: "Sexual Reproduction",
+                    12: "Fight",
+                }
+
+                failed = "Failed " if reward == -0.1 else ""
+                print("Action taken:", failed + action_number_to_action[action])
+                reward = int(input("Positive or negative (1 or -1): "))
+
+            # If food regeneration condition is met then regenerate food particles
+            if self.food_regen_condition_is_met:
+                print("Food regenerated!")
+                self.food_particles, _ = self.refresh_particles()
+                self.food_regen_condition_is_met = False
+
+            if self.mode == "human":
+                # Show all particles
+                for j in range(len(self.food_particles)):
+                    if type(self.food_particles[j]) != int:
+                        self.food_particles[j].show_particle(self.screen)
+
+            now_time = self.time
+
+            # Loop through all the players
+            for i in range(self.leading_zeros, len(self.players)):
+                # If agent is still alive
+                if i not in self.killed:
+                    # Put rewards and scores into players object
+                    if i == idx:
+                        self.model.rewards[idx].append(reward)
+                        self.model.scores[idx] += reward
+
+                    if self.mode == "human":
+                        # Find food particles in fixed radius
+                        (
+                            env_food_vector,
+                            env_particle_distance,
+                            env_particles,
+                        ) = self.food_in_env(self.players[i], get_idx=True)
+
+                        # Push the food particles near an agent to its object
+                        self.players[i].food_near = env_particle_distance
+
+                        # Find players in proximity
+                        (
+                            env_player_vector,
+                            env_player_distance,
+                            env_players,
+                        ) = self.players_in_env(self.players[i], get_idx=True)
+
+                        # Push the players in proximity to this agent to current agent's object
+                        self.players[i].players_near = env_player_distance
+
+                        # Change colors of food particles in proximity
+                        for index in range(0, len(env_particles)):
+                            local = env_particles[index]
+                            if type(self.food_particles[local]) != int:
+                                self.food_particles[local].show_close(self.screen)
+
+                        # Change color of players in proximity
+                        if not env_players:
+                            self.players[i].show_player(self.screen)
+                        else:
+                            self.players[i].show_close(self.screen)
+
+                    # Check if ingestion action is complete or not (if ingesting)
+                    if (
+                        type(self.players[i]) != int
+                        and self.players[i].ingesting_begin_time != 0
+                        and self.time - self.players[i].ingesting_begin_time >= 1
+                    ):
+                        self.players[i].food_ate += 1
+                        self.players[i].ingesting_begin_time = 0
+                        self.players[i].cannot_move = False
+
+                    # Check if mating action is complete or not (if mating)
+                    if (
+                        type(self.players[i]) != int
+                        and self.players[i].mating_begin_time != 0
+                        and self.time - self.players[i].mating_begin_time >= 2
+                    ):
+                        self.players[i].mating_begin_time = 0
+                        self.players[i].cannot_move = False
+
+                    if not no_energy_change:
+                        # If the agent's energy is less than or equal to zero (0) kill the agent
+                        if type(self.players[i]) != int and self.players[i].energy <= 0:
+                            self.players[i].write_data(self.time, self.current_population)
+                            self.players[i] = 0
+                            self.killed = np.append(self.killed, i)
+                            self.model.kill_agent(i)
+
+                            if self.current_feedbacked_player == idx:
+                                self.current_feedbacked_player = -1
+
+                        # If the agent has reached maximum age then kill the agent
+                        if (
+                            type(self.players[i]) != int
+                            and now_time - self.players[i].born_at >= self.max_age
+                        ):
+                            self.players[i].write_data(self.time, self.current_population)
+                            self.players[i] = 0
+                            self.killed = np.append(self.killed, i)
+                            self.model.kill_agent(i)
+
+                            if self.current_feedbacked_player == idx:
+                                self.current_feedbacked_player = -1
+
+            if self.mode == "human":
+                # Update the pygame window
+                myfont = pygame.font.SysFont("monospace", 32)
+                timetext = myfont.render("Time: " + str(self.time), 1, (255, 255, 255))
+                self.screen.blit(timetext, (5, 10))
+                pygame.display.update()
+
+            # Compute number of alive agents
+            self.current_population = len(self.players) - len(self.killed)
+
+            # If current population exceeds a max threshold then kill people randomly
+            if (
+                self.kill_type != ""
+                and self.max_allowed_population != -1
+                and self.current_population > self.max_allowed_population
+            ):
+                # Compute number of extra agents
+                extra_agent_count = (
+                    self.current_population - self.max_allowed_population
+                    if self.kill_type == "difference"
+                    else random.randint(
+                        self.current_population - self.max_allowed_population,
+                        self.current_population - 1,
+                    )
                 )
-            )
 
-            print(
-                "Max population exceeded! Number of people to be killed: %d"
-                % (extra_agent_count)
-            )
-            for _ in range(extra_agent_count):
-                # Alive agents index
-                alive_agents_index = list(
-                    set(np.arange(len(self.players))) - set(self.killed)
+                print(
+                    "Max population exceeded! Number of people to be killed: %d"
+                    % (extra_agent_count)
                 )
-                idx = random.choice(alive_agents_index)
-                self.current_population -= 1
-                self.players[idx].write_data(self.time, self.current_population)
-                self.players[idx] = 0
-                self.killed = np.append(self.killed, idx)
-                self.model.kill_agent(idx)
+                for _ in range(extra_agent_count):
+                    # Alive agents index
+                    alive_agents_index = list(
+                        set(np.arange(len(self.players))) - set(self.killed)
+                    )
+                    idx = random.choice(alive_agents_index)
+                    self.current_population -= 1
+                    self.players[idx].write_data(self.time, self.current_population)
+                    self.players[idx] = 0
+                    self.killed = np.append(self.killed, idx)
+                    self.model.kill_agent(idx)
 
     def update_time(self):
         """
@@ -1258,7 +1288,7 @@ class PrimaVita:
             # Generate a new player and add it to player pool
             self.players = np.append(
                 self.players,
-                Player(i, self.log_dir, self.time, self.initial_energy, mode=self.mode),
+                Player(i, self.log_dir, self.time, self.initial_energy, generation=0, mode=self.mode),
             )
 
     def refresh_particles(self):

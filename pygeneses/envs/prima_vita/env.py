@@ -32,11 +32,11 @@ def save(model, filename="latest_run.vita"):
             if type(model.players[i]) != int:
                 model.players[i].playerImg = ""
 
-        # Food particle images cannot be serialized, hence killing these pygame.Surface objects    
+        # Food particle images cannot be serialized, hence killing these pygame.Surface objects
         for i in range(len(model.food_particles)):
             if type(model.food_particles[i]) != int:
                 model.food_particles[i].particleImg = ""
-    
+
     # Dump into pickle file
     with open(filename, "wb") as file:
         pickle.dump(model, file)
@@ -69,11 +69,22 @@ def load(filename="latest_run.vita"):
     # Load environment from pickle dump
     with open(filename, "rb") as file:
         model = pickle.load(file)
-    
+
     if model.mode == "human":
         # Initialize pygame screen if in human mode
         pygame.init()
-        model.screen = pygame.display.set_mode((1200, 700))
+
+        # Title
+        pygame.display.set_caption("Prima Vita")
+
+        # Get screen
+        model.screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
+
+        # Fill the screen with green color
+        model.screen.fill((0, 178, 0))
+
+        # Update pygame screen
+        pygame.display.update()
 
         # Set player images as they weren't saved
         for i in range(len(model.players)):
@@ -81,8 +92,8 @@ def load(filename="latest_run.vita"):
                 model.players[i].playerImg = pygame.image.load(
                     os.path.join(os.path.dirname(__file__), "images/player.png")
                 )
-        
-        # Set food particle images as they weren't saved       
+
+        # Set food particle images as they weren't saved
         for i in range(len(model.food_particles)):
             if type(model.food_particles[i]) != int:
                 model.food_particles[i].particleImg = pygame.image.load(
@@ -93,4 +104,3 @@ def load(filename="latest_run.vita"):
 
     # Return environment object
     return model
-        

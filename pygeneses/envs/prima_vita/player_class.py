@@ -67,7 +67,7 @@ class Player:
        : Mode in which to run environment (human/bot)
     """
 
-    def __init__(self, i, log_dir, tob, energy, x=None, y=None, mode="bot"):
+    def __init__(self, i, log_dir, tob, energy, generation, x=None, y=None, mode="bot"):
         """
         Initializer for Player class
 
@@ -118,6 +118,8 @@ class Player:
         self.embeddings = np.array([0])
         self.states = np.array([0])
         self.mode = mode
+
+        self.generation = generation
 
         # Add the initial x, y coordinates as first entry in logs
         self.action_history.append([self.playerX, self.playerY])
@@ -269,7 +271,7 @@ class Player:
                 )
             )
 
-    def change_player_xposition(self, x):
+    def change_player_xposition(self, x, no_energy_change=False):
         """
         Update player's x coordinate
 
@@ -291,7 +293,8 @@ class Player:
                 self.playerX = SCREEN_WIDTH - self.PLAYER_WIDTH
 
             # Reduce energy by 2 for movement
-            self.energy -= 2
+            if not no_energy_change:
+                self.energy -= 2
 
     def change_player_yposition(self, y, no_energy_change=False):
         """
@@ -362,6 +365,7 @@ class Player:
                     self.log_dir,
                     time_given,
                     initial_energy,
+                    self.generation+1,
                     mode=self.mode,
                 )
             )
@@ -375,6 +379,7 @@ class Player:
         self,
         mating_begin_time,
         len_players,
+        no_energy_change,
         initial_energy=None,
         gen_offspring=False,
         mate_id=-1,
@@ -438,6 +443,7 @@ class Player:
                         self.log_dir,
                         mating_begin_time,
                         initial_energy,
+                        self.generation+1,
                         mode=self.mode,
                     )
                 )
@@ -449,7 +455,7 @@ class Player:
 
             return offspring_players, offspring_ids
 
-    def ingesting_food(self, idx, time_given):
+    def ingesting_food(self, idx, time_given, no_energy_change):
         """
         Perform food ingestion action
 
@@ -469,7 +475,8 @@ class Player:
         self.ingesting_particle_index = idx
 
         # Add energy of 100 points for ingestion action
-        self.energy += 100
+        if not no_energy_change:
+            self.energy += 100
 
     def show_player(self, screen):
         """
@@ -501,17 +508,9 @@ class Player:
                 (self.playerX, self.playerY),
             )
         else:
-            if self.gender == "Male":
-                screen.blit(
-                    pygame.image.load(
-                        os.path.join(os.path.dirname(__file__), "images/player_near.png")
-                    ),
-                    (self.playerX, self.playerY),
-                )
-            elif self.gender == "Female":
-                screen.blit(
-                    pygame.image.load(
-                        os.path.join(os.path.dirname(__file__), "images/player_near-female.png")
-                    ),
-                    (self.playerX, self.playerY),
-                )
+            screen.blit(
+                pygame.image.load(
+                    os.path.join(os.path.dirname(__file__), "images/player_near.png")
+                ),
+                (self.playerX, self.playerY),
+            )
