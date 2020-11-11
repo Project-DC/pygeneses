@@ -501,17 +501,9 @@ class Player:
                 (self.playerX, self.playerY),
             )
         else:
-            if self.gender == "Male":
-                screen.blit(
-                    pygame.image.load(
-                        os.path.join(os.path.dirname(__file__), "images/player_near.png")
-                    ),
-                    (self.playerX, self.playerY),
-                )
-            elif self.gender == "Female":
-                screen.blit(
-                    pygame.image.load(
-                        os.path.join(os.path.dirname(__file__), "images/player_near-female.png")
-                    ),
-                    (self.playerX, self.playerY),
-                )
+            screen.blit(
+                pygame.image.load(
+                    os.path.join(os.path.dirname(__file__), "images/player_near.png")
+                ),
+                (self.playerX, self.playerY),
+            )

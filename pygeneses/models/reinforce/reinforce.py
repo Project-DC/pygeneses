@@ -129,6 +129,7 @@ class ReinforceModel:
 
         # Append the current reward to rewards list for this agent
         self.rewards[idx].append(reward)
+        self.score[idx] += reward
 
     def add_agents(self, parent_idx, num_offsprings):
         """

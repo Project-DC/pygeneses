@@ -1,3 +1,5 @@
+import torch
+
 from .ddpg_agent import Agent
 
 class DDPGModel:
@@ -22,10 +24,10 @@ class DDPGModel:
             self.current_reward[idx] = 0
 
     def predict_action(self, idx, state):
-        action = self.agents[idx].act(state)
+        action, action_probs = self.agents[idx].act(state)
 
         self.current_state[idx] = state
-        self.current_action[idx] = action
+        self.current_action[idx] = action_probs
 
         return action, []
 

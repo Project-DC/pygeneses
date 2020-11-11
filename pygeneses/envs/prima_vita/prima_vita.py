@@ -21,7 +21,11 @@ from .global_constants import *
 model_to_class = {
     "reinforce": importlib.import_module(
         "pygeneses.models.reinforce.reinforce"
-    ).ReinforceModel
+    ).ReinforceModel,
+
+    "ddpg": importlib.import_module(
+        "pygeneses.models.ddpg.ddpg"
+    ).DDPGModel
 }
 
 
@@ -141,7 +145,7 @@ class PrimaVita:
             else 10
         )
         self.state_size = (
-            params_dic["state_size"] if "state_size" in params_dic.keys() else 21
+            params_dic["state_size"] if "state_size" in params_dic.keys() else 22
         )
         self.action_size = (
             params_dic["action_size"] if "action_size" in params_dic.keys() else 13
@@ -154,7 +158,7 @@ class PrimaVita:
             else 200
         )
         self.model = (
-            params_dic["model"] if "model" in params_dic.keys() else "reinforce"
+            params_dic["model"] if "model" in params_dic.keys() else "ddpg"
         )
         self.model_updates = (
             params_dic["model_updates"] if "model_updates" in params_dic.keys() else 10
@@ -187,7 +191,7 @@ class PrimaVita:
 
         # Human feedback for setting rewards
         self.human_feedback = (
-            params_dic["human_feedback"] if "human_feedback" in params_dic.keys() else 23
+            params_dic["human_feedback"] if "human_feedback" in params_dic.keys() else False
         )
         self.current_feedbacked_player = -1
 
@@ -417,7 +421,7 @@ class PrimaVita:
                 initial_state.append(temp_state)
 
         # Return the state as numpy array
-        return np.array(initial_state), running
+        return np.array(initial_state, dtype=object), running
 
     def run(self, stop_at=None):
         """
@@ -455,14 +459,14 @@ class PrimaVita:
             j = self.leading_zeros
             while True:
                 j += 1
-                if type(self.players[j]) == int:
+                if j < len(self.players) and type(self.players[j]) == int:
                     self.leading_zeros += 1
                 else:
                     break
 
             # Update NN for each agent every self.model_updates time steps
-            if self.time % self.model_updates == 0:
-                self.model.update_all_agents(self.leading_zeros)
+            # if self.time % self.model_updates == 0:
+            #     self.model.update_all_agents(self.leading_zeros)
 
             # Set an agent's index which will recieve human feedback
             if self.human_feedback and self.current_feedbacked_player == -1:
@@ -473,11 +477,14 @@ class PrimaVita:
             for i in range(self.leading_zeros, len(self.players)):
                 if type(self.players[i]) != int:
                     # Take an action for current index
-                    self.take_action(i, states[i])
+                    self.take_action(i, states[i].astype(np.float32))
                     idx = i if type(self.players[i]) != int else None
 
                     # Get updated state
                     states, running = self.get_current_state(idx)
+
+                    if(type(self.players[i]) != int):
+                        self.model.update_next_state(i, states[i].astype(np.float32))
 
     def take_action(self, idx, state):
         """
@@ -496,10 +503,10 @@ class PrimaVita:
             return
 
         # Predict action and return embedding using RL model used
-        action, embed = self.model.predict_action(idx, state)
+        action, _ = self.model.predict_action(idx, state)
 
         # Convert embedding from tensor to numpy
-        temp = embed.cpu().numpy()
+        temp = np.array([])
 
         # Set embeddings to current player
         self.players[idx].embeddings = np.add(self.players[idx].embeddings, temp)
@@ -868,8 +875,7 @@ class PrimaVita:
             if i not in self.killed:
                 # Put rewards and scores into players object
                 if i == idx:
-                    self.model.rewards[idx].append(reward)
-                    self.model.scores[idx] += reward
+                    self.model.update_reward(idx, reward)
 
                 if self.mode == "human":
                     # Find food particles in fixed radius
