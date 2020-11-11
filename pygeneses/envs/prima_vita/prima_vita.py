@@ -187,7 +187,7 @@ class PrimaVita:
 
         # Human feedback for setting rewards
         self.human_feedback = (
-            params_dic["human_feedback"] if "human_feedback" in params_dic.keys() else 23
+            params_dic["human_feedback"] if "human_feedback" in params_dic.keys() else False
         )
         self.current_feedbacked_player = -1
 

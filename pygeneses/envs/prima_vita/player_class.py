@@ -493,25 +493,9 @@ class Player:
             : Pygame display
         """
 
-        if self.mating_begin_time != 0:
-            screen.blit(
-                pygame.image.load(
-                    os.path.join(os.path.dirname(__file__), "images/player_mating.png")
-                ),
-                (self.playerX, self.playerY),
-            )
-        else:
-            if self.gender == "Male":
-                screen.blit(
-                    pygame.image.load(
-                        os.path.join(os.path.dirname(__file__), "images/player_near.png")
-                    ),
-                    (self.playerX, self.playerY),
-                )
-            elif self.gender == "Female":
-                screen.blit(
-                    pygame.image.load(
-                        os.path.join(os.path.dirname(__file__), "images/player_near-female.png")
-                    ),
-                    (self.playerX, self.playerY),
-                )
+        screen.blit(
+            pygame.image.load(
+                os.path.join(os.path.dirname(__file__), "images/player_mating.png")
+            ),
+            (self.playerX, self.playerY),
+        )
