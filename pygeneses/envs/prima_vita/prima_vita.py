@@ -469,6 +469,8 @@ class PrimaVita:
                 all_players_idx = np.array([i for i in range(len(self.players)) if type(self.players[i]) != int])
                 self.current_feedbacked_player = np.random.choice(all_players_idx)
 
+            # print(f"Total people at time step {self.time} = {len([i for i in range(len(self.players)) if type(self.players[i]) != int])}")
+
             # Training loop
             for i in range(self.leading_zeros, len(self.players)):
                 if type(self.players[i]) != int:
@@ -497,7 +499,7 @@ class PrimaVita:
 
         # Predict action and return embedding using RL model used
         topk = max(self.action_size - self.players[idx].generation, 1)
-        actions, main_action, embed = self.model.predict_action(idx, state, topk)
+        actions, main_action, embed = self.model.predict_action(idx, state, topk, is_rebel=self.players[idx].is_rebel)
 
         # Convert embedding from tensor to numpy
         temp = embed.cpu().numpy()
@@ -507,6 +509,9 @@ class PrimaVita:
 
         reward = 0
         mate_idx = -1
+
+        # Update this agent's model or not
+        update_model = False
 
         if self.mode == "human":
             # Fill the screen with green
@@ -529,22 +534,22 @@ class PrimaVita:
             if action == 0:
                 if not no_energy_change:
                     self.players[idx].change_player_xposition(-self.speed, no_energy_change)
-                reward = 1
+                reward = -0.1
             # Action right
             elif action == 1:
                 if not no_energy_change:
                     self.players[idx].change_player_xposition(self.speed, no_energy_change)
-                reward = 1
+                reward = -0.1
             # Action: up
             elif action == 2:
                 if not no_energy_change:
                     self.players[idx].change_player_yposition(-self.speed, no_energy_change)
-                reward = 1
+                reward = -0.1
             # Action: down
             elif action == 3:
                 if not no_energy_change:
                     self.players[idx].change_player_yposition(self.speed, no_energy_change)
-                reward = 1
+                reward = -0.1
             # Action: up left (move north-west)
             elif action == 4:
                 if not no_energy_change:
@@ -552,7 +557,7 @@ class PrimaVita:
                         -self.root_speed, no_energy_change=True
                     )
                     self.players[idx].change_player_xposition(-self.root_speed, no_energy_change)
-                reward = 1
+                reward = -0.1
             # Action: up right (move north-east)
             elif action == 5:
                 if not no_energy_change:
@@ -560,7 +565,7 @@ class PrimaVita:
                         -self.root_speed, no_energy_change=True
                     )
                     self.players[idx].change_player_xposition(self.root_speed, no_energy_change)
-                reward = 1
+                reward = -0.1
             # Action: down left (move south-west)
             elif action == 6:
                 if not no_energy_change:
@@ -568,7 +573,7 @@ class PrimaVita:
                         self.root_speed, no_energy_change=True
                     )
                     self.players[idx].change_player_xposition(-self.root_speed, no_energy_change)
-                reward = 1
+                reward = -0.1
             # Action: down right (move south-east)
             elif action == 7:
                 if not no_energy_change:
@@ -576,10 +581,10 @@ class PrimaVita:
                         self.root_speed, no_energy_change=True
                     )
                     self.players[idx].change_player_xposition(self.root_speed, no_energy_change)
-                reward = 1
+                reward = -0.1
             # Action: stay
             elif action == 8:
-                reward = 0.1
+                reward = -0.1
                 if not no_energy_change:
                     self.players[idx].energy -= 2
 
@@ -592,7 +597,7 @@ class PrimaVita:
                 # If food is in radius of current agent then
                 if food_particle != -1:
                     # Reward proportional to initial energy
-                    reward = 10
+                    reward = -10
 
                     if not no_energy_change:
                         # Begin food ingestion
@@ -621,6 +626,8 @@ class PrimaVita:
                     reward = 10
 
                     if not no_energy_change:
+                        reward = -10
+
                         # Perform asexual reproduction and get offsprings
                         offspring_players, offspring_ids = self.players[
                             idx
@@ -644,16 +651,7 @@ class PrimaVita:
                             offspring_ids=offspring_ids,
                         )
 
-                        # Kill the agent after asexual reproduction :)
-                        self.players[idx].write_data(self.time, self.current_population)
-                        self.players[idx] = 0
-                        self.killed = np.append(self.killed, idx)
-
-                        # Add agents to RL model
-                        self.model.add_agents(idx, len(offspring_players))
-                        self.model.kill_agent(idx)
-                        if self.current_feedbacked_player == idx:
-                            self.current_feedbacked_player = -1
+                        update_model = True
                 # If the above conditions don't meet then asexul reproduction fails
                 else:
                     reward = -0.1
@@ -703,6 +701,8 @@ class PrimaVita:
                                 np.append(self.players, offspring_player)
 
                             # Increase the total population
+                            self.model.rewards[idx].append(reward)
+                            self.model.scores[idx] += reward
                             self.initial_population += len(offspring_players)
 
                             # Update logs for sexual reproduction action
@@ -896,6 +896,23 @@ class PrimaVita:
                     if i == idx:
                         self.model.rewards[idx].append(reward)
                         self.model.scores[idx] += reward
+
+                        if update_model:
+                            # Update this agent's model
+                            self.model.update_single_agent(idx)
+
+                            # Kill the agent after asexual reproduction :)
+                            self.players[idx].write_data(self.time, self.current_population)
+                            self.players[idx] = 0
+                            self.killed = np.append(self.killed, idx)
+
+                            # Add agents to RL model
+                            self.model.add_agents(idx, len(offspring_players))
+                            self.model.kill_agent(idx)
+                            if self.current_feedbacked_player == idx:
+                                self.current_feedbacked_player = -1
+
+                            continue
 
                     if self.mode == "human":
                         # Find food particles in fixed radius

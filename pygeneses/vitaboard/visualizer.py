@@ -122,11 +122,13 @@ def visualize(file_location, speed):
     life_events = life_events[2:] if len(life_events[1]) == 2 else life_events[1:]
 
     # Initialize player object for the current player
-    player = Player(i, log_dir=".", tob=tob, energy=200, x=x, y=y, mode="human")
+    player = Player(i, log_dir=".", tob=tob, energy=200, x=x, y=y, mode="human", generation=-1)
 
     for life_event in life_events:
         # Extract action result, action and time at which it was done
-        result = "" if life_event[2] != 0 else "Failed "
+        result = ""
+        if life_event[0] >= 9 and life_event[2] == -0.1:
+            result = "Failed "
         action = life_event[0]
         timestamp = life_event[1]
         age = timestamp - tob
@@ -171,6 +173,7 @@ def visualize(file_location, speed):
                         x=(player.playerX + player_info[0]),
                         y=(player.playerY + player_info[1]),
                         mode="human",
+                        generation=-1
                     )
                 )
                 players[-1].show_close(screen)

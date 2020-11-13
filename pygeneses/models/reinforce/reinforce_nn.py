@@ -71,7 +71,7 @@ class Agent(nn.Module):
         # also return the embedding for the agent
         return F.softmax(x, dim=1), embed.detach()
 
-    def act(self, state, topk):
+    def act(self, state, topk, is_rebel):
         """
         Take an action
 
@@ -94,6 +94,10 @@ class Agent(nn.Module):
         probs, embed = self.forward(state)
         probs = probs.cpu()
         embed = embed.cpu()
+
+        if is_rebel:
+            values, indices = torch.topk(probs, k=13)
+            return indices.detach().numpy()[0], indices.detach().numpy()[0][-1], torch.log(values), embed
 
         if topk > 1:
             values, indices = torch.topk(probs, k=topk)

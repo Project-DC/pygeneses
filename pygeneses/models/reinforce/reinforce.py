@@ -90,7 +90,7 @@ class ReinforceModel:
             self.policy_loss[idx] = []
             self.rewards[idx] = []
 
-    def predict_action(self, idx, state, topk):
+    def predict_action(self, idx, state, topk, is_rebel):
         """
         Predict action using NN
 
@@ -110,7 +110,7 @@ class ReinforceModel:
         """
 
         # Compute action, lob probability of action and embedding from NN
-        actions, main_action, log_probs, embed = self.agents[idx].act(state, topk)
+        actions, main_action, log_probs, embed = self.agents[idx].act(state, topk, is_rebel)
 
         self.saved_log_probs[idx] = log_probs[0]
 
@@ -197,10 +197,11 @@ class ReinforceModel:
 
             # Compute log_probs[i] * rewards[i] for current agent
             for j in range(len(self.saved_log_probs[idx])):
-                self.policy_loss[idx].append(
-                    -(self.saved_log_probs[idx][j] * self.rewards[idx][j])
-                )
-                self.policy_loss[idx][-1] = self.policy_loss[idx][-1].unsqueeze(0)
+                if j < len(self.rewards[idx]):
+                    self.policy_loss[idx].append(
+                        -(self.saved_log_probs[idx][j] * self.rewards[idx][j])
+                    )
+                    self.policy_loss[idx][-1] = self.policy_loss[idx][-1].unsqueeze(0)
 
             self.saved_log_probs[idx] = []
             self.rewards[idx] = []

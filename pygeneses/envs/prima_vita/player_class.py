@@ -67,7 +67,7 @@ class Player:
        : Mode in which to run environment (human/bot)
     """
 
-    def __init__(self, i, log_dir, tob, energy, generation, x=None, y=None, mode="bot"):
+    def __init__(self, i, log_dir, tob, energy, generation, x=None, y=None, mode="bot", is_rebel=False):
         """
         Initializer for Player class
 
@@ -118,6 +118,7 @@ class Player:
         self.embeddings = np.array([0])
         self.states = np.array([0])
         self.mode = mode
+        self.is_rebel = is_rebel
 
         self.generation = generation
 
@@ -358,6 +359,11 @@ class Player:
 
             len_players = len_players + 1
 
+            # With 5% probability the child will be rebel
+            is_rebel = np.random.choice([True, False], p=[0.05, 0.95])
+            if(is_rebel):
+                print(f"A rebel is born at {time_given} with index {id_offspring}")
+
             # Create new Player objects and add as offsprings
             offspring_players.append(
                 Player(
@@ -367,6 +373,7 @@ class Player:
                     initial_energy,
                     self.generation+1,
                     mode=self.mode,
+                    is_rebel=is_rebel
                 )
             )
 
@@ -436,6 +443,11 @@ class Player:
                 offspring_ids.append(id_offspring)
                 len_players = len_players + 1
 
+                # With 5% probability the child will be rebel
+                is_rebel = np.random.choice([True, False], p=[0.05, 0.95])
+                if(is_rebel):
+                    print(f"A rebel is born at {mating_begin_time} with index {id_offspring}")
+
                 # Create new Player objects and add as offsprings
                 offspring_players.append(
                     Player(
@@ -445,6 +457,7 @@ class Player:
                         initial_energy,
                         self.generation+1,
                         mode=self.mode,
+                        is_rebel=is_rebel
                     )
                 )
 
