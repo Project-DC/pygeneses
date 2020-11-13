@@ -339,6 +339,15 @@ $("#stats").click(function() {
             }
         }
 
+        if(chart_mean != undefined) {
+          chart_mean.destroy()
+          console.log("Hello");
+        }
+        if(chart_variance)
+          chart_variance.destroy()
+        if(chart_qof)
+          chart_qof.destroy()
+
         var chart_mean = new Chart(ctx_mean,{
           type: 'scatter',
           data: data_mean,

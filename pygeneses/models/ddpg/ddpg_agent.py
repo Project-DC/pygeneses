@@ -15,7 +15,7 @@ from torch.distributions import Categorical
 class Agent():
     """Interacts with and learns from the environment."""
 
-    def __init__(self, state_size, action_size, device, actor_local=None, actor_target=None, critic_local=None, 
+    def __init__(self, state_size, action_size, device, actor_local=None, actor_target=None, critic_local=None,
                  critic_target=None, memory=None, random_seed=0):
         """Initialize an Agent object.
         Params
@@ -48,7 +48,7 @@ class Agent():
         self.memory.add(state, action, reward, next_state)
 
         # Learn, if enough samples are available in memory
-        if len(self.memory) > BATCH_SIZE:
+        if len(self.memory) >= BATCH_SIZE:
             experiences = self.memory.sample()
             self.learn(experiences, GAMMA)
 

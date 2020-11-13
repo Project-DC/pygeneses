@@ -136,7 +136,7 @@ class PrimaVita:
         self.food_particles = np.array([])
         self.current_population = 0
         self.screen = None
-        self.number_of_particles = random.randint(70, 80)
+        self.number_of_particles = random.randint(350, 400)
         self.leading_zeros = 0
         # Can take values from user
         self.initial_population = (
@@ -310,7 +310,7 @@ class PrimaVita:
             # If a player is not dead then
             if type(self.players[i]) != int:
                 # Update only current actor and surrounding player's state
-                if (idx == None) or (i in self.players[idx].players_near or i == idx):
+                if (self.time == self.players[i].born_at) or (idx == None) or (i in self.players[idx].players_near or i == idx):
                     # Get the food particles in environment
                     (
                         env_food_vector,
@@ -525,47 +525,47 @@ class PrimaVita:
         # Action left
         if action == 0:
             self.players[idx].change_player_xposition(-self.speed)
-            reward = 1
+            reward = 0.1
         # Action right
         elif action == 1:
             self.players[idx].change_player_xposition(self.speed)
-            reward = 1
+            reward = 0.1
         # Action: up
         elif action == 2:
             self.players[idx].change_player_yposition(-self.speed)
-            reward = 1
+            reward = 0.1
         # Action: down
         elif action == 3:
             self.players[idx].change_player_yposition(self.speed)
-            reward = 1
+            reward = 0.1
         # Action: up left (move north-west)
         elif action == 4:
             self.players[idx].change_player_yposition(
                 -self.root_speed, no_energy_change=True
             )
             self.players[idx].change_player_xposition(-self.root_speed)
-            reward = 1
+            reward = 0.1
         # Action: up right (move north-east)
         elif action == 5:
             self.players[idx].change_player_yposition(
                 -self.root_speed, no_energy_change=True
             )
             self.players[idx].change_player_xposition(self.root_speed)
-            reward = 1
+            reward = 0.1
         # Action: down left (move south-west)
         elif action == 6:
             self.players[idx].change_player_yposition(
                 self.root_speed, no_energy_change=True
             )
             self.players[idx].change_player_xposition(-self.root_speed)
-            reward = 1
+            reward = 0.1
         # Action: down right (move south-east)
         elif action == 7:
             self.players[idx].change_player_yposition(
                 self.root_speed, no_energy_change=True
             )
             self.players[idx].change_player_xposition(self.root_speed)
-            reward = 1
+            reward = 0.1
         # Action: stay
         elif action == 8:
             self.players[idx].energy -= 2
@@ -628,6 +628,10 @@ class PrimaVita:
                     num_offspring=len(offspring_ids),
                     offspring_ids=offspring_ids,
                 )
+
+                new_states, _ = self.get_current_state()
+                self.model.update_reward(idx, reward)
+                self.model.update_next_state(idx, new_states[idx].astype(np.float32))
 
                 # Kill the agent after asexual reproduction :)
                 self.players[idx].write_data(self.time, self.current_population)
@@ -954,6 +958,13 @@ class PrimaVita:
 
         if self.mode == "human":
             # Update the pygame window
+            myfont = pygame.font.SysFont("monospace", 32)
+            timetext = myfont.render("Time: " + str(self.time), 1, (255, 255, 255))
+            alivetext = myfont.render("Population: " + str(len([player for player in self.players if type(player) != int])), 1, (255, 255, 255))
+            foodtext = myfont.render("FC: " + str(len([food for food in self.food_particles if type(food) != int])), 1, (255, 255, 255))
+            self.screen.blit(timetext, (5, 10))
+            self.screen.blit(alivetext, (5, 40))
+            self.screen.blit(foodtext, (5, 70))
             pygame.display.update()
 
         # Compute number of alive agents

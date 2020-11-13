@@ -144,7 +144,7 @@ class Player:
         """
 
         # Show in front end API
-        print(f"RIP {self.born_at}-{self.index}, alive count = {alive_count}")
+        print(f"RIP {self.born_at}-{self.index}, died at age {time - self.born_at}, alive count = {alive_count}")
 
         # Form filename to save logs into
         file_name = str(self.born_at) + "-" + str(self.index)
@@ -355,6 +355,9 @@ class Player:
 
             len_players = len_players + 1
 
+            xpos = random.randint(min(round(self.playerX) - 200, 32), max(round(self.playerX) + 200, SCREEN_WIDTH - 32))
+            ypos = random.randint(min(round(self.playerY) - 200, 32), max(round(self.playerY) + 200, SCREEN_HEIGHT - 32))
+
             # Create new Player objects and add as offsprings
             offspring_players.append(
                 Player(
@@ -362,6 +365,8 @@ class Player:
                     self.log_dir,
                     time_given,
                     initial_energy,
+                    x=xpos,
+                    y=ypos,
                     mode=self.mode,
                 )
             )
@@ -431,6 +436,9 @@ class Player:
                 offspring_ids.append(id_offspring)
                 len_players = len_players + 1
 
+                xpos = random.randint(min(round(self.playerX) - 200, 32), max(round(self.playerX) + 200, SCREEN_WIDTH - 32))
+                ypos = random.randint(min(round(self.playerY) - 200, 32), max(round(self.playerY) + 200, SCREEN_HEIGHT - 32))
+
                 # Create new Player objects and add as offsprings
                 offspring_players.append(
                     Player(
@@ -438,6 +446,8 @@ class Player:
                         self.log_dir,
                         mating_begin_time,
                         initial_energy,
+                        x=xpos,
+                        y=ypos,
                         mode=self.mode,
                     )
                 )
