@@ -10,3 +10,4 @@ pygeneses.egg-info/*
 *.tar*
 *.gz
 .vscode/
+*.vita
