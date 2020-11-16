@@ -13,6 +13,9 @@ class DDPGModel:
         self.current_action = {}
         self.current_reward = {}
 
+        if torch.cuda.is_available():
+            print("Found GPU, training in GPU!")
+
         self.init(initial_population)
 
     def init(self, initial_population):
@@ -27,7 +30,7 @@ class DDPGModel:
         action, action_probs = self.agents[idx].act(state)
 
         self.current_state[idx] = state
-        self.current_action[idx] = action_probs
+        self.current_action[idx] = action_probs.detach().cpu()
 
         return action, []
 

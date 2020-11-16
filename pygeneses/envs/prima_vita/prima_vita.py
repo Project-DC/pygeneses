@@ -590,7 +590,7 @@ class PrimaVita:
                 self.players[idx].update_history(action, self.time, reward)
             # Otherwise punish the agent
             else:
-                reward = -0.1
+                reward = -1
                 self.players[idx].energy -= 1
 
                 # Log the failed ingestion action
@@ -605,6 +605,8 @@ class PrimaVita:
             ):
                 # Reward proportional to initial energy
                 reward = 10
+
+                print("Asexual reproduction")
 
                 # Perform asexual reproduction and get offsprings
                 offspring_players, offspring_ids = self.players[
@@ -645,7 +647,7 @@ class PrimaVita:
                     self.current_feedbacked_player = -1
             # If the above conditions don't meet then asexul reproduction fails
             else:
-                reward = -0.1
+                reward = -1
                 self.players[idx].energy -= 1
 
                 # Add to logs the failed action asexual reproduction
@@ -731,14 +733,14 @@ class PrimaVita:
                     self.model.add_agents(recessive_idx, num_recessive)
                 # Otherwise punish the agent trying to perform sexual reproduction
                 else:
-                    reward = -0.1
+                    reward = -1
                     self.players[idx].energy -= 1
 
                     # Update logs for failed sexual reproduction action
                     self.players[idx].update_history(action, self.time, reward)
             # If agent is already mating then also punish the agent (bad manners)
             else:
-                reward = -0.1
+                reward = -1
                 self.players[idx].energy -= 1
 
                 # Update logs for failed sexual reproduction action
@@ -777,14 +779,14 @@ class PrimaVita:
                     )
                 # If there is no agent in agent
                 else:
-                    reward = -0.1
+                    reward = -1
                     self.players[idx].energy -= 1
 
                     # Log failed fight action
                     self.players[idx].update_history(action, self.time, reward)
             # If the agent is already fighting with another agent (we do not promote mob fighting)
             else:
-                reward = -0.1
+                reward = -1
                 self.players[idx].energy -= 1
 
                 # Log failed fight action
@@ -874,7 +876,7 @@ class PrimaVita:
         now_time = self.time
 
         # Loop through all the players
-        for i in range(self.leading_zeros, len(self.players)):
+        for i in range(len(self.players)):
             # If agent is still alive
             if i not in self.killed:
                 # Put rewards and scores into players object
@@ -928,7 +930,7 @@ class PrimaVita:
                 if (
                     type(self.players[i]) != int
                     and self.players[i].mating_begin_time != 0
-                    and self.time - self.players[i].mating_begin_time >= 2
+                    and self.time - self.players[i].mating_begin_time >= 1
                 ):
                     self.players[i].mating_begin_time = 0
                     self.players[i].cannot_move = False
@@ -961,7 +963,7 @@ class PrimaVita:
             myfont = pygame.font.SysFont("monospace", 32)
             timetext = myfont.render("Time: " + str(self.time), 1, (255, 255, 255))
             alivetext = myfont.render("Population: " + str(len([player for player in self.players if type(player) != int])), 1, (255, 255, 255))
-            foodtext = myfont.render("FC: " + str(len([food for food in self.food_particles if type(food) != int])), 1, (255, 255, 255))
+            foodtext = myfont.render("FC: " + str(len([food for food in self.food_particles if type(food) == int])) + "/" + str(len(self.food_particles)), 1, (255, 255, 255))
             self.screen.blit(timetext, (5, 10))
             self.screen.blit(alivetext, (5, 40))
             self.screen.blit(foodtext, (5, 70))
@@ -1264,6 +1266,8 @@ class PrimaVita:
                     # If distance is less than 20 then delete the food particle
                     if ed < 20:
                         self.food_particles[j] = 0
+
+        self.food_particles = [food_particle for food_particle in self.food_particles if type(food_particle) != int]
 
     def regenerate_species(self):
         """
