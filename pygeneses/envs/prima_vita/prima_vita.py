@@ -1144,6 +1144,8 @@ class PrimaVita:
         if type(host) == int:
             return [], []
 
+        idx_to_distance_vectors = {}
+
         # Otherwise loop through all players
         for i in range(self.leading_zeros, len(self.players)):
             # If the player is not dead and is not the host itself then
@@ -1156,11 +1158,17 @@ class PrimaVita:
 
                 # If distance is less than equal to 100 then push to list
                 if ed <= self.sensory_radius:
-                    env.append(i)
-                    vec.append(host.playerX - self.players[i].playerX)
-                    vec.append(host.playerY - self.players[i].playerY)
-                    vec.append(gender_to_number[self.players[i].gender])
-                    distances.append(ed)
+                    idx_to_distance_vectors[i] = [ed, host.playerX - self.players[i].playerX, 
+                                                 host.playerY - self.players[i].playerY, 
+                                                 gender_to_number[self.players[i].gender]]
+
+        # Set vec, distances, and env
+        for key, values in idx_to_distance_vectors.items():
+            env.append(key)
+            vec.append(values[1:])
+            distances.append(values[0])
+
+        vec = sum(vec, [])
 
         if not get_idx:
             return vec, distances
