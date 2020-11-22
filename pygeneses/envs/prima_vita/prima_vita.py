@@ -1076,6 +1076,8 @@ class PrimaVita:
         if type(player) == int:
             return -1
 
+        idx_to_distance_vectors = {}
+
         # Otherwise loop through all food particles
         for i, food_particle in enumerate(self.food_particles):
 
@@ -1089,10 +1091,20 @@ class PrimaVita:
 
                 # If distance is less than or equal to 100 then push to lists
                 if ed <= self.sensory_radius:
-                    env.append(i)
-                    vec.append(food_particle.particleX - player.playerX)
-                    vec.append(food_particle.particleY - player.playerY)
-                    distances.append(ed)
+                    idx_to_distance_vectors[i] = [ed, food_particle.particleX - player.playerX, 
+                                                 food_particle.particleY - player.playerY]
+
+        # Sort according to distance
+        idx_to_distance_vectors = {k:v for k, v in 
+                                  sorted(idx_to_distance_vectors.items(), key=lambda item: item[1][0])}
+        
+        # Set vec, distances, and env
+        for key, values in idx_to_distance_vectors.items():
+            env.append(key)
+            vec.append(values[1:])
+            distances.append(values[0])
+
+        vec = sum(vec, [])
 
         if not get_idx:
             return vec, distances
