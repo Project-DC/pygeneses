@@ -1,3 +1,4 @@
+import math
 import numpy as np
 
 import torch
@@ -8,6 +9,24 @@ def hidden_init(layer):
     fan_in = layer.weight.data.size()[0]
     lim = 1. / np.sqrt(fan_in)
     return (-lim, lim)
+
+class PositionalEncoding(nn.Module):
+
+    def __init__(self, d_model, dropout=0.1, max_len=5000):
+        super(PositionalEncoding, self).__init__()
+        self.dropout = nn.Dropout(p=dropout)
+
+        pe = torch.zeros(max_len, d_model)
+        position = torch.arange(0, max_len, dtype=torch.float).unsqueeze(1)
+        div_term = torch.exp(torch.arange(0, d_model, 2).float() * (-math.log(10000.0) / d_model))
+        pe[:, 0::2] = torch.sin(position * div_term)
+        pe[:, 1::2] = torch.cos(position * div_term)
+        pe = pe.unsqueeze(0).transpose(0, 1)
+        self.register_buffer('pe', pe)
+
+    def forward(self, x):
+        x = x + self.pe[:x.size(0), :]
+        return self.dropout(x)
 
 class Actor(nn.Module):
     """Actor (Policy) Model."""
@@ -24,9 +43,17 @@ class Actor(nn.Module):
         """
         super(Actor, self).__init__()
         self.seed = torch.manual_seed(seed)
+        # self.fc1 = nn.Linear(state_size, fc1_units)
+        # self.fc2 = nn.Linear(fc1_units, fc2_units)
+        # self.fc3 = nn.Linear(fc2_units, action_size)
+
+        self.pos_encoder = PositionalEncoding(d_model=state_size, max_len=10)
         self.fc1 = nn.Linear(state_size, fc1_units)
+        self.encoder_layer = nn.TransformerEncoderLayer(d_model=fc1_units, nhead=8)
+        self.encoder = nn.TransformerEncoder(self.encoder_layer, num_layers=3)
         self.fc2 = nn.Linear(fc1_units, fc2_units)
-        self.fc3 = nn.Linear(fc2_units, action_size)
+        self.fc3 = nn.Linear(fc2_units, action_size) 
+
         self.reset_parameters()
 
     def reset_parameters(self):
@@ -36,10 +63,14 @@ class Actor(nn.Module):
 
     def forward(self, state):
         """Build an actor (policy) network that maps states -> actions."""
-        x = F.relu(self.fc1(state))
-        x = F.relu(self.fc2(x))
-        x = self.fc3(x)
-        return F.softmax(x, dim=1)
+        x = state.unsqueeze(0)
+        x = self.pos_encoder(x)
+        x = self.fc1(x)
+        out = self.encoder(x)
+        out = F.relu(self.fc2(out))
+        out = self.fc3(out)
+        out = out.squeeze(0)
+        return F.softmax(out, dim=1)
 
 
 class Critic(nn.Module):
