@@ -67,5 +67,5 @@ setup(
             'vitaboard = pygeneses.vitaboard.vitaboard:run_board'
         ]
     },
-    install_requires=["pygame", "numpy", "torch==1.4.0", "Flask", "sklearn"],
+    install_requires=["pygame", "numpy", "torch==1.13.1", "Flask", "sklearn"],
 )
